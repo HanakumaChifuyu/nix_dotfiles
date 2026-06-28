@@ -1,0 +1,47 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
+{
+  # System-level packages — user-facing packages belong in user/home.nix
+  environment.systemPackages = with pkgs; [
+    vim
+    lazygit
+    podman-tui
+    git
+    just
+    wget
+    curl
+    htop
+    btop
+    tree
+    file
+    unzip
+    zip
+    ripgrep
+    fd
+    bat
+    eza
+    fzf
+    tmux
+    jq
+    sing-box
+    home-manager
+    pciutils
+    usbutils
+    age
+    sops
+    dnsutils
+    inetutils
+    ncdu
+    strace
+
+    xrdb
+    android-tools
+    nix-index
+
+  ];
+}

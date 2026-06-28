@@ -1,0 +1,87 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$nix_shell\
+$cmd_duration\
+${custom.jobs}\
+$line_break\
+$character"""
+
+[directory]
+style = "blue"
+
+[character]
+success_symbol = "[❯](purple)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
+
+[git_branch]
+format = "[$branch]($style)"
+style = "bright-black"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
+
+[nix_shell]
+format = "[$symbol$state( \\($name\\))]($style) "
+symbol = " "
+style = "bright-black"
+
+[custom.jobs]
+description = "Suspended (Ctrl-Z) jobs grouped by type"
+style = "yellow"
+format = "([\\[](bright-black)[$output](yellow)[\\]](bright-black))"
+shell = ["sh"]
+when = true
+command = '''
+tty=$(ps -o tty= -p $$ 2>/dev/null | tr -d "[:space:]")
+{ [ -z "$tty" ] || [ "$tty" = "?" ]; } && exit 0
+ps -t "$tty" -o stat=,pid=,pgid=,comm= 2>/dev/null | awk '
+  BEGIN {
+    s[0]="⁰"; s[1]="¹"; s[2]="²"; s[3]="³"; s[4]="⁴"
+    s[5]="⁵"; s[6]="⁶"; s[7]="⁷"; s[8]="⁸"; s[9]="⁹"
+  }
+  function sup(n,   t, i, r) {
+    t = n ""; r = ""
+    for (i = 1; i <= length(t); i++) r = r s[substr(t, i, 1)]
+    return r
+  }
+  $1 ~ /^T/ && $2 == $3 {
+    total++; c = $4
+    if (c ~ /vim/)         nvim++
+    else if (c ~ /node/)   node++
+    else if (c ~ /python/) py++
+    else if (c ~ /yazi/)   yazi++
+    else                   other++
+  }
+  END {
+    if (total == 0) exit 0
+    out = "j:" total " "
+    if (nvim  > 0) out = out " " sup(nvim)
+    if (node  > 0) out = out " " sup(node)
+    if (py    > 0) out = out " " sup(py)
+    if (yazi  > 0) out = out "󰇥 " sup(yazi)
+    if (other > 0) out = out " ·" sup(other)
+    print out
+  }'
+'''

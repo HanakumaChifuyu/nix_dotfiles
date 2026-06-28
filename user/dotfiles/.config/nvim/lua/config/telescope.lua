@@ -1,0 +1,14 @@
+-- require('telescope').setup({
+--   defaults = {
+--     mappings = {
+--       i = {
+--         ["<CR>"] = require('telescope.actions').select_current_file, 
+--
+--       },
+--       n = {
+--         ["<CR>"] = require('telescope.actions').select_current_file,
+--       },
+--     }
+--   }
+-- })
+

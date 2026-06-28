@@ -1,0 +1,78 @@
+/* Rofi Theme - Select Menu */
+
+* {
+    background-color:            #11121d;
+    text-color:                  #c0caf5;
+
+    selected-normal-foreground:  #c0caf5;
+    selected-normal-background:  #1f2335;
+    normal-background:           #11121d;
+    normal-foreground:           #c0caf5;
+    urgent-background:           #11121d;
+    urgent-foreground:           #f7768e;
+    active-background:           #11121d;
+    active-foreground:           #7aa2f7;
+    alternate-normal-background: #11121d;
+    alternate-normal-foreground: #c0caf5;
+    border-color:                #3d59a1;
+
+    spacing:                     0;
+    padding:                     0;
+    margin:                      0;
+
+    font:                        "Source Han Sans SC Bold 10";
+}
+
+window {
+    background-color:            #11121d;
+    border:                      2px solid;
+    border-color:                #3d59a1;
+    border-radius:               12px;
+    padding:                     0;
+    location:                    center;
+    anchor:                      center;
+    width:                       320px;
+    children:                    [ mainbox ];
+}
+
+mainbox {
+    background-color:            #11121d;
+    padding:                     8px;
+    children:                    [ listview ];
+}
+
+listview {
+    background-color:            #11121d;
+    columns:                     1;
+    lines:                       6;
+    spacing:                     2px;
+    cycle:                       true;
+    scrollbar:                   false;
+}
+
+element {
+    padding:                     10px 14px;
+    border-radius:               8px;
+    children:                    [ element-text ];
+}
+
+element normal.normal {
+    background-color:            #11121d;
+    text-color:                  #c0caf5;
+}
+
+element selected.normal {
+    background-color:            #3d59a1;
+    text-color:                  #ffffff;
+    border:                      2px solid;
+    border-color:                #7aa2f7;
+    border-radius:               10px;
+}
+
+element-text {
+    background-color:            inherit;
+    text-color:                  inherit;
+    font:                        "Source Han Sans SC Bold 10";
+}
+
+/* vim:ft=css */

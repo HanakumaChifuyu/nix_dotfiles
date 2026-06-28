@@ -1,0 +1,122 @@
+// Wired-notify 配置（由 matugen 渲染，主题随壁纸联动）
+// 说明：
+//   - 颜色占位符（colors.X.default.hex）由 matugen 替换为 #RRGGBB
+//   - Wired 自动监听本文件改动并热重载，无需重启
+//   - 文档：https://github.com/Toqozz/wired-notify/wiki/Config
+
+(
+    max_notifications: 5,
+    icon_theme: "Adwaita",
+    timeout: 8000,
+    zero_timeout_behavior: NeverExpire,
+
+    poll_interval: 16,
+    idle_poll_interval: 500,
+
+    history_length: 50,
+    notify_on_reload: true,
+
+    replacing_enabled: true,
+    replacing_resets_timeout: false,
+    closing_enabled: true,
+
+    trim_whitespace: true,
+
+    debug: false,
+    debug_color: Color(r: 0.0, g: 1.0, b: 0.0, a: 1.0),
+    debug_color_alt: Color(r: 1.0, g: 0.0, b: 0.0, a: 1.0),
+
+    layout_blocks: [
+        // ---------- Root: 卡片本体（右上角，向下堆叠） ----------
+        (
+            name: "root",
+            parent: "",
+            // 屏幕右上角对齐通知右上角
+            hook: Hook(parent_anchor: TR, self_anchor: TR),
+            offset: Vec2(x: -16.0, y: 16.0),
+            params: NotificationBlock((
+                monitor: 0,
+                border_width: 1.0,
+                border_rounding: 14.0,
+                rounded_border_corners: true,
+
+                background_color:       Color(hex: "{{colors.surface_container.default.hex}}"),
+                border_color:           Color(hex: "{{colors.outline_variant.default.hex}}"),
+                border_color_low:       Color(hex: "{{colors.outline_variant.default.hex}}"),
+                border_color_critical:  Color(hex: "{{colors.error.default.hex}}"),
+                border_color_paused:    Color(hex: "{{colors.tertiary.default.hex}}"),
+
+                gap: Vec2(x: 0.0, y: 8.0),
+                // 新通知挂在上一条的左下角，向下堆叠
+                notification_hook: Hook(parent_anchor: BL, self_anchor: TL),
+            )),
+        ),
+
+        // ---------- 应用图标 / Hint 图（专辑封面等） ----------
+        (
+            name: "image",
+            parent: "root",
+            hook: Hook(parent_anchor: TL, self_anchor: TL),
+            offset: Vec2(x: 0.0, y: 0.0),
+            params: ImageBlock((
+                image_type: Hint,
+                padding: Padding(left: 12.0, right: 0.0, top: 12.0, bottom: 12.0),
+                rounding: 10.0,
+                scale_width: 48,
+                scale_height: 48,
+                filter_mode: Lanczos3,
+                min_width: 0,
+                min_height: 0,
+            )),
+        ),
+
+        // ---------- Summary（标题） ----------
+        (
+            name: "summary",
+            parent: "image",
+            // 图右侧、垂直方向稍微靠上：从 image 的中右贴到自己中左
+            hook: Hook(parent_anchor: MR, self_anchor: BL),
+            offset: Vec2(x: 0.0, y: 0.0),
+            params: TextBlock((
+                text: "%s",
+                font: "Inter Bold 11",
+                ellipsize: Middle,
+                color:         Color(hex: "{{colors.on_surface.default.hex}}"),
+                color_hovered: Color(hex: "{{colors.primary.default.hex}}"),
+                padding: Padding(left: 12.0, right: 12.0, top: 12.0, bottom: 0.0),
+                dimensions: (width: (min: 180, max: 260), height: (min: 0, max: 0)),
+                align: Left,
+            )),
+        ),
+
+        // ---------- Body（正文，可滚动长文本） ----------
+        (
+            name: "body",
+            parent: "summary",
+            hook: Hook(parent_anchor: BL, self_anchor: TL),
+            offset: Vec2(x: 0.0, y: -2.0),
+            render_criteria: [Body],
+            params: ScrollingTextBlock((
+                text: "%b",
+                font: "Inter 10",
+                color:         Color(hex: "{{colors.on_surface_variant.default.hex}}"),
+                color_hovered: Color(hex: "{{colors.on_surface.default.hex}}"),
+                padding: Padding(left: 12.0, right: 12.0, top: 4.0, bottom: 12.0),
+                width: (min: 180, max: 260),
+                scroll_speed: 0.08,
+                lhs_dist: 24.0,
+                rhs_dist: 24.0,
+                scroll_t: 1.5,
+            )),
+        ),
+    ],
+
+    // 鼠标交互：左键触发默认动作，右键关闭，中键全部关闭，侧键暂停
+    shortcuts: ShortcutsConfig (
+        notification_interact:  1,
+        notification_close:     2,
+        notification_closeall:  3,
+        notification_pause:     8,
+        notification_action1:   1,
+    ),
+)

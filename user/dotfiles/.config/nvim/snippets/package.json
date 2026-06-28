@@ -1,0 +1,8 @@
+{
+  "name": "personal-snippets",
+  "contributes": {
+    "snippets": [
+      { "language": "cmake", "path": "./cmake.json" }
+    ]
+  }
+}

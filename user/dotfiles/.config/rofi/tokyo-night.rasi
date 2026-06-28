@@ -1,0 +1,455 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Rofi Theme - Tokyo Night Deep Space
+ * A refined dark theme with glassmorphism and subtle glow effects
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Design Philosophy:
+ * - Deep, immersive background with layered transparency
+ * - Soft, ethereal glow effects on interactive elements
+ * - Crisp typography with generous spacing
+ * - Refined micro-interactions through color transitions
+ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Color Palette - Tokyo Night Extended
+ * ───────────────────────────────────────────────────────────────────────────── */
+* {
+    /* Base Colors */
+    bg-darker:                   #16161e;
+    bg-dark:                     #1a1b26;
+    bg:                          #1f2335;
+    bg-highlight:                #292e42;
+    bg-surface:                  #24283b;
+
+    /* Text Colors */
+    fg:                          #c0caf5;
+    fg-dark:                     #a9b1d6;
+    fg-muted:                    #565f89;
+    fg-gutter:                   #3b4261;
+
+    /* Accent Colors */
+    blue:                        #7aa2f7;
+    blue-accent:                 #3d59a1;
+    cyan:                        #7dcfff;
+    purple:                      #bb9af7;
+    magenta:                     #bb9af7;
+    orange:                      #ff9e64;
+    yellow:                      #e0af68;
+    green:                       #9ece6a;
+    red:                         #f7768e;
+    teal:                        #1abc9c;
+
+    /* Transparency (alpha values: 0.0 - 1.0) */
+    bg-alpha:                    rgba(26, 27, 38, 0.95);
+    bg-alpha-light:              rgba(31, 35, 53, 0.78);
+    border-alpha:                rgba(61, 89, 161, 0.6);
+    glow-alpha:                  rgba(122, 162, 247, 0.2);
+
+    /* Theme Variables */
+    background:                  var(bg-alpha);
+    foreground:                  var(fg);
+    selected-normal-foreground:  var(fg);
+    selected-normal-background:  var(bg-highlight);
+    selected-active-foreground:  var(bg-dark);
+    selected-active-background:  var(blue);
+    selected-urgent-foreground:  var(bg-dark);
+    selected-urgent-background:  var(red);
+    normal-background:           transparent;
+    normal-foreground:           var(fg);
+    alternate-normal-background: rgba(36, 40, 59, 0.2);
+    alternate-normal-foreground: var(fg);
+    active-background:           transparent;
+    active-foreground:           var(blue);
+    alternate-active-background: rgba(122, 162, 247, 0.04);
+    alternate-active-foreground: var(blue);
+    urgent-background:           transparent;
+    urgent-foreground:           var(red);
+    alternate-urgent-background: rgba(247, 118, 142, 0.04);
+    alternate-urgent-foreground: var(red);
+
+    border-color:                var(blue-accent);
+    separatorcolor:              var(fg-gutter);
+
+    /* Spacing */
+    spacing:                     8;
+    padding:                     12;
+    margin:                      0;
+    border-radius:               12;
+
+    /* Typography */
+    font:                        "Source Han Sans SC 11";
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Window - Main Container
+ * ───────────────────────────────────────────────────────────────────────────── */
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  false;
+    width:                       680px;
+    x-offset:                    0px;
+    y-offset:                    0px;
+
+    padding:                     0px;
+    border:                      2px solid;
+    border-color:                var(border-alpha);
+    border-radius:               16px;
+
+    background-color:            var(background);
+    children:                    [ mainbox ];
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Main Box - Primary Layout Container
+ * ───────────────────────────────────────────────────────────────────────────── */
+mainbox {
+    spacing:                     0;
+    padding:                     0;
+    border:                      0;
+    children:                    [ inputbar, listview ];
+    orientation:                 vertical;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Input Bar - Search Entry Area
+ * ───────────────────────────────────────────────────────────────────────────── */
+inputbar {
+    spacing:                     8px;
+    padding:                     20px 24px;
+    margin:                      0;
+    border:                      0;
+    border-color:                transparent;
+
+    background-color:            transparent;
+    text-color:                  var(normal-foreground);
+
+    children:                    [ prompt, entry ];
+}
+
+/* Prompt Symbol */
+prompt {
+    padding:                     8px 16px;
+    border:                      0;
+    border-radius:               8px;
+
+    background-color:            var(blue-accent);
+    text-color:                  var(fg);
+
+    font:                        "JetBrainsMono Nerd Font 11";
+}
+
+/* Text Entry */
+entry {
+    padding:                     8px 12px;
+    border:                      0;
+    border-radius:               8px;
+
+    background-color:            var(bg-highlight);
+    text-color:                  var(fg);
+
+    cursor:                      text;
+    placeholder:                 "Search applications...";
+    placeholder-color:           var(fg-muted);
+
+    font:                        "Source Han Sans SC 11";
+}
+
+/* Overlay - Search Result Count */
+overlay {
+    padding:                     4px 8px;
+    border:                      0;
+    border-radius:               4px;
+
+    background-color:            var(blue);
+    text-color:                  var(bg-dark);
+
+    font:                        "JetBrainsMono Nerd Font 9";
+}
+
+/* Case Indicator */
+case-indicator {
+    spacing:                     0;
+    text-color:                  var(fg-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * List View - Results Container
+ * ───────────────────────────────────────────────────────────────────────────── */
+listview {
+    spacing:                     4px;
+    padding:                     8px 16px 16px;
+    margin:                      0;
+    border:                      0;
+
+    background-color:            transparent;
+
+    columns:                     1;
+    lines:                       8;
+    cycle:                       true;
+    dynamic:                     true;
+    fixed-height:                true;
+    fixed-columns:               true;
+
+    scrollbar:                   true;
+    scrollbar-width:             6px;
+    scrollbar-padding:           4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Element - Individual List Items
+ * ───────────────────────────────────────────────────────────────────────────── */
+element {
+    spacing:                     12px;
+    padding:                     12px 16px;
+    margin:                      0;
+    border:                      0;
+    border-radius:               10px;
+
+    background-color:            transparent;
+    text-color:                  var(normal-foreground);
+
+    cursor:                      pointer;
+    orientation:                 horizontal;
+
+    children:                    [ element-icon, element-text ];
+}
+
+/* Normal State */
+element normal.normal {
+    background-color:            var(normal-background);
+    text-color:                  var(normal-foreground);
+}
+
+element normal.urgent {
+    background-color:            var(urgent-background);
+    text-color:                  var(urgent-foreground);
+}
+
+element normal.active {
+    background-color:            var(active-background);
+    text-color:                  var(active-foreground);
+}
+
+/* Selected State - Hover/Active */
+element selected.normal {
+    background-color:            var(selected-normal-background);
+    text-color:                  var(selected-normal-foreground);
+
+    border:                      1px solid;
+    border-color:                var(border-alpha);
+}
+
+element selected.urgent {
+    background-color:            var(selected-urgent-background);
+    text-color:                  var(selected-urgent-foreground);
+}
+
+element selected.active {
+    background-color:            var(selected-active-background);
+    text-color:                  var(selected-active-foreground);
+}
+
+/* Alternate State - Zebra Striping */
+element alternate.normal {
+    background-color:            var(alternate-normal-background);
+    text-color:                  var(alternate-normal-foreground);
+}
+
+element alternate.urgent {
+    background-color:            var(alternate-urgent-background);
+    text-color:                  var(alternate-urgent-foreground);
+}
+
+element alternate.active {
+    background-color:            var(alternate-active-background);
+    text-color:                  var(alternate-active-foreground);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Element Components
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* Icon */
+element-icon {
+    size:                        28px;
+    padding:                     0;
+    margin:                      0;
+
+    background-color:            transparent;
+    text-color:                  inherit;
+
+    cursor:                      inherit;
+}
+
+/* Text */
+element-text {
+    padding:                     0;
+    margin:                      0;
+
+    background-color:            transparent;
+    text-color:                  inherit;
+
+    cursor:                      inherit;
+    highlight:                   inherit;
+
+    font:                        "Source Han Sans SC 11";
+    vertical-align:              0.5;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Scrollbar
+ * ───────────────────────────────────────────────────────────────────────────── */
+scrollbar {
+    width:                       6px;
+    padding:                     0;
+    margin:                      0 0 0 4px;
+    border:                      0;
+    border-radius:               3px;
+
+    background-color:            transparent;
+    handle-color:                var(fg-gutter);
+    handle-width:                6px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Message Box - Error/Info Display
+ * ───────────────────────────────────────────────────────────────────────────── */
+message {
+    padding:                     16px;
+    margin:                      8px;
+    border:                      1px dash;
+    border-color:                var(separatorcolor);
+    border-radius:               10px;
+
+    background-color:            transparent;
+}
+
+textbox {
+    padding:                     0;
+    border:                      0;
+
+    background-color:            transparent;
+    text-color:                  var(fg);
+
+    font:                        "Source Han Sans SC 11";
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Sidebar - Mode Selector
+ * ───────────────────────────────────────────────────────────────────────────── */
+sidebar {
+    padding:                     8px;
+    margin:                      0;
+    border:                      1px 0 0 0 dash;
+    border-color:                var(separatorcolor);
+
+    background-color:            transparent;
+}
+
+button {
+    padding:                     8px 16px;
+    margin:                      4px;
+    border:                      0;
+    border-radius:               8px;
+
+    background-color:            transparent;
+    text-color:                  var(normal-foreground);
+
+    cursor:                      pointer;
+    font:                        "Source Han Sans SC 10";
+}
+
+button selected {
+    background-color:            var(blue-accent);
+    text-color:                  var(fg);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Additional Elements
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* Number of filtered rows indicator */
+num-filtered-rows {
+    expand:                      false;
+    text-color:                  var(fg-muted);
+    font:                        "JetBrainsMono Nerd Font 9";
+}
+
+/* Total number of rows */
+num-rows {
+    expand:                      false;
+    text-color:                  var(fg-muted);
+    font:                        "JetBrainsMono Nerd Font 9";
+}
+
+/* Separator between row counts */
+textbox-num-sep {
+    expand:                      false;
+    str:                         "/";
+    text-color:                  var(fg-muted);
+    font:                        "JetBrainsMono Nerd Font 9";
+}
+
+/* Prompt colon separator */
+textbox-prompt-colon {
+    expand:                      false;
+    str:                         "";
+    margin:                      0;
+    padding:                     0;
+    text-color:                  transparent;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Error Message Styling
+ * ───────────────────────────────────────────────────────────────────────────── */
+error-message {
+    padding:                     24px;
+    border:                      2px solid;
+    border-color:                var(red);
+    border-radius:               16px;
+
+    background-color:            var(background);
+    text-color:                  var(red);
+
+    font:                        "Source Han Sans SC 11";
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Mode-specific Overrides
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Window Switcher Mode */
+window-switcher window {
+    width:                       800px;
+}
+
+window-switcher element-text {
+    font:                        "Source Han Sans SC 10";
+}
+
+/* Run Mode */
+run-mode entry {
+    placeholder:                 "Enter command...";
+}
+
+/* SSH Mode */
+ssh-mode entry {
+    placeholder:                 "Connect to host...";
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Animation & Effects (where supported)
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Note: Rofi has limited animation support. These are prepared for future
+ * compatibility and work through color transitions on state changes. */
+
+element selected.normal {
+    border-color:                var(glow-alpha);
+}
+
+/* vim:ft=css

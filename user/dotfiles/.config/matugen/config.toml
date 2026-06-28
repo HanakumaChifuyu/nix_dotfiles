@@ -1,0 +1,64 @@
+# Matugen 主配置 —— Material 3 / dark / vibrant
+# 模板会随着各 app 接入逐个加进来：[templates.waybar]、[templates.kitty] ...
+
+[config]
+# matugen 4：command 是一整条命令字符串，{{ image }} 由 matugen 替换为壁纸路径
+[config.wallpaper]
+command = "sh -c '[ -n \"$WAYLAND_DISPLAY\" ] && command -v awww >/dev/null 2>&1 && awww query >/dev/null 2>&1 && awww img --transition-type any --transition-fps 60 --transition-duration 1 \"$1\" || true' sh {{ image }}"
+set = true
+
+# ---------- 各 app 模板将在下方按顺序追加 ----------
+[templates]
+
+[templates.waybar]
+input_path = "~/.config/matugen/templates/waybar-colors.css"
+output_path = "~/.cache/wal/colors-waybar.css"
+post_hook = "pkill -SIGUSR2 waybar || true"
+
+[templates.kitty]
+input_path = "~/.config/matugen/templates/kitty-colors.conf"
+output_path = "~/.cache/matugen/kitty-colors.conf"
+post_hook = "pkill -SIGUSR1 kitty || true"
+
+[templates.hyprvars]
+input_path = "~/.config/matugen/templates/hypr-vars.conf"
+output_path = "~/.cache/matugen/hypr-vars.conf"
+
+[templates.hyprland]
+input_path = "~/.config/matugen/templates/hyprland-colors.conf"
+output_path = "~/.cache/matugen/hyprland-bindings.conf"
+
+[templates.hyprvars_lua]
+input_path = "~/.config/matugen/templates/hypr-vars.lua"
+output_path = "~/.cache/matugen/hypr-vars.lua"
+post_hook = "sh -c '[ -z \"$MATUGEN_DEFER_HYPR_RELOAD\" ] && [ -n \"$HYPRLAND_INSTANCE_SIGNATURE\" ] && hyprctl reload >/dev/null 2>&1 || true'"
+
+[templates.swaync]
+input_path = "~/.config/matugen/templates/swaync-style.css"
+output_path = "~/.cache/matugen/swaync-style.css"
+post_hook = "swaync-client -rs || true"
+
+[templates.fuzzel]
+input_path = "~/.config/matugen/templates/fuzzel.ini"
+output_path = "~/.cache/matugen/fuzzel-colors.ini"
+# fuzzel 无运行时；下次启动自动生效
+
+[templates.btop]
+input_path = "~/.config/matugen/templates/btop.theme"
+output_path = "~/.cache/matugen/btop.theme"
+# btop 无热重载；下次启动自动生效
+
+[templates.yazi]
+input_path = "~/.config/matugen/templates/yazi-theme.toml"
+output_path = "~/.cache/matugen/yazi-theme.toml"
+# yazi 没有热重载主题的 IPC，新窗口自动生效；如要给已开窗口刷主题可手动 ya emit reload
+
+[templates.nvim]
+input_path = "~/.config/nvim/lua/matugen-template.lua"
+output_path = "~/.cache/matugen/nvim-matugen.lua"
+post_hook = "pkill -SIGUSR1 nvim || true"
+
+[templates.pywal]
+input_path = "~/.config/matugen/templates/pywal-colors.json"
+output_path = "~/.cache/wal/colors.json"
+post_hook = "sh -c 'timeout 2 pywalfox update </dev/null >/dev/null 2>&1 &' || true"

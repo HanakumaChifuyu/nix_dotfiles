@@ -1,0 +1,11 @@
+[[mgr.prepend_keymap]]
+on = ["C"]
+run = "copy path"
+desc = "Copy absolute path"
+[[mgr.prepend_keymap]]
+on = ["c", "c"]
+run = "noop"
+[[mgr.prepend_keymap]]
+on = ["X"]
+run = "plugin ouch"
+desc = "Compress with ouch"

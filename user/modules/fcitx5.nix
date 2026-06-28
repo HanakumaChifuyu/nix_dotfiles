@@ -1,0 +1,110 @@
+{ pkgs, lib, ... }:
+{
+  home.activation = {
+    installRimeIce = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      RIME_DIR="$HOME/.local/share/fcitx5/rime"
+      MARKER="$RIME_DIR/rime_ice.schema.yaml"
+      mkdir -p "$RIME_DIR"
+      if [ ! -f "$MARKER" ]; then
+        if [ -d "$RIME_DIR" ]; then
+          find "$RIME_DIR" -mindepth 1 -not -name rime_ice.userdb -not -name rime-ice.zip -exec rm -rf {} +
+        fi
+        ZIP_FILE="$RIME_DIR/rime-ice.zip"
+        if [ ! -f "$ZIP_FILE" ]; then
+          ${pkgs.curl}/bin/curl -fSL -o "$ZIP_FILE" \
+            "https://github.com/iDvel/rime-ice/releases/download/2026.06.03/full.zip"
+        fi
+        ${pkgs.unzip}/bin/unzip -o "$ZIP_FILE" -d "$RIME_DIR"
+        cp -f ${../dotfiles/rime/default.yaml} "$RIME_DIR/default.yaml"
+      fi
+    '';
+  };
+
+  xdg.configFile = {
+    "fcitx5/profile" = {
+      force = true;
+      text = ''
+        [Groups/0]
+        Name=Default
+        Default Layout=us
+        DefaultIM=rime
+
+        [Groups/0/Items/0]
+        Name=rime
+        Layout=
+
+        [Groups/0/Items/1]
+        Name=keyboard-us
+        Layout=
+
+        [GroupOrder]
+        0=Default
+      '';
+    };
+
+    "fcitx5/config" = {
+      force = true;
+      text = ''
+        [Hotkey]
+        TriggerKeys=
+        AltTriggerKeys=
+        EnumerateForwardKeys=
+        EnumerateBackwardKeys=
+        ToggleIMEStateKeys=
+
+        [Hotkey/TriggerKeys]
+        0=Control+space
+
+        [Behavior]
+        ActiveByDefault=True
+        PreloadInputMethod=True
+        ActiveByMatchingInputMethodName=False
+      '';
+    };
+
+    "fcitx5/conf/classicui.conf" = {
+      force = true;
+      text = ''
+        # Vertical Candidate List
+        Vertical Candidate List=False
+        # Use mouse wheel to go to prev or next page
+        WheelForPaging=True
+        # Font
+        Font="Sarasa Gothic SC 12"
+        # Menu Font
+        MenuFont="Sarasa Gothic SC 12"
+        # Tray Font
+        TrayFont="Sarasa Gothic SC 12"
+        # Tray Label Outline Color
+        TrayOutlineColor=#000000
+        # Tray Label Text Color
+        TrayTextColor=#ffffff
+        # Prefer Text Icon
+        PreferTextIcon=False
+        # Show Layout Name In Icon
+        ShowLayoutNameInIcon=True
+        # Use input method language to display text
+        UseInputMethodLanguageToDisplayText=True
+        # Theme
+        Theme=inflex-wechat
+        # Dark Theme
+        DarkTheme=inflex-wechat
+        # Follow system light/dark color scheme
+        UseDarkTheme=False
+        # Follow system accent color if it is supported by theme and desktop
+        UseAccentColor=True
+        # Use Per Screen DPI on X11
+        PerScreenDPI=False
+        # Force font DPI on Wayland
+        ForceWaylandDPI=0
+        # Enable fractional scale under Wayland
+        EnableFractionalScale=True
+
+      '';
+    };
+
+    "fcitx5/addon/punctuation.conf".text = "GlobalHotkey=";
+    "fcitx5/addon/quickphrase.conf".text = "ChooseKey=";
+    "fcitx5/addon/chttrans.conf".text = "Hotkey=";
+  };
+}

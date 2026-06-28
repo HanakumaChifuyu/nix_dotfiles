@@ -1,0 +1,190 @@
+"""
+~/.config/kitty/tab_bar.py — custom tab bar for kitty
+
+启用：在 kitty.conf 里写
+    tab_bar_style custom
+
+设计：
+  ┃   nvim · matugen        ┃   fish · ~/.config/kitty   ┃   git · awesome ⚡ ┃
+  方形填充，每个 tab 用左侧实心 bar (▏┃) 作为活跃指示器，内容包含:
+    - 程序图标 (依据前台进程)
+    - 程序名 / 命令名
+    - cwd 简称
+    - 活动 / 静默 / bell 状态符
+"""
+
+import os
+import subprocess
+from datetime import datetime
+
+from kitty.boss import get_boss
+from kitty.fast_data_types import Screen
+from kitty.tab_bar import (
+    DrawData, ExtraData, TabBarData,
+    as_rgb, draw_attributed_string,
+)
+from kitty.utils import color_as_int
+
+
+_GIT_CACHE: dict = {}  # cwd -> (timestamp, branch)
+
+
+def _git_branch(cwd: str) -> str:
+    if not cwd:
+        return ''
+    import time
+    now = time.time()
+    cached = _GIT_CACHE.get(cwd)
+    if cached and now - cached[0] < 3.0:
+        return cached[1]
+    try:
+        b = subprocess.check_output(
+            ['git', '-C', cwd, 'symbolic-ref', '--short', 'HEAD'],
+            stderr=subprocess.DEVNULL, timeout=0.08,
+        ).decode().strip()
+    except Exception:
+        b = ''
+    _GIT_CACHE[cwd] = (now, b)
+    return b
+
+
+# ─────────────────────────── 程序 → 图标 ───────────────────────────
+ICONS = {
+    'nvim': '', 'vim': '', 'vi': '',
+    'fish': '', 'bash': '', 'zsh': '',
+    'git': '', 'lazygit': '',
+    'docker': '', 'docker-compose': '',
+    'python': '', 'python3': '', 'ipython': '',
+    'node': '', 'npm': '', 'pnpm': '', 'yarn': '',
+    'cargo': '', 'rustc': '',
+    'go': '',
+    'btop': '', 'htop': '', 'top': '',
+    'yazi': '󰇥', 'ranger': '',
+    'ssh': '', 'tmux': '',
+    'curl': '', 'wget': '',
+    'man': '', 'less': '',
+    'opencode': '', 'claude': '',
+    'pacman': '󰣇', 'paru': '󰣇', 'yay': '󰣇',
+}
+DEFAULT_ICON = ''
+
+
+def _icon_for(cmd: str) -> str:
+    return ICONS.get(cmd, DEFAULT_ICON)
+
+
+def _short_cwd(cwd: str) -> str:
+    if not cwd:
+        return ''
+    home = os.path.expanduser('~')
+    if cwd == home:
+        return '~'
+    if cwd.startswith(home + '/'):
+        cwd = '~' + cwd[len(home):]
+    parts = cwd.split('/')
+    # 只保留最后两段
+    if len(parts) > 3:
+        return '/'.join([parts[0] or '/'] + ['…'] + parts[-2:])
+    return cwd
+
+
+def _foreground_info(tab_id: int):
+    """返回 (cmd_name, cwd) 或 ('', '')"""
+    try:
+        boss = get_boss()
+        tab = next((t for t in boss.all_tabs if t.id == tab_id), None)
+        if tab is None:
+            return '', ''
+        win = tab.active_window
+        if win is None:
+            return '', ''
+        # 优先拿前台进程
+        for p in win.child.foreground_processes:
+            cmd = (p.get('cmdline') or [''])[0]
+            if cmd:
+                return os.path.basename(cmd), p.get('cwd', '')
+        return os.path.basename(win.child.argv[0] or ''), win.child.cwd or ''
+    except Exception:
+        return '', ''
+
+
+# ─────────────────────────── 颜色辅助 ───────────────────────────
+def _rgb(c) -> int:
+    return as_rgb(color_as_int(c))
+
+
+def _accent_for(draw_data: DrawData, is_active: bool) -> int:
+    """活跃 tab 用 active_bg 当 accent，非活跃用 inactive_fg"""
+    return _rgb(draw_data.active_bg if is_active else draw_data.inactive_fg)
+
+
+# ─────────────────────────── 主入口 ───────────────────────────
+def draw_tab(
+    draw_data: DrawData,
+    screen: Screen,
+    tab: TabBarData,
+    before: int,
+    max_tab_length: int,
+    index: int,
+    is_last: bool,
+    extra_data: ExtraData,
+) -> int:
+    bar_bg = _rgb(draw_data.default_bg)
+    fg = _rgb(draw_data.active_fg if tab.is_active else draw_data.inactive_fg)
+    bg = _rgb(draw_data.active_bg if tab.is_active else draw_data.inactive_bg)
+
+    # tab 主体：整块色块填充，无任何分隔符 / 序号
+    screen.cursor.fg = fg
+    screen.cursor.bg = bg
+    screen.cursor.bold = tab.is_active
+
+    cmd, cwd = _foreground_info(tab.tab_id)
+    icon = _icon_for(cmd)
+    short_cwd = _short_cwd(cwd) if cwd else ''
+    label_main = cmd if cmd else (tab.title or 'shell')
+    branch = _git_branch(cwd) if cwd else ''
+
+    # 状态符
+    status = ''
+    if tab.has_activity_since_last_focus and not tab.is_active:
+        status = ' ●'
+    if tab.needs_attention:
+        status = ' '
+
+    parts = [' ', icon, ' ', label_main]
+    if short_cwd and short_cwd != label_main:
+        parts.append(' ')
+        parts.append(short_cwd)
+    if branch:
+        parts.append('  ')
+        parts.append(branch)
+    parts.append(status)
+    parts.append(' ')
+
+    text = ''.join(parts)
+    if len(text) > max_tab_length:
+        text = text[: max_tab_length - 1] + '…'
+
+    screen.draw(text)
+
+    # 最后一个 tab：在右侧空白处贴时钟
+    if is_last:
+        clock = datetime.now().strftime(' %H:%M ')
+        pad = screen.columns - screen.cursor.x - len(clock)
+        if pad > 0:
+            screen.cursor.fg = bar_bg
+            screen.cursor.bg = bar_bg
+            screen.cursor.bold = False
+            screen.draw(' ' * pad)
+            screen.cursor.fg = _rgb(draw_data.inactive_fg)
+            screen.cursor.bg = bar_bg
+            screen.draw(clock)
+        return screen.cursor.x
+
+    # tab 之间留一格透明（使用底色作分隔）
+    screen.cursor.fg = bar_bg
+    screen.cursor.bg = bar_bg
+    screen.cursor.bold = False
+    screen.draw(' ')
+
+    return screen.cursor.x

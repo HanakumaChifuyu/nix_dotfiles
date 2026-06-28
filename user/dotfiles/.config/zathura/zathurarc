@@ -1,0 +1,31 @@
+# 开启剪贴板复制功能（选中文本直接复制到系统剪贴板）
+set selection-clipboard clipboard
+
+# 设置窗口默认大小
+set window-width 1200
+set window-height 800
+
+# 缩放步长（每次缩放的比例）
+set zoom-step 10
+
+# 总是显示状态栏
+set statusbar-h-padding 0
+set statusbar-v-padding 0
+set guioptions s
+
+# 渲染设置（平滑滚动）
+set scroll-step 50
+
+# 开启重着色
+# set recolor "true"
+
+# 设置重着色配色（背景深色，文字浅色）
+set recolor-lightcolor "#1c1c1c" # 背景
+set recolor-darkcolor  "#d0d0d0" # 文字
+
+# 保持图片原有颜色（可选，开启后图片不会反色）
+set recolor-keephue "true"
+
+# 默认界面颜色
+set default-bg "#1c1c1c"
+set default-fg "#d0d0d0"

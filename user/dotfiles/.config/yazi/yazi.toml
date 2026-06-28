@@ -1,0 +1,81 @@
+[plugin]
+prepend_previewers = [
+  # Archive previewer
+  { mime = "application/*zip", run = "ouch" },
+  { mime = "application/x-tar", run = "ouch" },
+  { mime = "application/x-bzip2", run = "ouch" },
+  { mime = "application/x-7z-compressed", run = "ouch" },
+  { mime = "application/x-rar", run = "ouch" },
+  { mime = "application/vnd.rar", run = "ouch" },
+  { mime = "application/x-xz", run = "ouch" },
+  { mime = "application/xz", run = "ouch" },
+  { mime = "application/x-zstd", run = "ouch" },
+  { mime = "application/zstd", run = "ouch" },
+  { mime = "application/java-archive", run = "ouch" },
+]
+
+[opener]
+# 唤醒浏览器或通用 GUI：xdg-open 属于瞬时命令，用 block=false 即可
+browser = [{ run = 'xdg-open "$@"', desc = "Open with Browser", block = false }]
+
+# VS Code：必须加 orphan=true，防止 Yazi 关闭时连带掐死 VS Code
+vscode = [
+  { run = 'code "$@"', desc = "Open with VS Code", orphan = true, block = false },
+]
+
+# WPS：如果系统能直接找到 wps 命令，直接调用更稳定；若找不到，再退回 xdg-open，但去掉 orphan
+wps-writer = [
+  { run = 'xdg-open "$@"', desc = "Open with WPS Writer", block = false },
+]
+wps-sheet = [
+  { run = 'xdg-open "$@"', desc = "Open with WPS Spreadsheets", block = false },
+]
+wps-slides = [
+  { run = 'xdg-open "$@"', desc = "Open with WPS Presentation", block = false },
+]
+[open]
+
+prepend_rules = [
+  { url = "*.md", use = [
+    "vscode",
+    "edit",
+  ] },
+  { url = "*.html", use = [
+    "browser",
+    "edit",
+  ] },
+  { url = "*.docx", use = [
+    "wps-writer",
+  ] },
+  { url = "*.doc", use = [
+    "wps-writer",
+  ] },
+  { url = "*.odt", use = [
+    "wps-writer",
+  ] },
+  { url = "*.rtf", use = [
+    "wps-writer",
+  ] },
+  { url = "*.xlsx", use = [
+    "wps-sheet",
+  ] },
+  { url = "*.xls", use = [
+    "wps-sheet",
+  ] },
+  { url = "*.csv", use = [
+    "wps-sheet",
+    "edit",
+  ] },
+  { url = "*.ods", use = [
+    "wps-sheet",
+  ] },
+  { url = "*.pptx", use = [
+    "wps-slides",
+  ] },
+  { url = "*.ppt", use = [
+    "wps-slides",
+  ] },
+  { url = "*.odp", use = [
+    "wps-slides",
+  ] },
+]

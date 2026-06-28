@@ -1,0 +1,35 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Rofi Configuration - Deep Space Minimalist Theme
+ * Inspired by Tokyo Night with glassmorphism effects
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+configuration {
+    /* ─────────────────────────────────────────────────────────────────────────
+     * General Settings
+     * ───────────────────────────────────────────────────────────────────────── */
+    modi:                        "drun,run,window,ssh";
+    show-icons:                  true;
+    icon-theme:                  "Papirus-Dark";
+    drun-display-format:         "{name}";
+    disable-history:             false;
+    sidebar-mode:                false;
+    matching:                    "fuzzy";
+    sorting-method:              "fzf";
+    case-sensitive:              false;
+    cycle:                       true;
+    click-to-exit:               true;
+
+    /* Display */
+    fullscreen:                  false;
+    threads:                     0;
+
+    /* ─────────────────────────────────────────────────────────────────────────
+     * Layout Configuration
+     * ───────────────────────────────────────────────────────────────────────── */
+    window-format:               "{w} · {c} · {t}";
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Theme Import
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@theme "tokyo-night"

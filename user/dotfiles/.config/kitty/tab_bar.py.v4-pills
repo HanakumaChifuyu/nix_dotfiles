@@ -1,0 +1,137 @@
+"""
+~/.config/kitty/tab_bar.py
+内置 powerline tabs + 右侧圆角胶囊状态栏
+状态格子: 网速 / 内存 / 日期 / 时间, 每 2 秒刷新
+"""
+import datetime
+import time
+
+from kitty.boss import get_boss
+from kitty.fast_data_types import Screen, add_timer
+from kitty.tab_bar import (
+    DrawData, ExtraData, Formatter, TabBarData,
+    as_rgb, draw_attributed_string, draw_tab_with_powerline,
+)
+
+CAP_LEFT  = ''   # 圆角左帽
+CAP_RIGHT = ''   # 圆角右帽
+
+_timer_id = None
+_net_state = {'t': 0.0, 'rx': 0, 'tx': 0}
+
+
+def draw_tab(draw_data: DrawData, screen: Screen, tab: TabBarData,
+             before: int, max_title_length: int, index: int,
+             is_last: bool, extra_data: ExtraData) -> int:
+    global _timer_id
+    if _timer_id is None:
+        _timer_id = add_timer(_redraw_tab_bar, 2.0, True)
+    draw_tab_with_powerline(draw_data, screen, tab, before,
+                            max_title_length, index, is_last, extra_data)
+    if is_last:
+        _draw_right_status(draw_data, screen)
+    return screen.cursor.x
+
+
+def _draw_right_status(draw_data: DrawData, screen: Screen) -> None:
+    draw_attributed_string(Formatter.reset, screen)
+    cells = _make_cells()
+
+    # 每个 cell 占用 = len(cell) + 4 (左帽 + 2 空格 + 右帽), cell 间留 1 空格
+    while cells:
+        total = sum(len(c) + 4 for c in cells) + max(0, len(cells) - 1)
+        padding = screen.columns - screen.cursor.x - total
+        if padding >= 0:
+            break
+        cells = cells[1:]
+    if not cells:
+        return
+
+    if padding:
+        screen.draw(' ' * padding)
+
+    pill_bg = as_rgb(int(draw_data.inactive_bg))
+    pill_fg = as_rgb(int(draw_data.inactive_fg))
+    base_bg = as_rgb(int(draw_data.default_bg))
+
+    for i, cell in enumerate(cells):
+        if i > 0:
+            screen.cursor.fg = base_bg
+            screen.cursor.bg = base_bg
+            screen.draw(' ')
+        # 左圆帽
+        screen.cursor.fg = pill_bg
+        screen.cursor.bg = base_bg
+        screen.draw(CAP_LEFT)
+        # 内容
+        screen.cursor.fg = pill_fg
+        screen.cursor.bg = pill_bg
+        screen.draw(f' {cell} ')
+        # 右圆帽
+        screen.cursor.fg = pill_bg
+        screen.cursor.bg = base_bg
+        screen.draw(CAP_RIGHT)
+
+
+def _make_cells() -> list:
+    now = datetime.datetime.now()
+    return [
+        _net_speed(),
+        _mem_usage(),
+        now.strftime(' %m-%d %a'),
+        now.strftime(' %H:%M'),
+    ]
+
+
+def _mem_usage() -> str:
+    try:
+        info = {}
+        with open('/proc/meminfo') as f:
+            for line in f:
+                k, _, rest = line.partition(':')
+                info[k] = int(rest.strip().split()[0])
+        total = info['MemTotal']
+        avail = info.get('MemAvailable', info.get('MemFree', 0))
+        return f' {int((total - avail) * 100 / total)}%'
+    except Exception:
+        return ''
+
+
+def _fmt_rate(bytes_per_sec: float) -> str:
+    if bytes_per_sec < 1024:
+        return f'{int(bytes_per_sec)}B/s'
+    if bytes_per_sec < 1024 * 1024:
+        return f'{bytes_per_sec/1024:.0f}K/s'
+    return f'{bytes_per_sec/1024/1024:.1f}M/s'
+
+
+def _net_speed() -> str:
+    try:
+        rx_total = tx_total = 0
+        with open('/proc/net/dev') as f:
+            next(f); next(f)
+            for line in f:
+                name, _, rest = line.partition(':')
+                name = name.strip()
+                if name == 'lo' or name.startswith(('docker', 'veth', 'br-', 'virbr')):
+                    continue
+                fields = rest.split()
+                rx_total += int(fields[0])
+                tx_total += int(fields[8])
+        now = time.time()
+        prev_t = _net_state['t']
+        prev_rx = _net_state['rx']; prev_tx = _net_state['tx']
+        _net_state['t'] = now; _net_state['rx'] = rx_total; _net_state['tx'] = tx_total
+        if prev_t == 0:
+            return ' 0K/s  0K/s'
+        dt = max(now - prev_t, 0.001)
+        rx_rate = max(0, (rx_total - prev_rx) / dt)
+        tx_rate = max(0, (tx_total - prev_tx) / dt)
+        return f' {_fmt_rate(rx_rate)}  {_fmt_rate(tx_rate)}'
+    except Exception:
+        return ''
+
+
+def _redraw_tab_bar(timer_id):
+    for tm in get_boss().all_tab_managers:
+        tm.mark_tab_bar_dirty()

@@ -1,0 +1,72 @@
+"""
+~/.config/kitty/tab_bar.py — 极简方块版
+
+  nvim ~/.config/matugen        fish ~/Downloads
+  └ active_bg, bold ─┘   └ inactive_bg, dim ─┘
+"""
+import os
+from kitty.boss import get_boss
+from kitty.fast_data_types import Screen
+from kitty.tab_bar import DrawData, ExtraData, TabBarData, as_rgb
+from kitty.utils import color_as_int
+
+ICONS = {
+    'nvim': '', 'vim': '', 'fish': '', 'bash': '', 'zsh': '',
+    'git': '', 'lazygit': '', 'docker': '',
+    'python': '', 'python3': '', 'node': '', 'cargo': '',
+    'btop': '', 'htop': '', 'yazi': '󰇥', 'ranger': '',
+    'ssh': '', 'opencode': '', 'claude': '',
+}
+
+def _icon(c): return ICONS.get(c, '')
+
+def _short(cwd):
+    if not cwd: return ''
+    h = os.path.expanduser('~')
+    if cwd == h: return '~'
+    if cwd.startswith(h + '/'): cwd = '~' + cwd[len(h):]
+    p = cwd.split('/')
+    return '/'.join([p[0] or '', '…'] + p[-2:]) if len(p) > 4 else cwd
+
+def _fg_info(tid):
+    try:
+        t = next((x for x in get_boss().all_tabs if x.id == tid), None)
+        if not t or not t.active_window: return '', ''
+        for p in t.active_window.child.foreground_processes:
+            cmd = (p.get('cmdline') or [''])[0]
+            if cmd: return os.path.basename(cmd), p.get('cwd', '')
+        return os.path.basename(t.active_window.child.argv[0] or ''), t.active_window.child.cwd or ''
+    except Exception:
+        return '', ''
+
+def _rgb(c): return as_rgb(color_as_int(c))
+
+def draw_tab(draw_data: DrawData, screen: Screen, tab: TabBarData,
+             before, max_tab_length, index, is_last, extra_data: ExtraData) -> int:
+    bar_bg = _rgb(draw_data.default_bg)
+    if tab.is_active:
+        screen.cursor.fg = _rgb(draw_data.active_fg)
+        screen.cursor.bg = _rgb(draw_data.active_bg)
+        screen.cursor.bold = True
+    else:
+        screen.cursor.fg = _rgb(draw_data.inactive_fg)
+        screen.cursor.bg = _rgb(draw_data.inactive_bg)
+        screen.cursor.bold = False
+
+    cmd, cwd = _fg_info(tab.tab_id)
+    label = cmd if cmd else (tab.title or 'shell')
+    short = _short(cwd) if cwd else ''
+    status = ' ●' if (tab.has_activity_since_last_focus and not tab.is_active) else ''
+    if tab.needs_attention: status = ' '
+
+    text = f'  {_icon(cmd)} {label}'
+    if short and short != label: text += f'  {short}'
+    text += status + '  '
+    if len(text) > max_tab_length:
+        text = text[:max_tab_length - 1] + '…'
+    screen.draw(text)
+
+    if not is_last:
+        screen.cursor.fg = bar_bg; screen.cursor.bg = bar_bg; screen.cursor.bold = False
+        screen.draw(' ')
+    return screen.cursor.x

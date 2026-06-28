@@ -1,0 +1,6 @@
+user/dotfiles/.config/tmux/plugins/
+user/dotfiles/.config/nvim/lazy-lock.json
+user/dotfiles/.config/sing-box/secrets.toml
+user/dotfiles/.claude/cache/
+user/dotfiles/.claude/config.json
+/result

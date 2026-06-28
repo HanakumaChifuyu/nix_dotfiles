@@ -1,0 +1,640 @@
+/* =============================================================
+ * SwayNotificationCenter — Material 3 (matugen)
+ * 全面精致化版本：阴影/层级/关键样式/图标着色/M3 缓动/grouping/
+ *                MPRIS/buttons-grid/字体节奏/inline-reply/排版
+ * 颜色由 matugen 注入（colors.X.default.hex → #RRGGBB）
+ * ============================================================= */
+
+/* ---- M3 缓动曲线 + 字体栈 ---- */
+* {
+  font-family: "Inter", "JetBrains Mono NF", "Noto Sans CJK SC", sans-serif;
+  font-size: 13px;
+  background-clip: border-box;
+  /* M3 emphasized easing；GTK 默认 ease，这里全局覆盖 */
+  transition: 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* =============================================================
+ * Control Center（侧栏）
+ * 用 surface 作底，外层卡片 surface_container_high，制造 tonal 层级
+ * ============================================================= */
+.control-center {
+  background: {{colors.surface.default.hex}};
+  border: 1px solid {{colors.outline_variant.default.hex}};
+  border-radius: 18px;
+  padding: 12px;
+  margin: 10px;
+  color: {{colors.on_surface.default.hex}};
+  /* 阴影：双层模拟 M3 elevation 3 */
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.30),
+    0 8px 24px rgba(0, 0, 0, 0.36);
+}
+
+.control-center-list {
+  background: transparent;
+}
+
+.control-center-list-placeholder {
+  color: {{colors.on_surface_variant.default.hex}};
+  opacity: 0.55;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+trough {
+  background: {{colors.surface_container_low.default.hex}};
+  border-radius: 999px;
+}
+slider {
+  background: {{colors.primary.default.hex}};
+  border-radius: 999px;
+  min-width: 6px;
+  min-height: 6px;
+}
+scrollbar slider {
+  min-width: 4px;
+  margin: 2px;
+  opacity: 0.6;
+}
+scrollbar slider:hover { opacity: 1.0; }
+
+/* =============================================================
+ * Title bar（"Notifications" + Clear all）
+ * ============================================================= */
+.widget-title {
+  color: {{colors.on_surface.default.hex}};
+  margin: 6px 8px 14px 8px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+}
+
+.widget-title > button,
+.widget-title button {
+  background-color: {{colors.primary_container.default.hex}};
+  background-image: none;
+  border: 2px solid transparent;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  min-height: 0;
+  color: {{colors.on_primary_container.default.hex}};
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-left: 8px;
+  font-weight: 500;
+  font-size: 12px;
+  transition: background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+              color           180ms cubic-bezier(0.2, 0, 0, 1),
+              border-color    150ms cubic-bezier(0.2, 0, 0, 1),
+              box-shadow      180ms cubic-bezier(0.2, 0, 0, 1);
+}
+.widget-title > button label,
+.widget-title button label { color: {{colors.on_primary_container.default.hex}}; }
+.widget-title > button:hover,
+.widget-title button:hover {
+  background-color: {{colors.primary.default.hex}};
+  color: {{colors.on_primary.default.hex}};
+  border-color: {{colors.primary.default.hex}};
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+}
+.widget-title > button:hover label,
+.widget-title button:hover label { color: {{colors.on_primary.default.hex}}; }
+.widget-title > button:active,
+.widget-title button:active {
+  background-color: {{colors.primary.default.hex}};
+  color: {{colors.on_primary.default.hex}};
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+}
+.widget-title > button:focus,
+.widget-title > button:focus-visible,
+.widget-title button:focus,
+.widget-title button:focus-visible {
+  box-shadow: 0 0 0 2px {{colors.primary.default.hex}};
+}
+
+/* =============================================================
+ * DND switch
+ * ============================================================= */
+.widget-dnd {
+  color: {{colors.on_surface.default.hex}};
+  margin: 4px 8px 8px 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.widget-dnd > switch {
+  background: {{colors.surface_container_high.default.hex}};
+  border-radius: 999px;
+  border: 1px solid {{colors.outline_variant.default.hex}};
+  margin-left: 8px;
+  min-height: 22px;
+  min-width: 42px;
+}
+.widget-dnd > switch:checked {
+  background: {{colors.primary.default.hex}};
+  border-color: {{colors.primary.default.hex}};
+}
+.widget-dnd > switch slider {
+  background: {{colors.on_surface_variant.default.hex}};
+  border-radius: 999px;
+  min-width: 18px;
+  min-height: 18px;
+}
+.widget-dnd > switch:checked slider { background: {{colors.on_primary.default.hex}}; }
+
+/* =============================================================
+ * Notification card（控制中心内）
+ * ============================================================= */
+.notification-row {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-background .notification,
+.notification {
+  background: {{colors.surface_container_high.default.hex}};
+  border: 1px solid {{colors.outline_variant.default.hex}};
+  border-radius: 16px;
+  margin: 6px 4px;
+  padding: 0;
+  color: {{colors.on_surface.default.hex}};
+}
+.notification-background .notification:hover,
+.notification:hover {
+  background: {{colors.surface_container_highest.default.hex}};
+}
+
+.notification-content {
+  padding: 12px 14px;
+  background: transparent;
+}
+
+/* ---- 排版梯度：summary 14/700, app-name 11/500 caps, time 12/500 ---- */
+.summary {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  color: {{colors.on_surface.default.hex}};
+}
+.body {
+  font-size: 13px;
+  font-weight: 400;
+  color: {{colors.on_surface_variant.default.hex}};
+  margin-top: 4px;
+}
+.time {
+  font-size: 12px;
+  font-weight: 500;
+  color: {{colors.on_surface_variant.default.hex}};
+  margin-left: 8px;
+  opacity: 0.85;
+}
+.app-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: {{colors.secondary.default.hex}};
+  letter-spacing: 1.2px;
+  /* GTK CSS 不支持 text-transform，但可以靠字号 + 间距制造 caps 视觉 */
+  opacity: 0.85;
+}
+
+/* close button —— 圆形 hover 红 */
+.close-button {
+  background: transparent;
+  background-image: none;
+  color: {{colors.on_surface_variant.default.hex}};
+  border: 2px solid transparent;
+  box-shadow: none;
+  outline: none;
+  border-radius: 999px;
+  margin: 6px;
+  padding: 2px 6px;
+  min-width: 18px;
+  min-height: 18px;
+  transition: background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+              color           180ms cubic-bezier(0.2, 0, 0, 1),
+              border-color    150ms cubic-bezier(0.2, 0, 0, 1);
+}
+.close-button:hover {
+  background: {{colors.error.default.hex}};
+  color: {{colors.on_error.default.hex}};
+  border-color: {{colors.error.default.hex}};
+}
+.close-button:active {
+  background: {{colors.error.default.hex}};
+  color: {{colors.on_error.default.hex}};
+}
+.close-button:focus,
+.close-button:focus-visible {
+  box-shadow: 0 0 0 2px {{colors.primary.default.hex}};
+}
+
+/* =============================================================
+ * Action buttons（notify-send --action 渲染出来的按钮）
+ * ============================================================= */
+.notification-default-action {
+  background: transparent;
+  color: {{colors.on_surface.default.hex}};
+  border: none;
+  padding: 4px;
+  border-radius: 12px;
+}
+.notification-default-action:hover {
+  background: {{colors.surface_container_highest.default.hex}};
+}
+
+.notification-action,
+.notification-row .notification-background .notification .notification-action {
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.notification-action > button,
+.notification-row .notification-background .notification .notification-action > button {
+  background-color: {{colors.surface_container_highest.default.hex}};
+  background-image: none;
+  border: 2px solid transparent;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  min-height: 0;
+  color: {{colors.on_surface.default.hex}};
+  border-radius: 999px;
+  margin: 4px 4px 8px 4px;
+  padding: 5px 12px;
+  font-weight: 500;
+  font-size: 12px;
+  transition: background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+              color           180ms cubic-bezier(0.2, 0, 0, 1),
+              border-color    150ms cubic-bezier(0.2, 0, 0, 1),
+              box-shadow      180ms cubic-bezier(0.2, 0, 0, 1);
+}
+.notification-action > button label { color: {{colors.on_surface.default.hex}}; }
+
+/* Hover：边框点亮 + 色阶提升 */
+.notification-action > button:hover {
+  background-color: {{colors.primary_container.default.hex}};
+  color: {{colors.on_primary_container.default.hex}};
+  border-color: {{colors.primary.default.hex}};
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+}
+.notification-action > button:hover label { color: {{colors.on_primary_container.default.hex}}; }
+
+/* Pressed/Active：色阶再提一档 + 按下去 */
+.notification-action > button:active {
+  background-color: {{colors.primary.default.hex}};
+  color: {{colors.on_primary.default.hex}};
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+}
+.notification-action > button:active label { color: {{colors.on_primary.default.hex}}; }
+
+/* 键盘选中（聚焦）：M3 focus ring */
+.notification-action > button:focus,
+.notification-action > button:focus-visible {
+  background-color: {{colors.primary_container.default.hex}};
+  color: {{colors.on_primary_container.default.hex}};
+  box-shadow: 0 0 0 2px {{colors.primary.default.hex}};
+}
+.notification-action > button:focus label,
+.notification-action > button:focus-visible label { color: {{colors.on_primary_container.default.hex}}; }
+
+/* =============================================================
+ * Critical / Low urgency —— 左侧强调条 + 微弱 glow
+ * 不替换整圈边框，避免喧宾夺主
+ * ============================================================= */
+.notification.critical,
+.notification-row .notification-background .notification.critical {
+  border-color: {{colors.error.default.hex}};
+  /* 左侧 4px 强调条 */
+  border-left: 4px solid {{colors.error.default.hex}};
+  /* 错误色弱辉光 */
+  box-shadow: 0 0 0 1px {{colors.error.default.hex}}1f;
+}
+.notification.critical .summary { color: {{colors.error.default.hex}}; }
+
+.notification.low {
+  /* 低优先级稍稍弱化 */
+  opacity: 0.92;
+}
+.notification.low .summary { font-weight: 600; }
+
+/* =============================================================
+ * 图片 / 应用图标
+ * 让 symbolic（单色）图标随主题着色
+ * ============================================================= */
+.notification .image,
+.notification image {
+  border-radius: 10px;
+}
+.body-image {
+  border-radius: 10px;
+  margin: 4px 0;
+}
+/* symbolic 图标着色 —— 适用于 GTK 风格的单色图标 */
+.notification .app-icon,
+.notification-content image.app-icon {
+  color: {{colors.on_surface_variant.default.hex}};
+  -gtk-icon-style: symbolic;
+}
+
+/* =============================================================
+ * Notification grouping
+ * 分组头 / 折叠按钮 / 子卡片
+ * ============================================================= */
+.notification-group {
+  background: transparent;
+  border-radius: 18px;
+  padding: 0;
+  margin: 6px 4px;
+}
+
+.notification-group-headers {
+  color: {{colors.on_surface_variant.default.hex}};
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.0px;
+  padding: 6px 14px 2px 14px;
+  opacity: 0.8;
+}
+
+.notification-group-icon {
+  color: {{colors.primary.default.hex}};
+  margin-right: 6px;
+}
+
+.notification-group-collapse-button,
+.notification-group-close-all-button {
+  background: transparent;
+  background-image: none;
+  border: none;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  min-height: 0;
+  color: {{colors.on_surface_variant.default.hex}};
+  border-radius: 999px;
+  padding: 4px 8px;
+  margin: 2px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.notification-group-collapse-button:hover,
+.notification-group-close-all-button:hover {
+  background: {{colors.surface_container_highest.default.hex}};
+  color: {{colors.on_surface.default.hex}};
+}
+
+/* 分组内的子卡片更紧凑 */
+.notification-group .notification {
+  margin: 2px 0;
+  border-radius: 12px;
+}
+
+/* =============================================================
+ * Floating popup（弹出通知）
+ * 飘起来：更强的阴影 + 半圆角 + 关键级别带 primary 微光
+ * ============================================================= */
+.floating-notifications.background .notification {
+  background: {{colors.surface_container.default.hex}};
+  border: 1px solid {{colors.outline_variant.default.hex}};
+  border-radius: 16px;
+  margin: 8px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.30),
+    0 12px 28px rgba(0, 0, 0, 0.40);
+}
+
+.floating-notifications.background .notification.critical {
+  /* 关键级浮窗：弱 primary glow + error 描边 */
+  box-shadow:
+    0 0 0 1px {{colors.error.default.hex}}40,
+    0 2px 6px rgba(0, 0, 0, 0.32),
+    0 12px 28px {{colors.error.default.hex}}33;
+}
+
+/* =============================================================
+ * Inline reply（已在 config.json 里启用）
+ * ============================================================= */
+entry {
+  background: {{colors.surface_container_highest.default.hex}};
+  color: {{colors.on_surface.default.hex}};
+  border: 1px solid {{colors.outline_variant.default.hex}};
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin: 4px 8px 8px 8px;
+  caret-color: {{colors.primary.default.hex}};
+  font-size: 13px;
+}
+entry:focus {
+  border-color: {{colors.primary.default.hex}};
+  /* focus 微光 */
+  box-shadow: 0 0 0 2px {{colors.primary.default.hex}}33;
+}
+entry placeholder {
+  color: {{colors.on_surface_variant.default.hex}};
+  opacity: 0.6;
+}
+
+/* =============================================================
+ * MPRIS 媒体卡片（控制中心 widget）
+ * 封面 + 标题 + 控制按钮，做成 M3 风格的 surface_variant 卡片
+ * ============================================================= */
+.widget-mpris {
+  background: {{colors.surface_container_high.default.hex}};
+  border: 1px solid {{colors.outline_variant.default.hex}};
+  border-radius: 16px;
+  padding: 10px;
+  margin: 6px 4px;
+  color: {{colors.on_surface.default.hex}};
+}
+
+.widget-mpris-player {
+  padding: 6px;
+  background: transparent;
+  border-radius: 12px;
+}
+
+.widget-mpris-album-art {
+  border-radius: 12px;
+  margin-right: 12px;
+  /* 封面投影 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+
+.widget-mpris-title {
+  color: {{colors.on_surface.default.hex}};
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+}
+
+.widget-mpris-subtitle {
+  color: {{colors.on_surface_variant.default.hex}};
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* MPRIS 控制按钮 —— 圆形悬浮 */
+.widget-mpris button {
+  background: transparent;
+  background-image: none;
+  border: 2px solid transparent;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  min-height: 0;
+  color: {{colors.on_surface_variant.default.hex}};
+  border-radius: 999px;
+  padding: 4px;
+  margin: 2px;
+  min-width: 28px;
+  min-height: 28px;
+  transition: background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+              color           180ms cubic-bezier(0.2, 0, 0, 1),
+              border-color    150ms cubic-bezier(0.2, 0, 0, 1);
+}
+.widget-mpris button:hover {
+  background: {{colors.surface_container_highest.default.hex}};
+  color: {{colors.primary.default.hex}};
+  border-color: {{colors.primary.default.hex}};
+}
+.widget-mpris button:active {
+  background: {{colors.primary_container.default.hex}};
+  color: {{colors.on_primary_container.default.hex}};
+}
+.widget-mpris button:focus,
+.widget-mpris button:focus-visible {
+  box-shadow: 0 0 0 2px {{colors.primary.default.hex}};
+}
+
+/* MPRIS 进度条 */
+.widget-mpris progressbar trough {
+  background: {{colors.surface_container_low.default.hex}};
+  border-radius: 999px;
+  min-height: 4px;
+}
+.widget-mpris progressbar progress {
+  background: {{colors.primary.default.hex}};
+  border-radius: 999px;
+  min-height: 4px;
+}
+
+/* =============================================================
+ * Buttons grid（自定义快捷开关，例如 WiFi）
+ * toggle 态用 primary_container；off 态用 surface_container
+ * ============================================================= */
+.widget-buttons-grid {
+  padding: 6px 4px;
+  margin: 4px 0;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild {
+  padding: 0;
+  margin: 4px;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+  background: {{colors.surface_container_highest.default.hex}};
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  color: {{colors.on_surface_variant.default.hex}};
+  border: 1px solid {{colors.outline_variant.default.hex}};
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 44px;
+  min-height: 44px;
+  transition: background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+              color           180ms cubic-bezier(0.2, 0, 0, 1),
+              border-color    180ms cubic-bezier(0.2, 0, 0, 1),
+              box-shadow      180ms cubic-bezier(0.2, 0, 0, 1);
+}
+.widget-buttons-grid > flowbox > flowboxchild > button label {
+  color: {{colors.on_surface_variant.default.hex}};
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+  background: {{colors.surface_container_highest.default.hex}};
+  color: {{colors.on_surface.default.hex}};
+  border-color: {{colors.primary.default.hex}};
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+}
+.widget-buttons-grid > flowbox > flowboxchild > button:hover label {
+  color: {{colors.on_surface.default.hex}};
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:active {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:focus,
+.widget-buttons-grid > flowbox > flowboxchild > button:focus-visible {
+  box-shadow: 0 0 0 2px {{colors.primary.default.hex}};
+  border-color: {{colors.primary.default.hex}};
+}
+
+/* toggle = ON */
+.widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked,
+.widget-buttons-grid > flowbox > flowboxchild > button:checked {
+  background: {{colors.primary_container.default.hex}};
+  color: {{colors.on_primary_container.default.hex}};
+  border-color: transparent;
+}
+.widget-buttons-grid > flowbox > flowboxchild > button:checked label {
+  color: {{colors.on_primary_container.default.hex}};
+}
+
+/* =============================================================
+ * Volume / Backlight sliders（如果以后 widget 列表里加上）
+ * ============================================================= */
+.widget-volume,
+.widget-backlight {
+  padding: 6px 8px;
+  margin: 4px 0;
+  color: {{colors.on_surface.default.hex}};
+}
+
+/* =============================================================
+ * Label widget（自定义文本块）
+ * ============================================================= */
+.widget-label > label {
+  color: {{colors.on_surface_variant.default.hex}};
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+/* =============================================================
+ * Inhibitors widget
+ * ============================================================= */
+.widget-inhibitors {
+  color: {{colors.on_surface.default.hex}};
+  margin: 4px 8px;
+}
+.widget-inhibitors > button {
+  background: {{colors.error_container.default.hex}};
+  color: {{colors.on_error_container.default.hex}};
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+
+/* Disable SwayNC shadows globally. */
+* {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+button:focus,
+button:focus-visible,
+entry:focus {
+  outline: 2px solid {{colors.primary.default.hex}};
+  outline-offset: 2px;
+}

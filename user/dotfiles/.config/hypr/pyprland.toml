@@ -1,0 +1,19 @@
+[pyprland]
+plugins = ["scratchpads", "expose"]
+
+# --- Scratchpads 配置 ---
+[scratchpads.term]
+animation = "fromTop"
+command = "kitty --class scratchpad_term"
+class = "scratchpad_term"
+size = "75% 60%"
+
+[scratchpads.volume]
+animation = "fromRight"
+command = "pavucontrol"
+class = "pavucontrol"
+size = "40% 90%"
+unfocus = "hide"
+
+# --- Expose 配置 ---
+[expose]

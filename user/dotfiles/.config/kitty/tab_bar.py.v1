@@ -1,0 +1,99 @@
+"""
+kitty 自定义 tab bar
+启用方式：在 kitty.conf 里设置
+    tab_bar_style custom
+
+文件路径：~/.config/kitty/tab_bar.py
+kitty 启动时自动加载，每次重绘 tab 都会调 draw_tab()。
+
+主要 API:
+- draw_data        : DrawData      tab bar 整体配置 (颜色、字体宽等)
+- screen           : Screen        当前 tab 的输出画布 (类终端 buffer)
+- tab              : TabBarData    当前 tab 的元数据 (title, is_active, num_windows...)
+- before           : int           当前光标列位置
+- max_tab_length   : int           本 tab 允许的最大宽度
+- index            : int           tab 编号 (1 起步)
+- is_last          : bool          是不是最后一个 tab
+- extra_data       : ExtraData     额外信息 (上一个/下一个 tab 等)
+
+返回值: int — 绘制完成后光标应该在的列号 (kitty 用来知道下一个 tab 从哪开始画)
+
+可用绘制方法：
+- screen.draw(text)                直接写字符串
+- screen.cursor.fg / .bg / .bold   设置当前样式 (RGB int, 用 as_rgb 转换)
+- screen.cursor.x                  当前列号
+"""
+
+from kitty.boss import get_boss
+from kitty.fast_data_types import Screen
+from kitty.tab_bar import (
+    DrawData, ExtraData, TabBarData,
+    as_rgb, draw_title,
+)
+from kitty.utils import color_as_int
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  色板 (matugen 跑出来的颜色，不想硬编码可以从 draw_data 里拿)
+# ─────────────────────────────────────────────────────────────────────────────
+SEP_LEFT  = ''   # nerd font: 圆角左闭合
+SEP_RIGHT = ''   # nerd font: 圆角右闭合
+ICON_ACTIVE   = ' '
+ICON_INACTIVE = ' '
+
+
+def _bg(draw_data: DrawData, tab: TabBarData) -> int:
+    return draw_data.active_bg if tab.is_active else draw_data.inactive_bg
+
+
+def _fg(draw_data: DrawData, tab: TabBarData) -> int:
+    return draw_data.active_fg if tab.is_active else draw_data.inactive_fg
+
+
+def draw_tab(
+    draw_data: DrawData,
+    screen: Screen,
+    tab: TabBarData,
+    before: int,
+    max_tab_length: int,
+    index: int,
+    is_last: bool,
+    extra_data: ExtraData,
+) -> int:
+    bar_bg = as_rgb(color_as_int(draw_data.default_bg))
+    tab_bg = as_rgb(_bg(draw_data, tab))
+    tab_fg = as_rgb(_fg(draw_data, tab))
+
+    # 左封口: 用 bar 背景作为前景，tab 背景作为背景，画一个反向的圆角
+    screen.cursor.fg = tab_bg
+    screen.cursor.bg = bar_bg
+    screen.draw(SEP_LEFT)
+
+    # tab 主体
+    screen.cursor.fg = tab_fg
+    screen.cursor.bg = tab_bg
+    screen.cursor.bold = tab.is_active
+
+    icon = ICON_ACTIVE if tab.is_active else ICON_INACTIVE
+    title = tab.title or ''
+    if len(title) > max_tab_length - 8:
+        title = title[: max_tab_length - 9] + '…'
+
+    label = f' {icon} {index} · {title}'
+    if tab.num_windows > 1:
+        label += f'  [{tab.num_windows}]'
+    label += ' '
+    screen.draw(label)
+
+    # 右封口
+    screen.cursor.fg = tab_bg
+    screen.cursor.bg = bar_bg
+    screen.cursor.bold = False
+    screen.draw(SEP_RIGHT)
+
+    # tab 之间留一个空格
+    if not is_last:
+        screen.cursor.bg = bar_bg
+        screen.draw(' ')
+
+    return screen.cursor.x
