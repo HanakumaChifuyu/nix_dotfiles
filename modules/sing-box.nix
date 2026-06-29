@@ -10,6 +10,11 @@ let
   hy2-obfs-passwd = config.sops.secrets."hysteria2/obfs/password".path;
   hy2-tls-server_name = config.sops.secrets."hysteria2/tls/server_name".path;
 
+  vl-reality-ip = config.sops.secrets."vless_reality/server_ip".path;
+  vl-reality-uuid = config.sops.secrets."vless_reality/uuid".path;
+  vl-reality-pubkey = config.sops.secrets."vless_reality/public_key".path;
+  vl-reality-shortid = config.sops.secrets."vless_reality/short_id".path;
+
   cn-rule-set-tags = [
     "WeChat"
     "DingTalk"
@@ -52,6 +57,7 @@ let
   };
 
   cn-domains-dns = [
+    "www.coalcloud.net"
     "cloudflare.com"
     "mirrors.aliyun.com"
     "mirrors.tuna.tsinghua.edu.cn"
@@ -111,6 +117,7 @@ let
     "api.doubao.com"
     "ark.cn-beijing.volces.com"
     "ark.cn-shanghai.volces.com"
+    "console.volcengine.com"
   ];
 
   cn-domains-route-extra = [
@@ -119,7 +126,6 @@ let
     "mirrors.xjtu.edu.cn"
     "mirrors.jlu.edu.cn"
     "mirrors.ustc.edu.cn"
-    "mirrors.tuna.tsinghua.edu.cn"
     "mirrors.nju.edu.cn"
     "ruby.taobao.org"
     "registry.npm.taobao.org"
@@ -173,18 +179,24 @@ in
   sops.secrets."hysteria2/obfs/password" = { };
   sops.secrets."hysteria2/tls/server_name" = { };
 
+  sops.secrets."vless_reality/server_ip" = { };
+  sops.secrets."vless_reality/uuid" = { };
+  sops.secrets."vless_reality/public_key" = { };
+  sops.secrets."vless_reality/short_id" = { };
+
   services.sing-box = {
     enable = true;
     settings = {
       log = {
-        level = "error";
+        level = "info";
         timestamp = true;
       };
       dns = {
+
         servers = [
           {
             tag = "aliyun";
-            type = "tls";
+            type = "udp";
             server = "223.5.5.5";
           }
           {
@@ -228,11 +240,10 @@ in
               "A"
               "AAAA"
             ];
-            action = "route";
             server = "fakeip-dns";
           }
         ];
-        strategy = "prefer_ipv4";
+        strategy = "ipv4_only";
         independent_cache = true;
         final = "aliyun";
       };
@@ -251,7 +262,7 @@ in
             "172.19.0.1/30"
             "fdfe:dcba:9876::1/126"
           ];
-          mtu = 9000;
+          mtu = 1350;
           stack = "system";
           auto_route = true;
           strict_route = true;
@@ -287,11 +298,38 @@ in
             };
           };
         }
+        {
+          type = "vless";
+          tag = "reality-proxy";
+          server = {
+            _secret = vl-reality-ip;
+          };
+          server_port = 29191;
+          uuid = {
+            _secret = vl-reality-uuid;
+          };
+          flow = "xtls-rprx-vision";
+          tls = {
+            enabled = true;
+            server_name = "www.microsoft.com";
+            utls = {
+              enabled = true;
+              fingerprint = "chrome";
+            };
+            reality = {
+              enabled = true;
+              public_key = {
+                _secret = vl-reality-pubkey;
+              };
+              short_id = {
+                _secret = vl-reality-shortid;
+              };
+            };
+          };
+        }
       ];
       route = {
-        default_domain_resolver = {
-          server = "aliyun";
-        };
+        default_domain_resolver = "aliyun";
         rule_set = map mkRuleSet cn-rule-set-tags;
         rules = [
           {
