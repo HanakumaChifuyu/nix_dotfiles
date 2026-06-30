@@ -12,8 +12,8 @@ in
   };
 
   sops.secrets = {
-    "deepseek_key" = {
-      key = "ai_api_keys/deepseek_ak";
+    "open_router_ak" = {
+      key = "ai_api_keys/open_router_ak";
     };
   };
   sops.templates."claude-code-settings.json" = {
@@ -23,14 +23,15 @@ in
         "skipDangerousModePermissionPrompt": true,
 
         "env": {
-          "ANTHROPIC_BASE_URL": "https://api.deepseek.com/anthropic",
-          "ANTHROPIC_AUTH_TOKEN": "${config.sops.placeholder."deepseek_key"}",
+          "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
+          "ANTHROPIC_AUTH_TOKEN": "${config.sops.placeholder."open_router_ak"}",
+          "ANTHROPIC_API_KEY": "", 
           "API_TIMEOUT_MS": "3000000",
           "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1,
 
-          "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek-v4-pro",
-          "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4-pro",
-          "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek-v4-pro"
+          "ANTHROPIC_DEFAULT_HAIKU_MODEL": "z-ai/glm-5.2",
+          "ANTHROPIC_DEFAULT_SONNET_MODEL": "z-ai/glm-5.2",
+          "ANTHROPIC_DEFAULT_OPUS_MODEL": "z-ai/glm-5.2"
         }
       }
     '';
