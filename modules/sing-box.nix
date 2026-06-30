@@ -243,7 +243,7 @@ in
             server = "fakeip-dns";
           }
         ];
-        strategy = "ipv4_only";
+        strategy = "prefer_ipv4";
         independent_cache = true;
         final = "aliyun";
       };
