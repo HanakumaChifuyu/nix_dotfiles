@@ -185,7 +185,8 @@ in
   sops.secrets."vless_reality/short_id" = { };
 
   services.sing-box = {
-    enable = true;
+    # enable = true;
+    enable = false;
     settings = {
       log = {
         level = "info";
@@ -281,7 +282,7 @@ in
           server = {
             _secret = hy2-ip;
           };
-          server_port = 8888;
+          server_port = 29191;
           password = {
             _secret = hy2-passwd;
           };
