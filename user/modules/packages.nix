@@ -67,9 +67,11 @@
 
     #develop
     ccache
+    opencode
 
     # misc
     starship
     libnotify
+    flclash
   ];
 }

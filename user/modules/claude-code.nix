@@ -15,6 +15,7 @@ in
     "open_router_ak" = {
       key = "ai_api_keys/open_router_ak";
     };
+
   };
   sops.templates."claude-code-settings.json" = {
     path = "${config.home.homeDirectory}/.claude/settings.json";
@@ -25,7 +26,7 @@ in
         "env": {
           "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
           "ANTHROPIC_AUTH_TOKEN": "${config.sops.placeholder."open_router_ak"}",
-          "ANTHROPIC_API_KEY": "", 
+          "ANTHROPIC_API_KEY": "",
           "API_TIMEOUT_MS": "3000000",
           "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1,
 
@@ -35,6 +36,7 @@ in
         }
       }
     '';
+
   };
 
   home.file.".claude/rules".source = ../dotfiles/.claude/rules;
