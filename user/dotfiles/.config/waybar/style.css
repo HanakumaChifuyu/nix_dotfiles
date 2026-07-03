@@ -18,8 +18,6 @@
 
 window#waybar {
   background-color: @background;
-  transition-property: background-color;
-  transition-duration: .5s;
   border-radius: 32px;
 }
 

@@ -1,5 +1,5 @@
 -- Opacity for kitty
-hl.window_rule({ match = { class = "kitty" }, opacity = "0.8" })
+hl.window_rule({ match = { class = "kitty" }, opacity = "0.9" })
 
 -- Float XWayland windows, no blur/border/rounding
 hl.window_rule({
