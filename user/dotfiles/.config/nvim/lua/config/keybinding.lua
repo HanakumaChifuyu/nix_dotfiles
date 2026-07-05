@@ -51,10 +51,16 @@ vim.keymap.set("n", "gd", function()
 end, { desc = "Goto Definition" })
 vim.keymap.set("n", "gr", function()
 	Snacks.picker.lsp_references()
-end, { nowait = true, desc = "References" })
+end, { desc = "References" })
+
+vim.keymap.set("n", "gi", function()
+	Snacks.picker.lsp_implementations()
+end, { desc = "Goto implementations" })
+
 vim.keymap.set("n", "<leader>ss", function()
 	Snacks.picker.lsp_symbols()
 end, { desc = "LSP Symbols" })
+
 vim.keymap.set("n", "<leader>sS", function()
 	Snacks.picker.lsp_workspace_symbols()
 end, { desc = "LSP Workspace Symbols" })

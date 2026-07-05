@@ -56,6 +56,8 @@
     libjpeg
     libpng
     sqlite
+
+    wezterm
   ];
   programs.hyprlock.enable = true;
   programs.firefox.enable = true;

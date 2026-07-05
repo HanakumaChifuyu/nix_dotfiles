@@ -73,5 +73,7 @@
     starship
     libnotify
     flclash
+
+    wezterm
   ];
 }

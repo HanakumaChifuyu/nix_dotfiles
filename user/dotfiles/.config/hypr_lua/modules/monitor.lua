@@ -1,1 +1,1 @@
-hl.monitor({ output = "", mode = "highres", position = "auto", scale = 2.6 })
+hl.monitor({ output = "", mode = "highres", position = "auto", scale = 2.0 })
