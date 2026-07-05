@@ -11,11 +11,7 @@ hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(term))
 -- Dropdown terminal
 hl.bind(
 	mainMod .. " + SHIFT + Return",
-	hl.dsp.exec_cmd(term, {
-		float = true,
-		center = true,
-		size = { "(monitor_w*0.7)", "(monitor_h*0.6)" },
-	})
+	hl.dsp.exec_cmd(term .. " start --class wezterm-dropdown")
 )
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close()) -- close active (not kill)
