@@ -58,6 +58,7 @@
     google-chrome
     scrcpy
     mpv
+    vlc
 
     # Formatters (for Neovim conform.nvim)
 
