@@ -1,6 +1,6 @@
 local mainMod = "SUPER"
 local scriptsDir = os.getenv("HOME") .. "/.config/hypr/scripts"
-local term = "kitty"
+local term = "wezterm"
 
 -- ---- basic ----
 

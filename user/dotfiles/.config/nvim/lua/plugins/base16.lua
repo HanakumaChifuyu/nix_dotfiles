@@ -1,6 +1,2 @@
-return {
-    'RRethy/base16-nvim',
-    config = function()
-        require('matugen').setup()
-    end,
-}
+-- disabled: matugen base16 injection removed, using tokyonight instead
+return {}

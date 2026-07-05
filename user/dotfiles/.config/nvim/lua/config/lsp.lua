@@ -69,16 +69,6 @@ vim.lsp.config["lua_ls"] = {
 	root_markers = { ".luarc.json", ".luarc.jsonc", ".git" },
 	settings = {
 		Lua = {
-			runtime = {
-				version = "LuaJIT",
-			},
-			workspace = {
-				checkThirdParty = false,
-				library = {
-					vim.fn.expand("$VIMRUNTIME/lua"),
-					vim.fn.expand("$VIMRUNTIME/lua/vim/_meta"),
-				},
-			},
 			completion = {
 				callSnippet = "Replace",
 			},

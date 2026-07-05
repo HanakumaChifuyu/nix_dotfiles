@@ -53,10 +53,10 @@ input_path = "~/.config/matugen/templates/yazi-theme.toml"
 output_path = "~/.cache/matugen/yazi-theme.toml"
 # yazi 没有热重载主题的 IPC，新窗口自动生效；如要给已开窗口刷主题可手动 ya emit reload
 
-[templates.nvim]
-input_path = "~/.config/nvim/lua/matugen-template.lua"
-output_path = "~/.cache/matugen/nvim-matugen.lua"
-post_hook = "pkill -SIGUSR1 nvim || true"
+# [templates.nvim]  # disabled: using tokyonight instead
+# input_path = "~/.config/nvim/lua/matugen-template.lua"
+# output_path = "~/.cache/matugen/nvim-matugen.lua"
+# post_hook = "pkill -SIGUSR1 nvim || true"
 
 [templates.pywal]
 input_path = "~/.config/matugen/templates/pywal-colors.json"
