@@ -33,6 +33,15 @@ config.hide_tab_bar_if_only_one_tab = false
 -- ========== 性能 ==========
 config.max_fps = 60
 config.animation_fps = 60
+-- 状态栏刷新间隔（毫秒），默认 1000ms 导致 Copy Mode 提示有明显延迟
+config.status_update_interval = 50
+
+-- ========== 鼠标滚轮步进 ==========
+-- 覆盖默认滚轮绑定，每次滚动 1 行（默认为 3）
+config.mouse_bindings = {
+	{ event = { Down = { streak = 1, button = { WheelUp = 1 } } }, mods = "NONE", action = act.ScrollByLine(-1) },
+	{ event = { Down = { streak = 1, button = { WheelDown = 1 } } }, mods = "NONE", action = act.ScrollByLine(1) },
+}
 
 -- ========== 激活窗格高亮 ==========
 config.inactive_pane_hsb = {
@@ -55,6 +64,8 @@ local C = {
 	cpu_fg = "#1a1b26",
 	mem_bg = "#bb9af7",
 	mem_fg = "#1a1b26",
+	copy_bg = "#e0af68",
+	copy_fg = "#1a1b26",
 }
 
 -- ========== 标签栏颜色 ==========
@@ -94,32 +105,50 @@ local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider --
 local cpu_prev = { total = 0, idle = 0 }
 
 local function read_cpu_usage()
-	local ok, out, _ = wezterm.run_child_process({ "cat", "/proc/stat" })
-	if not ok then return "N/A" end
-	local u, n, s, id, io, irq, si =
-		out:match("^cpu%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
-	if not u then return "N/A" end
-	u, n, s, id, io, irq, si = tonumber(u), tonumber(n), tonumber(s), tonumber(id), tonumber(io), tonumber(irq), tonumber(si)
-	local total = u + n + s + id + io + irq + si
+	local f = io.open("/proc/stat", "r")
+	if not f then
+		return "N/A"
+	end
+	local line = f:read("*l")
+	f:close()
+	local u, n, s, id, io_w, irq, si = line:match("^cpu%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
+	if not u then
+		return "N/A"
+	end
+	u, n, s, id, io_w, irq, si =
+		tonumber(u), tonumber(n), tonumber(s), tonumber(id), tonumber(io_w), tonumber(irq), tonumber(si)
+	local total = u + n + s + id + io_w + irq + si
 	local d_total = total - cpu_prev.total
 	local d_idle = id - cpu_prev.idle
 	cpu_prev.total = total
 	cpu_prev.idle = id
-	if d_total == 0 then return "  0%" end
+	if d_total == 0 then
+		return "  0%"
+	end
 	local pct = (d_total - d_idle) / d_total * 100
 	return string.format("%3.0f%%", pct)
 end
 
 local function read_mem_usage()
-	local ok, out, _ = wezterm.run_child_process({ "cat", "/proc/meminfo" })
-	if not ok then return "N/A" end
+	local f = io.open("/proc/meminfo", "r")
+	if not f then
+		return "N/A"
+	end
+	local out = f:read("*a")
+	f:close()
 	local total = tonumber(out:match("MemTotal:%s+(%d+)"))
 	local available = tonumber(out:match("MemAvailable:%s+(%d+)"))
-	if not total or not available or total == 0 then return "N/A" end
+	if not total or not available or total == 0 then
+		return "N/A"
+	end
 	local used_gb = (total - available) / 1024 / 1024
 	local total_gb = total / 1024 / 1024
 	return string.format("%4.1f/%3.0fG", used_gb, total_gb)
 end
+
+-- CPU / 内存结果缓存，避免 50ms 高频刷新导致数值乱跳
+local STATS_INTERVAL = 2 -- 每隔 N 秒才重新采样一次
+local stats_cache = { cpu = "N/A", mem = "N/A", last_t = 0 }
 
 -- ========== 右侧状态栏 ==========
 wezterm.on("update-right-status", function(window, pane)
@@ -133,9 +162,15 @@ wezterm.on("update-right-status", function(window, pane)
 		cwd = " 󰉋 " .. path .. " "
 	end
 
-	-- CPU / 内存
-	local cpu_text = " 󰻠 " .. read_cpu_usage() .. " "
-	local mem_text = " 󰘚 " .. read_mem_usage() .. " "
+	-- CPU / 内存（节流：每 STATS_INTERVAL 秒采样一次，其余帧复用缓存）
+	local now = os.time()
+	if now - stats_cache.last_t >= STATS_INTERVAL then
+		stats_cache.cpu = read_cpu_usage()
+		stats_cache.mem = read_mem_usage()
+		stats_cache.last_t = now
+	end
+	local cpu_text = " 󰻠 " .. stats_cache.cpu .. " "
+	local mem_text = " 󰘚 " .. stats_cache.mem .. " "
 
 	-- 当前时间
 	local time = " 󰥔 " .. wezterm.strftime("%H:%M") .. " "
@@ -173,6 +208,25 @@ wezterm.on("update-right-status", function(window, pane)
 		{ Attribute = { Intensity = "Bold" } },
 		{ Text = time },
 	}))
+
+	-- ========== 左侧 Copy Mode 提示 ==========
+	local key_table = window:active_key_table()
+	if key_table == "copy_mode" then
+		window:set_left_status(wezterm.format({
+			{ Background = { Color = C.bar_bg } },
+			{ Foreground = { Color = C.copy_bg } },
+			{ Text = SOLID_RIGHT_ARROW },
+			{ Background = { Color = C.copy_bg } },
+			{ Foreground = { Color = C.copy_fg } },
+			{ Attribute = { Intensity = "Bold" } },
+			{ Text = "  COPY " },
+			{ Background = { Color = C.bar_bg } },
+			{ Foreground = { Color = C.copy_bg } },
+			{ Text = SOLID_RIGHT_ARROW },
+		}))
+	else
+		window:set_left_status("")
+	end
 end)
 
 wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, max_width)
@@ -224,6 +278,21 @@ end)
 
 -- ========== 按键 ==========
 config.keys = {
+	-- 复制 / 粘贴（Ctrl+C 仅在有选区时复制，否则透传中断信号；Ctrl+V 粘贴）
+	{
+		key = "c",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			local sel = window:get_selection_text_for_pane(pane)
+			if sel and sel ~= "" then
+				window:copy_to_clipboard(sel)
+			else
+				window:perform_action(act.SendKey({ key = "c", mods = "CTRL" }), pane)
+			end
+		end),
+	},
+	{ key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
+
 	-- 进入 Copy Mode（vim 风格选择终端输出）
 	{ key = "/", mods = "ALT", action = act.ActivateCopyMode },
 

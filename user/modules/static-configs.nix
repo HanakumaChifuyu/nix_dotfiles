@@ -13,6 +13,7 @@ in
     htop = forceSource "${dots}/htop";
     hypr = forceSource "${dots}/hypr_lua";
     rofi = forceSource "${dots}/rofi";
+    mako = forceSource "${dots}/mako";
     wezterm = forceSource "${dots}/wezterm";
     zathura = forceSource "${dots}/zathura";
   };

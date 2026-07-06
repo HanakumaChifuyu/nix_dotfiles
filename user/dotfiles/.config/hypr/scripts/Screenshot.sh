@@ -28,15 +28,15 @@ sleep 0.05
 grim -g "${NEW_X},${NEW_Y} ${NEW_W}x${NEW_H}" "$FULLPATH"
 wl-copy < "$FULLPATH"
 
-# 通知 + 两个 action 按钮，等待用户点击并 dispatch
+# 通知 + action：左键（invoke-default-action）→ satty 标注；copy 按钮 → 复制
 ACTION=$(notify-send --wait \
     --icon="$FULLPATH" \
     --app-name="Screenshot" \
-    -A "annotate=🖊 标注" \
+    -A "default=🖊 用 Satty 标注" \
     -A "copy=📋 复制" \
     "截图已保存" "$FULLPATH")
 
 case "$ACTION" in
-    annotate) satty -f "$FULLPATH" ;;
-    copy)     wl-copy < "$FULLPATH" ;;
+    default) satty -f "$FULLPATH" ;;
+    copy)    wl-copy < "$FULLPATH" ;;
 esac

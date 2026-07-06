@@ -42,6 +42,8 @@
     xrdb
     android-tools
     nix-index
+    ffmpeg
+    v4l-utils
 
   ];
 }

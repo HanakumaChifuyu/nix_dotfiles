@@ -208,7 +208,7 @@
   },
 
   "custom/notification-silencing-indicator": {
-    "on-click": "swaync-client -t -sw",
+    // "on-click": "swaync-client -t -sw",  // replaced by mako
     "exec": "echo '{\"text\":\"\",\"tooltip\":\"\"}' ",
     "signal": 10,
     "return-type": "json"

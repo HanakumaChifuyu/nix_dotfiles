@@ -5,7 +5,8 @@
     ./modules/kitty.nix
     ./modules/matugen.nix
     ./modules/btop.nix
-    ./modules/swaync.nix
+    # ./modules/swaync.nix  # replaced by mako
+    ./modules/mako.nix
     ./modules/waybar.nix
     ./modules/static-configs.nix
     ./modules/fontconfig.nix

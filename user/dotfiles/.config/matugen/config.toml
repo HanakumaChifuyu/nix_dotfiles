@@ -33,10 +33,10 @@ input_path = "~/.config/matugen/templates/hypr-vars.lua"
 output_path = "~/.cache/matugen/hypr-vars.lua"
 post_hook = "sh -c '[ -z \"$MATUGEN_DEFER_HYPR_RELOAD\" ] && [ -n \"$HYPRLAND_INSTANCE_SIGNATURE\" ] && hyprctl reload >/dev/null 2>&1 || true'"
 
-[templates.swaync]
-input_path = "~/.config/matugen/templates/swaync-style.css"
-output_path = "~/.cache/matugen/swaync-style.css"
-post_hook = "swaync-client -rs || true"
+# [templates.swaync]  # swaync replaced by mako; post_hook would block waiting for swaync service
+# input_path = "~/.config/matugen/templates/swaync-style.css"
+# output_path = "~/.cache/matugen/swaync-style.css"
+# post_hook = "swaync-client -rs || true"
 
 [templates.fuzzel]
 input_path = "~/.config/matugen/templates/fuzzel.ini"

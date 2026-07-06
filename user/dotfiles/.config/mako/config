@@ -1,0 +1,84 @@
+# ── mako 通知配置 · Tokyo Night 主题 ──────────────────────────────────────
+
+# ---- 全局行为 ----
+max-history=10
+sort=-time
+
+# ---- 交互 ----
+on-button-left=invoke-default-action
+on-button-middle=dismiss-group
+on-button-right=dismiss
+on-touch=invoke-default-action
+
+# ---- 字体 ----
+font=JetBrains Mono 11
+
+# ---- 外观（Tokyo Night） ----
+background-color=#1a1b26ee
+text-color=#c0caf5
+border-color=#7aa2f7
+border-size=2
+border-radius=10
+
+# ---- 布局 ----
+width=360
+height=120
+outer-margin=10
+margin=6
+padding=14
+icons=1
+max-icon-size=40
+icon-location=left
+# icon-theme=Papirus-Dark
+
+# ---- 进度条 ----
+progress-color=over #7aa2f7
+
+# ---- 格式 ----
+markup=1
+actions=1
+history=1
+format=<b>%s</b>\n%b
+text-alignment=left
+
+# ---- 超时 ----
+default-timeout=8000
+ignore-timeout=0
+
+# ---- 显示 ----
+max-visible=5
+layer=overlay
+anchor=top-right
+
+# ── 按紧急级别覆盖样式 ────────────────────────────────────────────────────
+
+[urgency=low]
+background-color=#1a1b26cc
+border-color=#565f89
+default-timeout=5000
+
+[urgency=normal]
+background-color=#1a1b26ee
+border-color=#7aa2f7
+default-timeout=5000
+
+[urgency=high]
+background-color=#2a1b2e
+border-color=#f7768e
+text-color=#f7768e
+default-timeout=12000
+
+# ── 专门为 Hyprland 工作区切换设置的样式 ──────────────────────────────────────
+
+[app-name=hyprland]
+anchor=top-left
+font=JetBrains Mono Bold 24
+text-alignment=center
+width=260
+height=100
+padding=25
+border-radius=20
+background-color=#1a1b26dd
+border-color=#bb9af7
+border-size=4
+format=<b>%s</b>

@@ -15,7 +15,7 @@ let
     pkgs.coreutils
     pkgs.matugen
     pkgs.procps
-    pkgs.swaynotificationcenter
+    # pkgs.swaynotificationcenter  # swaync replaced by mako
     pkgs.awww
   ];
   requiredOutputs = [
@@ -25,7 +25,7 @@ let
     "${home}/.cache/matugen/hypr-vars.conf"
     "${home}/.cache/matugen/hyprland-bindings.conf"
     "${home}/.cache/matugen/hypr-vars.lua"
-    "${home}/.cache/matugen/swaync-style.css"
+    # "${home}/.cache/matugen/swaync-style.css"  # swaync replaced by mako
     "${home}/.cache/matugen/fuzzel-colors.ini"
     "${home}/.cache/matugen/btop.theme"
     "${home}/.cache/matugen/yazi-theme.toml"
