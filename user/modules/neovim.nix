@@ -25,6 +25,7 @@
       rust-analyzer # Rust
       clang-tools # cpp
       neocmakelsp # cmake
+      mesonlsp
 
       # Build tools for lazy.nvim plugins such as nvim-treesitter and LuaSnip jsregexp.
       gcc

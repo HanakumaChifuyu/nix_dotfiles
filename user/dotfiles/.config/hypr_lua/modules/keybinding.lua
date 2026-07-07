@@ -1,6 +1,6 @@
 local mainMod = "SUPER"
 local scriptsDir = os.getenv("HOME") .. "/.config/hypr/scripts"
-local term = "wezterm"
+local term = "kitty"
 
 -- ---- basic ----
 
@@ -9,7 +9,7 @@ hl.bind(mainMod .. " + semicolon", hl.dsp.exec_cmd("cliphist list | fuzzel -d | 
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(term))
 
 -- Dropdown terminal
-hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(term .. " start --class wezterm-dropdown"))
+hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(term .. " --class kitty-dropdown"))
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close()) -- close active (not kill)
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.move({ workspace = "special:minimized", follow = false })) -- 把当前窗口隐藏到缓冲区

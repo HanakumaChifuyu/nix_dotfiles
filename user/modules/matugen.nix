@@ -21,7 +21,6 @@ let
   requiredOutputs = [
     "${home}/.cache/wal/colors-waybar.css"
     "${home}/.cache/wal/colors.json"
-    "${home}/.cache/matugen/kitty-colors.conf"
     "${home}/.cache/matugen/hypr-vars.conf"
     "${home}/.cache/matugen/hyprland-bindings.conf"
     "${home}/.cache/matugen/hypr-vars.lua"

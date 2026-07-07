@@ -1,9 +1,9 @@
--- Opacity for wezterm
-hl.window_rule({ match = { class = "org.wezfurlong.wezterm" }, opacity = "0.95" })
+-- Opacity for kitty
+hl.window_rule({ match = { class = "kitty" }, opacity = "0.95" })
 
 -- Dropdown terminal (float + center)
 hl.window_rule({
-	match = { class = "wezterm-dropdown" },
+	match = { class = "kitty-dropdown" },
 	float = true,
 	center = true,
 	size = { "70%", "60%" },

@@ -15,10 +15,10 @@ input_path = "~/.config/matugen/templates/waybar-colors.css"
 output_path = "~/.cache/wal/colors-waybar.css"
 post_hook = "pkill -SIGUSR2 waybar || true"
 
-[templates.kitty]
-input_path = "~/.config/matugen/templates/kitty-colors.conf"
-output_path = "~/.cache/matugen/kitty-colors.conf"
-post_hook = "pkill -SIGUSR1 kitty || true"
+# [templates.kitty]
+# input_path = "~/.config/matugen/templates/kitty-colors.conf"
+# output_path = "~/.cache/matugen/kitty-colors.conf"
+# post_hook = "pkill -SIGUSR1 kitty || true"
 
 [templates.hyprvars]
 input_path = "~/.config/matugen/templates/hypr-vars.conf"

@@ -170,7 +170,7 @@ vim.lsp.enable("vtsls")
 
 -- cpp
 vim.lsp.config["clangd"] = {
-	cmd = { "clangd" },
+	cmd = { "clangd", "--query-driver=**" },
 	filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
 	root_markers = {
 		".clangd",
@@ -182,4 +182,8 @@ vim.lsp.config["clangd"] = {
 		".git",
 	},
 }
-vim.lsp.enable({ "clangd", "neocmake" })
+vim.lsp.config["mesonlsp"] = {
+	cmd = { "mesonlsp", "--lsp" },
+	filetypes = { "meson" },
+}
+vim.lsp.enable({ "clangd", "neocmake", "mesonlsp" })

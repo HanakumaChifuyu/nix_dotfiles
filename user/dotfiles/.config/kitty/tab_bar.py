@@ -184,9 +184,38 @@ def get_net(max_size, tab=None):
         return None
 
 
-def get_tab_cell(tab):
-    color = COLOR_TAB_ACTIVE if tab.is_active else COLOR_TAB
-    return Cell(f' {tab.tab_id} '.strip() + ' ', get_tab_text, tab, color=color)
+class TabCell:
+    def __init__(self, tab, draw_data):
+        self.tab = tab
+        self.draw_data = draw_data
+
+    def _get_text(self, max_size):
+        overhead = len(str(self.tab.tab_id)) + 3
+        text = get_tab_text(max_size - overhead, self.tab)
+        if text == '': return f' {self.tab.tab_id} '
+        if text is None: return ''
+        return f' {self.tab.tab_id} {text} '
+
+    def length(self, max_size):
+        return len(self._get_text(max_size))
+
+    def draw(self, screen, max_size):
+        text = self._get_text(max_size)
+        if not text: return
+        
+        if self.tab.is_active:
+            screen.cursor.fg = as_rgb(color_as_int(self.draw_data.active_fg))
+            screen.cursor.bg = as_rgb(color_as_int(self.draw_data.active_bg))
+            screen.cursor.bold = True
+        else:
+            screen.cursor.fg = as_rgb(color_as_int(self.draw_data.inactive_fg))
+            screen.cursor.bg = as_rgb(color_as_int(self.draw_data.inactive_bg))
+            screen.cursor.bold = False
+            
+        screen.draw(text)
+        screen.cursor.bg = BG
+        screen.cursor.fg = FG
+        screen.cursor.bold = False
 
 
 # ─────────────────────────── 自适应中段 ───────────────────────────
@@ -242,16 +271,14 @@ def _draw_center(screen, strategy):
 
 
 def _draw_left(screen, max_length):
-    if not _center: return
-    Cell(ICON_FOLDER, get_wd, _center[_active_index].tab, color=COLOR_CWD)\
-        .draw(screen, max_length)
+    pass
+
 
 
 def _draw_right(screen):
     max_size = screen.columns - screen.cursor.x
     cells = [
-        Cell(ICON_NET,  get_net, color=COLOR_NET),
-        Cell(ICON_MEM,  get_mem, color=COLOR_MEM),
+        Cell(ICON_FOLDER, get_wd, _center[_active_index].tab, color=COLOR_CWD),
         Cell(ICON_TIME, get_time, color=COLOR_TIME),
     ]
     sizes = []
@@ -286,12 +313,10 @@ def draw_tab(draw_data: DrawData, screen: Screen, tab: TabBarData,
         _timer_id = add_timer(_redraw, REFRESH_TIME, True)
     if tab.is_active:
         _active_index = index - 1
-    _center.append(get_tab_cell(tab))
+    _center.append(TabCell(tab, draw_data))
     if is_last:
         strategy, length = _strategy(screen)
-        center_start = (screen.columns - length) // 2
-        _draw_left(screen, max(0, center_start - 1))
-        screen.cursor.x = center_start
+        screen.cursor.x = 0
         _draw_center(screen, strategy)
         screen.draw(' ')
         _draw_right(screen)

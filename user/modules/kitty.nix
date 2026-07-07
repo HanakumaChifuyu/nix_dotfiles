@@ -28,7 +28,7 @@
 
       tab_bar_min_tabs = 2;
       tab_bar_edge = "bottom";
-      tab_bar_style = "powerline";
+      tab_bar_style = "custom";
       tab_title_template = "{index}: {title[:20]}{'  :{}'.format(num_windows) if num_windows > 1 else ''}";
 
       enabled_layouts = "splits:split_axis=horizontal";
@@ -56,8 +56,8 @@
       "ctrl+shift+j" = "scroll_line_down";
       "ctrl+shift+k" = "scroll_line_up";
 
-      "alt+s" = "launch --location=hsplit --cwd=current";
-      "alt+v" = "launch --location=vsplit --cwd=current";
+      "alt+|" = "launch --location=hsplit --cwd=current";
+      "alt+-" = "launch --location=vsplit --cwd=current";
 
       "alt+k" = "neighboring_window up";
       "alt+j" = "neighboring_window down";
@@ -80,11 +80,15 @@
       "ctrl+down" = "resize_window shorter 3";
 
       "alt+q" = "close_window_with_confirmation";
-      "alt+n" = ''launch --stdin-source=@screen_scrollback --type=overlay nvim -c "setlocal buftype=nofile bufhidden=hide noswapfile" -c "normal G" -'';
+      "alt+/" =
+        ''launch --stdin-source=@screen_scrollback --type=overlay nvim -c "setlocal buftype=nofile bufhidden=hide noswapfile" -c "normal G" -'';
     };
 
     extraConfig = ''
-      include ~/.cache/matugen/kitty-colors.conf
+      include themes/tokyonight_night.conf
     '';
   };
+
+  xdg.configFile."kitty/tab_bar.py".source = ../dotfiles/.config/kitty/tab_bar.py;
+  xdg.configFile."kitty/themes".source = ../dotfiles/.config/kitty/themes;
 }
