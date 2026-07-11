@@ -20,7 +20,6 @@ let
     "DingTalk"
     "BiliBili"
     "NetEaseMusic"
-    "Steam"
     "DouYin"
     "Weibo"
     "Zhihu"

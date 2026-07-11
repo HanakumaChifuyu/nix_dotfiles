@@ -56,7 +56,7 @@
       "ctrl+shift+j" = "scroll_line_down";
       "ctrl+shift+k" = "scroll_line_up";
 
-      "alt+|" = "launch --location=hsplit --cwd=current";
+      "alt+\\" = "launch --location=hsplit --cwd=current";
       "alt+-" = "launch --location=vsplit --cwd=current";
 
       "alt+k" = "neighboring_window up";

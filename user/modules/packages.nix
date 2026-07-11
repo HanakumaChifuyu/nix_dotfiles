@@ -59,6 +59,7 @@
     scrcpy
     mpv
     vlc
+    codex
 
     # Formatters (for Neovim conform.nvim)
 
