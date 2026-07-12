@@ -21,8 +21,9 @@ border-size=2
 border-radius=10
 
 # ---- 布局 ----
-width=360
-height=120
+# height 是最大高度；设得太低会让长正文被裁剪。
+width=520
+height=600
 outer-margin=10
 margin=6
 padding=14
