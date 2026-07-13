@@ -70,4 +70,17 @@
       pkgs.cudaPackages.cudatoolkit
     ];
   };
+
+  # ============================================================================
+  # Gaming Configuration
+  # ============================================================================
+  programs.steam = {
+    enable = true;
+    # 开放串流端口
+    remotePlay.openFirewall = true;
+    # 开放局域网联机端口
+    dedicatedServer.openFirewall = true;
+    # 启用 gamescope 支持（在 Wayland 下玩游戏很有用）
+    gamescopeSession.enable = true;
+  };
 }
