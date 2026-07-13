@@ -170,7 +170,7 @@ vim.lsp.enable("vtsls")
 
 -- cpp
 vim.lsp.config["clangd"] = {
-	cmd = { "clangd", "--query-driver=**" },
+	cmd = { "clangd", "--query-driver=/nix/store/*/bin/*" },
 	filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
 	root_markers = {
 		".clangd",
