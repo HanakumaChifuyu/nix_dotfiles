@@ -15,11 +15,6 @@
     extraGroups = [
       "wheel"
       "networkmanager"
-      "video"
-      "audio"
-      "docker"
-      "adbusers"
-      "podman"
     ];
     shell = pkgs.fish;
     hashedPasswordFile = config.sops.secrets."tohno/passwd".path;
