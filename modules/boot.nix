@@ -17,6 +17,4 @@
   # boot.loader.grub.enable = true;
   # boot.loader.grub.device = "/dev/vda";
   #
-  # Zen kernel: optimized for desktop responsiveness and low latency
-  boot.kernelPackages = pkgs.linuxPackages_zen;
 }

@@ -16,5 +16,6 @@ in
     mako = forceSource "${dots}/mako";
     wezterm = forceSource "${dots}/wezterm";
     zathura = forceSource "${dots}/zathura";
+    qutebrowser = forceSource "${dots}/qutebrowser";
   };
 }

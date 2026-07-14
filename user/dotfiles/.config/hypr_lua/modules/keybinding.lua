@@ -8,8 +8,8 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("fuzzel"))
 hl.bind(mainMod .. " + semicolon", hl.dsp.exec_cmd("cliphist list | fuzzel -d | cliphist decode | wl-copy"))
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(term))
 
--- Dropdown terminal
-hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(term .. " --class kitty-dropdown"))
+-- Dropdown terminal (Floating, fixed size, centered)
+hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd("[float; size 800 600; center] " .. term .. " --class kitty-dropdown"))
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close()) -- close active (not kill)
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.move({ workspace = "special:minimized", follow = false })) -- 把当前窗口隐藏到缓冲区

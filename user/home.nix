@@ -28,10 +28,4 @@
   home.username = "tohno";
   home.homeDirectory = "/home/tohno";
   home.stateVersion = "26.05";
-
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
 }

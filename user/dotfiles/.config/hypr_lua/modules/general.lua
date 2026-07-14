@@ -40,6 +40,11 @@ hl.config({
 		},
 	},
 
+	cursor = {
+		inactive_timeout = 3,       -- 鼠标停止移动 3 秒后自动隐藏
+		hide_on_key_press = true,   -- 敲击键盘时自动隐藏鼠标
+	},
+
 	group = {
 		merge_groups_on_drag = true,
 		merge_groups_on_groupbar = true,
