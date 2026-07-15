@@ -24,6 +24,15 @@ hl.bind(mainMod .. " + ALT + S", hl.dsp.window.move({ workspace = "special:scrat
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(scriptsDir .. "/Record.sh"))
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd(scriptsDir .. "/scratchpad-picker.sh")) -- 提取后台缓冲区的窗口
 
+-- ---- media keys ----
+
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(scriptsDir .. "/osd-volume.sh up"), { repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(scriptsDir .. "/osd-volume.sh down"), { repeating = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd(scriptsDir .. "/osd-volume.sh mute"), { locked = true })
+
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(scriptsDir .. "/osd-brightness.sh up"), { repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(scriptsDir .. "/osd-brightness.sh down"), { repeating = true })
+
 -- ---- window control ----
 
 -- Resize windows

@@ -40,4 +40,12 @@
       STOP_CHARGE_THRESH_BAT0 = 80;
     };
   };
+
+  environment.systemPackages = with pkgs; [
+    brightnessctl
+    libcanberra-gtk3
+    libnotify
+    sound-theme-freedesktop
+    wireplumber
+  ];
 }
