@@ -9,6 +9,8 @@
 
   sops.secrets."tohno/passwd".neededForUsers = true;
 
+  programs.fish.enable = true;
+
   # Define a user account. Don't forget to set a password with 'passwd'.
   users.users.tohno = {
     isNormalUser = true;
