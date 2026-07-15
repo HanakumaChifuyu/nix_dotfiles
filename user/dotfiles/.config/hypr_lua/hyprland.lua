@@ -1,5 +1,6 @@
 require("modules/general")
 require("modules/keybinding")
+require("modules/gestures")
 require("modules/animations")
 require("modules/startups")
 require("modules/windowrules")

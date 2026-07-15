@@ -1,3 +1,5 @@
+{ config, ... }:
+
 {
   programs.kitty = {
     enable = true;
@@ -81,7 +83,7 @@
 
       "alt+q" = "close_window_with_confirmation";
       "alt+/" =
-        ''launch --stdin-source=@screen_scrollback --type=overlay nvim -c "setlocal buftype=nofile bufhidden=hide noswapfile" -c "normal G" -'';
+        "launch --stdin-source=@screen_scrollback --type=overlay ${config.home.homeDirectory}/.config/kitty/scrollback-nvim.sh";
     };
 
     extraConfig = ''
@@ -91,4 +93,8 @@
 
   xdg.configFile."kitty/tab_bar.py".source = ../dotfiles/.config/kitty/tab_bar.py;
   xdg.configFile."kitty/themes".source = ../dotfiles/.config/kitty/themes;
+  xdg.configFile."kitty/scrollback-nvim.sh" = {
+    source = ../dotfiles/.config/kitty/scrollback-nvim.sh;
+    executable = true;
+  };
 }

@@ -84,6 +84,14 @@ hl.config({
 		movefocus_cycles_fullscreen = true,
 	},
 
+	gestures = {
+		workspace_swipe_distance = 260,
+		workspace_swipe_cancel_ratio = 0.35,
+		workspace_swipe_create_new = false,
+		workspace_swipe_direction_lock = true,
+		workspace_swipe_direction_lock_threshold = 12,
+	},
+
 	misc = {
 		enable_swallow = true,
 		initial_workspace_tracking = 1,
