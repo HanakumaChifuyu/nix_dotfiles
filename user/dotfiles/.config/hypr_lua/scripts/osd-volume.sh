@@ -10,7 +10,30 @@ TIMEOUT_MS=900
 play_feedback() {
     if command -v canberra-gtk-play >/dev/null 2>&1; then
         canberra-gtk-play -i audio-volume-change -d "volume change" >/dev/null 2>&1 &
+        return
     fi
+
+    local sound_file data_dir
+    local -a data_dirs=()
+
+    IFS=: read -r -a data_dirs <<< "${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+    data_dirs+=(
+        "$HOME/.nix-profile/share"
+        "/etc/profiles/per-user/$USER/share"
+        "/run/current-system/sw/share"
+    )
+
+    for data_dir in "${data_dirs[@]}"; do
+        sound_file="$data_dir/sounds/freedesktop/stereo/audio-volume-change.oga"
+        if [[ -f "$sound_file" ]]; then
+            if command -v pw-play >/dev/null 2>&1; then
+                pw-play "$sound_file" >/dev/null 2>&1 &
+            elif command -v paplay >/dev/null 2>&1; then
+                paplay "$sound_file" >/dev/null 2>&1 &
+            fi
+            return
+        fi
+    done
 }
 
 notify_volume() {
