@@ -2,34 +2,32 @@
 
 ## 密钥管理
 
-本项目使用 [sops-nix](https://github.com/Mic92/sops-nix) 管理 secrets，需要两把密钥用于解密：
+本项目使用 [sops-nix](https://github.com/Mic92/sops-nix) 管理 secrets，系统和 Home Manager 都以 SSH host key 作为 bootstrap 密钥：
 
-### 系统级密钥（NixOS 层）
+### Bootstrap 密钥
 
-在部署系统配置（`nixos-rebuild switch`）前，将私钥放到：
+在部署系统配置（`nixos-rebuild switch`）前，目标系统必须有：
 
 ```
 /etc/ssh/ssh_host_ed25519_key
 ```
 
-对应配置在 `modules/sops.nix:14`：
+NixOS 层直接使用它解密 secrets：
 
 ```nix
 sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 ```
 
-### 用户级密钥（Home Manager 层）
-
-在部署用户配置（`home-manager switch`）前，将私钥放到：
+系统激活时会从这把 host key 派生 Home Manager 使用的 age identity：
 
 ```
-~/.ssh/id_ed25519
+/home/tohno/.config/sops/age/keys.txt
 ```
 
-对应配置在 `user/modules/secrets.nix:6`：
+Home Manager 只读取这个派生文件：
 
 ```nix
-sops.age.sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
+sops.age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 ```
 
 ### 首次安装（Live ISO）
@@ -41,10 +39,6 @@ sops.age.sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
 mkdir -p /mnt/etc/ssh
 cp /run/media/usb/ssh_host_ed25519_key /mnt/etc/ssh/ssh_host_ed25519_key
 chmod 600 /mnt/etc/ssh/ssh_host_ed25519_key
-
-mkdir -p /mnt/home/tohno/.ssh
-cp /run/media/usb/id_ed25519 /mnt/home/tohno/.ssh/id_ed25519
-chmod 600 /mnt/home/tohno/.ssh/id_ed25519
 ```
 
 然后正常执行 `nixos-install`，sops-nix 就能在构建阶段解密 secrets。
@@ -53,8 +47,8 @@ chmod 600 /mnt/home/tohno/.ssh/id_ed25519
 
 ### 后续部署（已安装系统）
 
-1. 手动放置两把私钥到上述路径
+1. 确认 `/etc/ssh/ssh_host_ed25519_key` 存在
 2. `sudo nixos-rebuild switch` — 使用 `/etc/ssh/ssh_host_ed25519_key` 解密系统级 secrets
-3. `home-manager switch` — 使用 `~/.ssh/id_ed25519` 解密用户级 secrets
+3. `home-manager switch` — 使用系统激活时派生的 `~/.config/sops/age/keys.txt` 解密用户级 secrets
 
 > 注意：`user/modules/activation.nix` 会在 home-manager 激活时清理 `~/.ssh` 下残留的 Nix store 符号链接，确保 SSH 权限检查不会因错误的文件类型而拒绝密钥。
