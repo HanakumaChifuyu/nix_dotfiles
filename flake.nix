@@ -7,6 +7,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
 
     # flake-parts
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -19,6 +21,7 @@
       nixpkgs,
       home-manager,
       sops-nix,
+      disko,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -41,6 +44,15 @@
             modules = [
               ./hosts/gpu-nixos/configuration.nix
               inputs.sops-nix.nixosModules.sops
+            ];
+          };
+
+          nas = nixpkgs.lib.nixosSystem {
+            system = builtins.head (inputs.self.systems or [ "x86_64-linux" ]);
+            modules = [
+              ./hosts/nas/configuration.nix
+              inputs.sops-nix.nixosModules.sops
+              disko.nixosModules.disko
             ];
           };
 
