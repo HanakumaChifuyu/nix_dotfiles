@@ -1,5 +1,9 @@
 { pkgs, ... }:
 
+let
+  copyCommand = if pkgs.stdenv.hostPlatform.isDarwin then "pbcopy" else "wl-copy";
+in
+
 {
   xdg.configFile."fish/config.fish".force = true;
 
@@ -17,7 +21,7 @@
       lg = "lazygit";
       y = "yazi";
       vi = "nvim";
-      ct = "code2prompt ./ | wl-copy";
+      ct = "code2prompt ./ | ${copyCommand}";
       svim = "sudoedit";
       ls = "eza --icons";
       ll = "eza -lgh --icons";

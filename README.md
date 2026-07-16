@@ -56,6 +56,8 @@ sudo nix --extra-experimental-features "nix-command flakes" run github:nix-darwi
 nix --extra-experimental-features "nix-command flakes" run github:nix-community/home-manager/release-26.05 -- switch --flake .#mac@macbook
 ```
 
+`nix run` 只是在首次部署时临时调用 Home Manager，本身不会把 `home-manager` 命令安装到用户环境里。本仓库的 Mac Home Manager profile 会通过 `home.packages` 持久安装 `home-manager`，所以上面这次激活成功后，后续就可以直接使用 `home-manager switch`。
+
 后续部署：
 
 ```sh

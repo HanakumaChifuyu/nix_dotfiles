@@ -19,8 +19,12 @@
 
   home.packages = with pkgs; [
     curl
+    code2prompt
+    eza
     fd
+    home-manager
     jq
+    lazygit
     ripgrep
     tokei
     wget
