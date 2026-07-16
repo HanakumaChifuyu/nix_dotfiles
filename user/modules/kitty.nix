@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   programs.kitty = {
@@ -17,7 +17,7 @@
       cursor_underline_thickness = 2.0;
 
       confirm_os_window_close = 1;
-      shell = "fish";
+      shell = "${pkgs.fish}/bin/fish";
 
       copy_on_select = "no";
       strip_trailing_spaces = "smart";
