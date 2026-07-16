@@ -1,8 +1,8 @@
-{ pkgs, ... }:
+{ lib, ... }:
 {
   xresources.properties = {
 
-    "Xft.dpi" = 192;
+    "Xft.dpi" = lib.mkDefault 192;
     "Xft.autohint" = 0;
     "Xft.lcdfilter" = "lcddefault";
     "Xft.hintstyle" = "hintslight";
