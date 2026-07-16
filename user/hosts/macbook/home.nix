@@ -11,8 +11,8 @@
     ../../modules/yazi.nix
   ];
 
-  home.username = "tohno";
-  home.homeDirectory = "/Users/tohno";
+  home.username = "mac";
+  home.homeDirectory = "/Users/mac";
   home.stateVersion = "26.05";
 
   home.packages = with pkgs; [

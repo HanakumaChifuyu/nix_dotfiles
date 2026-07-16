@@ -39,10 +39,10 @@ MacBook：
 
 ```sh
 sudo darwin-rebuild switch --flake .#macbook
-home-manager switch --flake .#tohno@macbook
+home-manager switch --flake .#mac@macbook
 ```
 
-`macbook` 当前按 Apple Silicon 配置为 `aarch64-darwin`。如果目标机器是 Intel Mac，需要把 flake 里的 system 改为 `x86_64-darwin`，并相应调整 `homeConfigurations."tohno@macbook"` 使用的 system。
+`macbook` 当前按 Apple Silicon 配置为 `aarch64-darwin`。如果目标机器是 Intel Mac，需要把 flake 里的 system 改为 `x86_64-darwin`，并相应调整 `homeConfigurations."mac@macbook"` 使用的 system。
 
 ## 密钥管理
 

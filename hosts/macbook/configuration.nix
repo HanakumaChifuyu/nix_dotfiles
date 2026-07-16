@@ -10,8 +10,8 @@
 
   networking.hostName = "macbook";
 
-  users.users.tohno = {
-    home = "/Users/tohno";
+  users.users.mac = {
+    home = "/Users/mac";
     shell = pkgs.fish;
   };
 
@@ -19,7 +19,7 @@
   environment.shells = [ pkgs.fish ];
 
   system = {
-    primaryUser = "tohno";
+    primaryUser = "mac";
     stateVersion = 6;
   };
 }
