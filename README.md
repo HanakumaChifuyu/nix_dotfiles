@@ -33,9 +33,30 @@ sudo nixos-rebuild switch --flake .#nas
 
 NAS 当前没有独立 Home Manager profile。
 
+如果首次部署时还没有 `home-manager` 命令，可以用 `nix run` 临时调用 Home Manager。把 profile 换成对应机器的 `homeConfigurations` 名称：
+
+```sh
+nix --extra-experimental-features "nix-command flakes" run github:nix-community/home-manager/release-26.05 -- switch --flake .#tohno@desktop
+nix --extra-experimental-features "nix-command flakes" run github:nix-community/home-manager/release-26.05 -- switch --flake .#tohno@gpu
+```
+
 ### macOS / nix-darwin
 
-MacBook：
+MacBook 首次部署时，系统里还没有 `darwin-rebuild` 和 `home-manager` 命令，需要都通过 `nix run` 临时调用。
+
+阶段 1：首次激活 nix-darwin 系统层：
+
+```sh
+sudo nix --extra-experimental-features "nix-command flakes" run github:nix-darwin/nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake .#macbook
+```
+
+阶段 2：首次激活 Home Manager 用户层：
+
+```sh
+nix --extra-experimental-features "nix-command flakes" run github:nix-community/home-manager/release-26.05 -- switch --flake .#mac@macbook
+```
+
+后续部署：
 
 ```sh
 sudo darwin-rebuild switch --flake .#macbook

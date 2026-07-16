@@ -15,6 +15,8 @@
   home.homeDirectory = "/Users/mac";
   home.stateVersion = "26.05";
 
+  programs.man.generateCaches = false;
+
   home.packages = with pkgs; [
     curl
     fd
