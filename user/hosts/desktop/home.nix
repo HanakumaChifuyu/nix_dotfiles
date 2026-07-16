@@ -9,7 +9,7 @@
 
   # desktop-specific home configuration
   xdg.configFile."hypr/modules/monitor.lua".text = ''
-    hl.monitor({ output = "", mode = "highres", position = "auto", scale = 1.6 })
+    hl.monitor({ output = "", mode = "highres", position = "auto", scale = 1.4 })
   '';
 
   home.packages = with pkgs; [
@@ -17,5 +17,10 @@
     brightnessctl
     powertop
     codex
+
+    # 社交网络
+    wechat
+    telegram-desktop
+    vesktop
   ];
 }

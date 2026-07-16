@@ -28,6 +28,18 @@
   };
   networking.hostName = "desktop_nixos";
 
+  # Hibernate can resume from the dedicated swap partition generated in
+  # ../../hardware-configuration.nix.
+  boot.resumeDevice = "/dev/disk/by-label/swap";
+
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend-then-hibernate";
+    HandleLidSwitchDocked = "ignore";
+    HandleLidSwitchExternalPower = "suspend-then-hibernate";
+  };
+
+  systemd.sleep.settings.Sleep.HibernateDelaySec = "30min";
+
   services.upower.enable = true;
   services.tlp = {
     enable = true;
@@ -36,8 +48,8 @@
       PLATFORM_PROFILE_ON_BAT = "low-power";
       PCIE_ASPM_ON_BAT = "powersupersave";
       AMDGPU_ABM_LEVEL_ON_BAT = 3;
-      START_CHARGE_THRESH_BAT0 = 75;
-      STOP_CHARGE_THRESH_BAT0 = 80;
+      START_CHARGE_THRESH_BAT0 = 98;
+      STOP_CHARGE_THRESH_BAT0 = 99;
     };
   };
 
