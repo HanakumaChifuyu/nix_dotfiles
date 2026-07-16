@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nix-darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -19,16 +21,30 @@
     inputs@{
       flake-parts,
       nixpkgs,
+      nix-darwin,
       home-manager,
       sops-nix,
       disko,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
       debug = true;
 
       flake = {
+        darwinConfigurations = {
+          macbook = nix-darwin.lib.darwinSystem {
+            system = "aarch64-darwin";
+            modules = [
+              ./hosts/macbook/configuration.nix
+            ];
+            specialArgs = { inherit inputs; };
+          };
+        };
+
         nixosConfigurations = {
 
           desktop_nixos = nixpkgs.lib.nixosSystem {
@@ -60,27 +76,28 @@
 
         homeConfigurations =
           let
-            system = builtins.head (inputs.self.systems or [ "x86_64-linux" ]);
-            pkgs = nixpkgs.legacyPackages.${system};
+            mkHome =
+              system: modules:
+              home-manager.lib.homeManagerConfiguration {
+                pkgs = nixpkgs.legacyPackages.${system};
+                inherit modules;
+                extraSpecialArgs = { inherit inputs; };
+              };
           in
           {
-            "tohno@desktop" = home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                ./user/hosts/desktop/home.nix
-                sops-nix.homeManagerModules.sops
-              ];
-              extraSpecialArgs = { inherit inputs; };
-            };
+            "tohno@desktop" = mkHome "x86_64-linux" [
+              ./user/hosts/desktop/home.nix
+              sops-nix.homeManagerModules.sops
+            ];
 
-            "tohno@gpu" = home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                ./user/hosts/gpu/home.nix
-                sops-nix.homeManagerModules.sops
-              ];
-              extraSpecialArgs = { inherit inputs; };
-            };
+            "tohno@gpu" = mkHome "x86_64-linux" [
+              ./user/hosts/gpu/home.nix
+              sops-nix.homeManagerModules.sops
+            ];
+
+            "tohno@macbook" = mkHome "aarch64-darwin" [
+              ./user/hosts/macbook/home.nix
+            ];
           };
       };
 

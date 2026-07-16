@@ -1,5 +1,49 @@
 # NixOS Dotfiles
 
+## 两阶段部署
+
+系统配置和 Home Manager 配置在 flake 里是解耦的，需要分两步应用：
+
+1. 先切换系统层：NixOS 使用 `nixos-rebuild`，macOS 使用 `darwin-rebuild`
+2. 再切换用户层：统一使用 `home-manager switch`
+
+这样系统服务、boot、用户账号、nix-darwin defaults 等机器级配置不会和用户 dotfiles、shell、编辑器配置绑在同一次激活里。
+
+### NixOS
+
+桌面机：
+
+```sh
+sudo nixos-rebuild switch --flake .#desktop_nixos
+home-manager switch --flake .#tohno@desktop
+```
+
+GPU 主机：
+
+```sh
+sudo nixos-rebuild switch --flake .#gpu_nixos
+home-manager switch --flake .#tohno@gpu
+```
+
+NAS：
+
+```sh
+sudo nixos-rebuild switch --flake .#nas
+```
+
+NAS 当前没有独立 Home Manager profile。
+
+### macOS / nix-darwin
+
+MacBook：
+
+```sh
+sudo darwin-rebuild switch --flake .#macbook
+home-manager switch --flake .#tohno@macbook
+```
+
+`macbook` 当前按 Apple Silicon 配置为 `aarch64-darwin`。如果目标机器是 Intel Mac，需要把 flake 里的 system 改为 `x86_64-darwin`，并相应调整 `homeConfigurations."tohno@macbook"` 使用的 system。
+
 ## 密钥管理
 
 本项目使用 [sops-nix](https://github.com/Mic92/sops-nix) 管理 secrets，系统和 Home Manager 都以 SSH host key 作为 bootstrap 密钥：
@@ -45,10 +89,12 @@ chmod 600 /mnt/etc/ssh/ssh_host_ed25519_key
 
 > 如果你没有 U 盘，也可以用 `scp` 从另一台机器拉取，或者挂载一个已有的加密分区。关键是在 `nixos-install` 之前，`/mnt/etc/ssh/ssh_host_ed25519_key` 必须存在。
 
-### 后续部署（已安装系统）
+### 后续部署（已安装 NixOS）
 
 1. 确认 `/etc/ssh/ssh_host_ed25519_key` 存在
-2. `sudo nixos-rebuild switch` — 使用 `/etc/ssh/ssh_host_ed25519_key` 解密系统级 secrets
-3. `home-manager switch` — 使用系统激活时派生的 `~/.config/sops/age/keys.txt` 解密用户级 secrets
+2. `sudo nixos-rebuild switch --flake .#<host>` — 使用 `/etc/ssh/ssh_host_ed25519_key` 解密系统级 secrets
+3. `home-manager switch --flake .#<user@host>` — 使用系统激活时派生的 `~/.config/sops/age/keys.txt` 解密用户级 secrets
 
 > 注意：`user/modules/activation.nix` 会在 home-manager 激活时清理 `~/.ssh` 下残留的 Nix store 符号链接，确保 SSH 权限检查不会因错误的文件类型而拒绝密钥。
+
+macOS 的 Home Manager profile 当前没有启用 `sops-nix`，因此不依赖上面的 NixOS SSH host key bootstrap 流程。后续如果要在 macOS 上解密 secrets，需要先给 Mac 生成 age identity，把 public key 加进 `.sops.yaml`，再在 Mac 的 Home Manager profile 中启用对应的 sops module。
