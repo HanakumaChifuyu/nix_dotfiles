@@ -17,6 +17,10 @@
   home.username = "mac";
   home.homeDirectory = "/Users/mac";
   home.stateVersion = "26.05";
+  home.sessionVariables = {
+    LANG = "en_US.UTF-8";
+    LC_ALL = "en_US.UTF-8";
+  };
 
   programs.man.generateCaches = false;
 

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   xdg.configFile."nvim" = {
@@ -14,38 +14,40 @@
     viAlias = true;
     vimAlias = true;
 
-    extraPackages = with pkgs; [
-      # LSP
-      nixd # Nix LSP
-      lua-language-server # Lua
-      basedpyright # Python
-      gopls # Go
-      vtsls # TypeScript
-      tinymist # Typsty
-      rust-analyzer # Rust
-      clang-tools # cpp
-      neocmakelsp # cmake
-      mesonlsp
+    extraPackages =
+      (with pkgs; [
+        # LSP
+        nixd # Nix LSP
+        lua-language-server # Lua
+        basedpyright # Python
+        gopls # Go
+        vtsls # TypeScript
+        tinymist # Typsty
+        rust-analyzer # Rust
+        clang-tools # cpp
+        neocmakelsp # cmake
+        mesonlsp
 
-      # Build tools for lazy.nvim plugins such as nvim-treesitter and LuaSnip jsregexp.
-      gcc
-      gnumake
-      tree-sitter
+        # Build tools for lazy.nvim plugins such as nvim-treesitter and LuaSnip jsregexp.
+        gcc
+        gnumake
+        tree-sitter
 
-      # Formatter
-      shfmt
-      prettier
-      biome
-      taplo
-      xmlformat
-      google-java-format
-      nixfmt # Nix formatter
-      stylua # Lua formatter
-      black # Python formatter
-      gersemi # cmake formatter
+        # Formatter
+        shfmt
+        prettier
+        biome
+        taplo
+        xmlformat
+        google-java-format
+        nixfmt # Nix formatter
+        stylua # Lua formatter
+        black # Python formatter
+        gersemi # cmake formatter
 
-      fzf
-      wordnet
-    ];
+        fzf
+        wordnet
+      ])
+      ++ lib.optionals pkgs.stdenv.isDarwin [ pkgs.macism ];
   };
 }

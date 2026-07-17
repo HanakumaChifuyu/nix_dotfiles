@@ -23,5 +23,10 @@
   system = {
     primaryUser = "mac";
     stateVersion = 6;
+
+    defaults.CustomUserPreferences."NSGlobalDomain" = {
+      AppleLanguages = [ "en-US" ];
+      AppleLocale = "en_US";
+    };
   };
 }
