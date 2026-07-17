@@ -49,10 +49,7 @@
                     type = "basic";
                     from = {
                       key_code = binding.from;
-                      modifiers = {
-                        mandatory = [ "control" ];
-                        optional = [ "any" ];
-                      };
+                      modifiers.mandatory = [ "control" ];
                     };
                     to = [ { key_code = binding.to; } ];
                   })

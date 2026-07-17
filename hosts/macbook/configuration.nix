@@ -5,6 +5,7 @@
     ../../modules/nix-settings.nix
     ./fonts.nix
     ./homebrew.nix
+    ./yabai.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
