@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, unstable, ... }:
 
 {
   imports = [
@@ -10,6 +10,7 @@
     ../../modules/starship.nix
     ../../modules/ssh.nix
     ../../modules/yazi.nix
+    ./rime.nix
   ];
 
   home.username = "mac";
@@ -30,5 +31,6 @@
     tokei
     wget
     zoxide
+    unstable.codex
   ];
 }

@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  unstable,
   ...
 }:
 
@@ -18,7 +19,7 @@
     wireplumber
     brightnessctl
     powertop
-    codex
+    unstable.codex
 
     # 社交网络
     wechat

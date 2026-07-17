@@ -4,6 +4,7 @@
     installRimeIce = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       RIME_DIR="$HOME/.local/share/fcitx5/rime"
       MARKER="$RIME_DIR/rime_ice.schema.yaml"
+      EXTRACT_DIR="$RIME_DIR/.rime-ice-extract"
       mkdir -p "$RIME_DIR"
       if [ ! -f "$MARKER" ]; then
         if [ -d "$RIME_DIR" ]; then
@@ -14,7 +15,11 @@
           ${pkgs.curl}/bin/curl -fSL -o "$ZIP_FILE" \
             "https://github.com/iDvel/rime-ice/releases/download/2026.06.03/full.zip"
         fi
-        ${pkgs.unzip}/bin/unzip -o "$ZIP_FILE" -d "$RIME_DIR"
+        rm -rf "$EXTRACT_DIR"
+        mkdir -p "$EXTRACT_DIR"
+        ${pkgs.unzip}/bin/unzip -o "$ZIP_FILE" -d "$EXTRACT_DIR"
+        cp -R "$EXTRACT_DIR/full/." "$RIME_DIR/"
+        rm -rf "$EXTRACT_DIR"
         cp -f ${../dotfiles/rime/default.yaml} "$RIME_DIR/default.yaml"
       fi
     '';

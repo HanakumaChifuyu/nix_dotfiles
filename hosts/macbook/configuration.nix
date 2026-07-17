@@ -4,6 +4,7 @@
   imports = [
     ../../modules/nix-settings.nix
     ./fonts.nix
+    ./homebrew.nix
   ];
 
   nixpkgs.config.allowUnfree = true;

@@ -3,8 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -21,7 +23,9 @@
     inputs@{
       flake-parts,
       nixpkgs,
+      nixpkgs-unstable,
       nix-darwin,
+      nix-homebrew,
       home-manager,
       sops-nix,
       disko,
@@ -39,6 +43,7 @@
           macbook = nix-darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             modules = [
+              nix-homebrew.darwinModules.nix-homebrew
               ./hosts/macbook/configuration.nix
             ];
             specialArgs = { inherit inputs; };
@@ -81,7 +86,10 @@
               home-manager.lib.homeManagerConfiguration {
                 pkgs = nixpkgs.legacyPackages.${system};
                 inherit modules;
-                extraSpecialArgs = { inherit inputs; };
+                extraSpecialArgs = {
+                  inherit inputs;
+                  unstable = nixpkgs-unstable.legacyPackages.${system};
+                };
               };
           in
           {

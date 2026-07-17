@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  unstable,
   ...
 }:
 
@@ -19,7 +20,7 @@
     opencode
     claude-code
     github-copilot-cli
-    codex
+    unstable.codex
 
     # Social & Communication
     wechat
