@@ -11,7 +11,7 @@
   xresources.properties."Xft.dpi" = 96;
 
   xdg.configFile."hypr/modules/monitor.lua".text = ''
-    hl.monitor({ output = "", mode = "highres", position = "auto", scale = 1.4 })
+    hl.monitor({ output = "", mode = "highres", position = "auto", scale = 1.33 })
   '';
 
   home.packages = with pkgs; [
