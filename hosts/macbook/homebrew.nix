@@ -20,7 +20,7 @@
     enable = true;
 
     casks = [
-      "squirrel"
+      "squirrel-app"
     ];
 
     onActivation = {
