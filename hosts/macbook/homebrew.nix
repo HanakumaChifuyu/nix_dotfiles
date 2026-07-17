@@ -20,7 +20,9 @@
     enable = true;
 
     casks = [
+      "karabiner-elements"
       "squirrel-app"
+      "wechat"
     ];
 
     onActivation = {

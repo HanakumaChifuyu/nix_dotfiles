@@ -35,6 +35,7 @@
       fi
 
       cp -f ${../../dotfiles/rime/default.yaml} "$RIME_DIR/default.yaml"
+      cp -f ${../../dotfiles/rime/squirrel.custom.yaml} "$RIME_DIR/squirrel.custom.yaml"
     '';
   };
 }

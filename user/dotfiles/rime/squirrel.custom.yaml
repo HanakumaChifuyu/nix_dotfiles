@@ -1,0 +1,50 @@
+# Squirrel theme managed by Home Manager.
+# Squirrel uses BGR color values: 0xBBGGRR.
+patch:
+  style/color_scheme: tokyo_night_light
+  style/color_scheme_dark: tokyo_night_dark
+  style/candidate_list_layout: stacked
+  style/candidate_format: "[label]  [candidate] [comment]"
+  style/font_face: "PingFang SC"
+  style/font_point: 17
+  style/label_font_face: "Helvetica Neue"
+  style/label_font_point: 12
+  style/comment_font_face: "PingFang SC"
+  style/comment_font_point: 14
+  style/corner_radius: 10
+  style/hilited_corner_radius: 7
+  style/border_height: 5
+  style/border_width: 7
+  style/line_spacing: 7
+  style/spacing: 9
+  style/shadow_size: 4
+
+  preset_color_schemes/tokyo_night_light:
+    name: "Tokyo Night Light"
+    author: "nix_dotfiles"
+    color_space: srgb
+    back_color: 0xEDE7E6
+    border_color: 0xD8D1CB
+    text_color: 0x895F56
+    candidate_text_color: 0x583B34
+    label_color: 0x9E746D
+    comment_text_color: 0x9E746D
+    hilited_candidate_back_color: 0x8A5434
+    hilited_candidate_text_color: 0xFFFFFF
+    hilited_candidate_label_color: 0xFFFFFF
+    hilited_comment_text_color: 0xEDE7E6
+
+  preset_color_schemes/tokyo_night_dark:
+    name: "Tokyo Night Dark"
+    author: "nix_dotfiles"
+    color_space: srgb
+    back_color: 0x261B1A
+    border_color: 0x3B2A29
+    text_color: 0x895F56
+    candidate_text_color: 0xF5CAC0
+    label_color: 0x895F56
+    comment_text_color: 0x895F56
+    hilited_candidate_back_color: 0xF7A27A
+    hilited_candidate_text_color: 0x261B1A
+    hilited_candidate_label_color: 0x261B1A
+    hilited_comment_text_color: 0x3B2A29

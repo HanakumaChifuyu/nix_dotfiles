@@ -10,6 +10,7 @@
     ../../modules/starship.nix
     ../../modules/ssh.nix
     ../../modules/yazi.nix
+    ./karabiner.nix
     ./rime.nix
   ];
 

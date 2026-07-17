@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
 
+let
+  windowModifier = if pkgs.stdenv.isDarwin then "cmd" else "alt";
+in
 {
   programs.kitty = {
     enable = true;
@@ -58,31 +61,31 @@
       "ctrl+shift+j" = "scroll_line_down";
       "ctrl+shift+k" = "scroll_line_up";
 
-      "alt+-" = "launch --location=hsplit --cwd=current";
-      "alt+\\" = "launch --location=vsplit --cwd=current";
+      "${windowModifier}+-" = "launch --location=hsplit --cwd=current";
+      "${windowModifier}+\\" = "launch --location=vsplit --cwd=current";
 
-      "alt+k" = "neighboring_window up";
-      "alt+j" = "neighboring_window down";
-      "alt+h" = "neighboring_window left";
-      "alt+l" = "neighboring_window right";
+      "${windowModifier}+k" = "neighboring_window up";
+      "${windowModifier}+j" = "neighboring_window down";
+      "${windowModifier}+h" = "neighboring_window left";
+      "${windowModifier}+l" = "neighboring_window right";
 
-      "alt+shift+k" = "move_window up";
-      "alt+shift+j" = "move_window down";
-      "alt+shift+h" = "move_window left";
-      "alt+shift+l" = "move_window right";
+      "${windowModifier}+shift+k" = "move_window up";
+      "${windowModifier}+shift+j" = "move_window down";
+      "${windowModifier}+shift+h" = "move_window left";
+      "${windowModifier}+shift+l" = "move_window right";
 
-      "alt+up" = "resize_window taller";
-      "alt+down" = "resize_window shorter 3";
-      "alt+right" = "resize_window narrower";
-      "alt+left" = "resize_window wider 3";
+      "${windowModifier}+up" = "resize_window taller";
+      "${windowModifier}+down" = "resize_window shorter 3";
+      "${windowModifier}+right" = "resize_window narrower";
+      "${windowModifier}+left" = "resize_window wider 3";
 
       "ctrl+left" = "resize_window narrower 3";
       "ctrl+right" = "resize_window wider 3";
       "ctrl+up" = "resize_window taller 3";
       "ctrl+down" = "resize_window shorter 3";
 
-      "alt+q" = "close_window_with_confirmation";
-      "alt+/" =
+      "${windowModifier}+q" = "close_window_with_confirmation";
+      "${windowModifier}+/" =
         "launch --stdin-source=@screen_scrollback --type=overlay ${config.home.homeDirectory}/.config/kitty/scrollback-nvim.sh";
     };
 
