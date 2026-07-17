@@ -6,6 +6,7 @@
 
     # Hyprland ecosystem
     hypridle
+    wofi
     rofi
     fuzzel
     awww
@@ -33,8 +34,6 @@
     mpv
 
     # Formatters (for Neovim conform.nvim)
-
-
 
     # misc
     starship
