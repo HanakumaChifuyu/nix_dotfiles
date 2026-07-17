@@ -23,7 +23,6 @@
     ./modules/portals.nix
     ./modules/xwayland.nix
     ./modules/registry.nix
-    ./modules/proxy.nix
   ];
 
   home.username = "tohno";
