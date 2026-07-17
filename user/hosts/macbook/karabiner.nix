@@ -15,6 +15,10 @@
 
           simple_modifications = [
             {
+              from.key_code = "caps_lock";
+              to = [ { key_code = "escape"; } ];
+            }
+            {
               from.key_code = "left_control";
               to = [ { key_code = "fn"; } ];
             }
@@ -70,6 +74,37 @@
                       from = "l";
                       to = "right_arrow";
                     }
+                  ];
+            }
+            {
+              description = "Ctrl editing shortcuts to Command outside Kitty";
+              manipulators =
+                map
+                  (key: {
+                    type = "basic";
+                    from = {
+                      key_code = key;
+                      modifiers.mandatory = [ "control" ];
+                    };
+                    to = [
+                      {
+                        key_code = key;
+                        modifiers = [ "command" ];
+                      }
+                    ];
+                    conditions = [
+                      {
+                        type = "frontmost_application_unless";
+                        bundle_identifiers = [ "^net\\.kovidgoyal\\.kitty$" ];
+                      }
+                    ];
+                  })
+                  [
+                    "a"
+                    "c"
+                    "v"
+                    "x"
+                    "z"
                   ];
             }
           ];

@@ -52,11 +52,17 @@ in
 
       # Applications and basic window actions.
       alt - return : open -na '${kitty}'
+      alt - r      : open -a 'Raycast'
       alt - q      : yabai -m window --close
       alt - f      : yabai -m window --toggle zoom-fullscreen
       alt - a      : yabai -m window --toggle zoom-parent
       alt - space  : yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2
       alt - tab    : yabai -m window --focus recent
+
+      # Screenshot: physical Option+Shift+S selects a region and copies it.
+      # Physical Option is logical Command after the Karabiner swap.
+      cmd + shift - s : /usr/sbin/screencapture -i -c
+      alt + shift - s : /usr/sbin/screencapture -i -c
 
       # Focus windows with physical Command+h/j/k/l.
       alt - h : yabai -m window --focus west
@@ -79,7 +85,7 @@ in
 
       # Layout controls.
       alt - e : yabai -m space --balance
-      alt - r : yabai -m space --rotate 90
+      alt + shift - r : yabai -m space --rotate 90
       alt - x : yabai -m window --toggle split
 
       # Native macOS Spaces. Existing Spaces must be created in Mission Control.

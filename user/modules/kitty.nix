@@ -29,7 +29,7 @@ in
       window_border_width = "1pt";
       window_margin_width = 0;
       window_padding_width = 4;
-      hide_window_decorations = if pkgs.stdenv.isDarwin then "titlebar-and-corners" else "no";
+      hide_window_decorations = "no";
 
       tab_bar_min_tabs = 2;
       tab_bar_edge = "bottom";
@@ -44,6 +44,7 @@ in
 
     keybindings = {
       "ctrl+c" = "copy_or_interrupt";
+      "ctrl+v" = "paste_from_clipboard";
 
       "ctrl+plus" = "change_font_size all +1";
       "ctrl+equal" = "change_font_size all +1";
