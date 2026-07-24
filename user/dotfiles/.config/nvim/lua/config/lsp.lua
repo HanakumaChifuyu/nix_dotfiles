@@ -36,6 +36,7 @@ require("conform").setup({
 		conf = { "prettier" },
 		fish = { "fish_indent" },
 		typst = { "typstyle" },
+		rust = { "rustfmt" },
 		python = { "ruff_format", "ruff_organize_imports", "ruff_fix" },
 		nix = { "nixfmt" },
 		json = { "biome", "prettier", stop_after_first = true },

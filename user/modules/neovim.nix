@@ -34,6 +34,7 @@
         tree-sitter
 
         # Formatter
+        rustfmt
         shfmt
         prettier
         biome

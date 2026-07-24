@@ -37,6 +37,10 @@
     # Browsers
     qutebrowser
     google-chrome
+
+    # node
+    nodejs_26
+    pnpm
   ];
 
   xdg.configFile."hypr/modules/monitor.lua".text = ''
