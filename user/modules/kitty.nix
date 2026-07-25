@@ -59,8 +59,8 @@ in
       "ctrl+shift+h" = "previous_tab";
       "ctrl+shift+l" = "next_tab";
 
-      "ctrl+shift+j" = "scroll_line_down";
-      "ctrl+shift+k" = "scroll_line_up";
+      "ctrl+e" = "scroll_line_down 2";
+      "ctrl+y" = "scroll_line_up 2";
 
       "${windowModifier}+-" = "launch --location=hsplit --cwd=current";
       "${windowModifier}+\\" = "launch --location=vsplit --cwd=current";

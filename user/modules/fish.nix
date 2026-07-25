@@ -33,9 +33,6 @@ in
     shellAliases = {
       lg = "lazygit";
       y = "yazi";
-      vi = "nvim";
-      ct = "code2prompt ./ | ${copyCommand}";
-      svim = "sudoedit";
       ls = "eza --icons";
       ll = "eza -lgh --icons";
       lt = "eza --tree";
