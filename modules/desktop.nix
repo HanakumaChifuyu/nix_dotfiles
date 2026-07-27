@@ -51,14 +51,10 @@
       default = {
         ids = [ "*" ];
         settings = {
-          global = {
-            tap_timeout = 20;
-          };
-
           main = {
             pageup = "macro2(100, 100, scrollup)";
             pagedown = "macro2(100, 100, scrolldown)";
-            capslock = "esc";
+            capslock = "overloadt(control, esc, 200)";
 
             leftalt = "leftmeta";
             leftmeta = "leftalt";

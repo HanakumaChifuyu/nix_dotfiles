@@ -55,9 +55,9 @@ in
       "ctrl+0" = "change_font_size all 0";
       "ctrl+kp_0" = "change_font_size all 0";
 
-      "ctrl+shift+i" = "new_tab";
-      "ctrl+shift+h" = "previous_tab";
-      "ctrl+shift+l" = "next_tab";
+      "${windowModifier}+i" = "new_tab";
+      "${windowModifier}+shift+h" = "previous_tab";
+      "${windowModifier}+shift+l" = "next_tab";
 
       "ctrl+e" = "scroll_line_down 2";
       "ctrl+y" = "scroll_line_up 2";
@@ -70,20 +70,16 @@ in
       "${windowModifier}+h" = "neighboring_window left";
       "${windowModifier}+l" = "neighboring_window right";
 
-      "${windowModifier}+shift+k" = "move_window up";
-      "${windowModifier}+shift+j" = "move_window down";
-      "${windowModifier}+shift+h" = "move_window left";
-      "${windowModifier}+shift+l" = "move_window right";
+      "${windowModifier}+shift+up" = "move_window up";
+      "${windowModifier}+shift+down" = "move_window down";
+      "${windowModifier}+shift+right" = "move_window left";
+      "${windowModifier}+shift+left" = "move_window right";
 
+      # On NixOS, keyd also makes Caps+Alt+H/J/K/L reach these bindings.
       "${windowModifier}+up" = "resize_window taller";
       "${windowModifier}+down" = "resize_window shorter 3";
       "${windowModifier}+right" = "resize_window narrower";
       "${windowModifier}+left" = "resize_window wider 3";
-
-      "ctrl+left" = "resize_window narrower 3";
-      "ctrl+right" = "resize_window wider 3";
-      "ctrl+up" = "resize_window taller 3";
-      "ctrl+down" = "resize_window shorter 3";
 
       "${windowModifier}+q" = "close_window_with_confirmation";
       "${windowModifier}+/" =

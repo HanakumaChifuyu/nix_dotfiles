@@ -1,6 +1,6 @@
 return {
 	"keaising/im-select.nvim",
-	enabled = false,
+	-- enabled = false,
 	config = function()
 		local is_macos = vim.fn.has("macunix") == 1
 
