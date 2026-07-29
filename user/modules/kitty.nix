@@ -34,7 +34,7 @@ in
       tab_bar_min_tabs = 2;
       tab_bar_edge = "bottom";
       tab_bar_style = "custom";
-      tab_title_template = "{index}: {title[:20]}{'  :{}'.format(num_windows) if num_windows > 1 else ''}";
+      tab_title_template = "{index}: {title[:12]}{'  :{}'.format(num_windows) if num_windows > 1 else ''}";
 
       enabled_layouts = "splits:split_axis=horizontal";
       shell_integration = "enabled";
