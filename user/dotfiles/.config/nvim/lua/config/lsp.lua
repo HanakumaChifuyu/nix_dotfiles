@@ -146,6 +146,9 @@ vim.lsp.enable("tinymist")
 vim.lsp.config["rust_analyzer"] = {
 	settings = {
 		["rust-analyzer"] = {
+			doctest = {
+				enable = true,
+			},
 			imports = {
 				granularity = {
 					group = "module",
@@ -191,6 +194,11 @@ vim.lsp.config["tailwindcss"] = {
 		"Cargo.toml",
 		".git",
 	},
+	init_options = {
+		userLanguages = {
+			rust = "html",
+		},
+	},
 	settings = {
 		tailwindCSS = {
 			includeLanguages = {
@@ -198,8 +206,13 @@ vim.lsp.config["tailwindcss"] = {
 			},
 			experimental = {
 				classRegex = {
+					'class\\s*=\\s*"(.*?)"',
+					"class\\s*=\\s*\\((.*?)\\)",
 					'class:\\s*"(.*?)"',
 					"class:\\s*\\((.*?)\\)",
+					'class!\\("(.*?)"\\)',
+					'classes!\\("(.*?)"\\)',
+					"class:([^=\\s>]+)",
 				},
 			},
 		},
