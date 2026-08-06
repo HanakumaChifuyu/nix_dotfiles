@@ -36,7 +36,7 @@ require("conform").setup({
 		conf = { "prettier" },
 		fish = { "fish_indent" },
 		typst = { "typstyle" },
-		rust = { "rustfmt" },
+		rust = { "leptosfmt", "rustfmt", stop_after_first = true },
 		python = { "ruff_format", "ruff_organize_imports", "ruff_fix" },
 		nix = { "nixfmt" },
 		json = { "biome", "prettier", stop_after_first = true },
@@ -166,8 +166,46 @@ vim.lsp.config["rust_analyzer"] = {
 
 vim.lsp.enable("rust_analyzer")
 
--- TS
-vim.lsp.enable("vtsls")
+-- Frontend (TS / HTML / CSS / Tailwind / Emmet / ESLint)
+vim.lsp.config["tailwindcss"] = {
+	cmd = { "tailwindcss-language-server", "--stdio" },
+	filetypes = {
+		"html",
+		"css",
+		"scss",
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+		"vue",
+		"svelte",
+		"rust",
+	},
+	root_markers = {
+		"tailwind.config.js",
+		"tailwind.config.ts",
+		"tailwind.config.cjs",
+		"tailwind.config.mjs",
+		"postcss.config.js",
+		"package.json",
+		"Cargo.toml",
+		".git",
+	},
+	settings = {
+		tailwindCSS = {
+			includeLanguages = {
+				rust = "html",
+			},
+			experimental = {
+				classRegex = {
+					'class:\\s*"(.*?)"',
+					"class:\\s*\\((.*?)\\)",
+				},
+			},
+		},
+	},
+}
+vim.lsp.enable({ "vtsls", "html", "cssls", "tailwindcss", "emmet_ls", "eslint" })
 
 -- cpp
 vim.lsp.config["clangd"] = {
