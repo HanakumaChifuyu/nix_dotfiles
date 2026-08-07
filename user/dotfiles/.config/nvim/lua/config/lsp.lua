@@ -3,6 +3,12 @@
 -- ============================================================================
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+-- Neovim 0.12 enables document-color requests by default. A client that
+-- restarts while a request is queued can leave its internal provider with a
+-- stale client id, which then hits an assertion in document_color.lua.
+-- Disable the native provider until that race is fixed upstream.
+vim.lsp.document_color.enable(false)
+
 -- Enable workspace/didChangeWatchedFiles so LSP can detect external file changes
 capabilities.workspace = capabilities.workspace or {}
 capabilities.workspace.didChangeWatchedFiles = {
@@ -36,7 +42,7 @@ require("conform").setup({
 		conf = { "prettier" },
 		fish = { "fish_indent" },
 		typst = { "typstyle" },
-		rust = { "leptosfmt", "rustfmt", stop_after_first = true },
+		rust = { "rustfmt", "leptosfmt" },
 		python = { "ruff_format", "ruff_organize_imports", "ruff_fix" },
 		nix = { "nixfmt" },
 		json = { "biome", "prettier", stop_after_first = true },
