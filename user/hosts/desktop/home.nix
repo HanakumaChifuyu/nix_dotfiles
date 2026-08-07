@@ -7,7 +7,10 @@
 }:
 
 {
-  imports = [ ../../home.nix ];
+  imports = [
+    ../../home.nix
+    ../../modules/wechat.nix
+  ];
 
   # Desktop 使用 1x 输出缩放，并单独放大文字，避免低 DPI 屏幕上的
   # fractional scaling 使界面和字体发虚。

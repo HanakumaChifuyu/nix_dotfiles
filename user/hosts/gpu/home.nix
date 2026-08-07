@@ -6,7 +6,10 @@
 }:
 
 {
-  imports = [ ../../home.nix ];
+  imports = [
+    ../../home.nix
+    ../../modules/wechat.nix
+  ];
 
   # gpu-specific home configuration
   home.packages = with pkgs; [
