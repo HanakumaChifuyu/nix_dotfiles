@@ -8,6 +8,7 @@ let
 in
 {
   xdg.configFile = {
+    tmux = forceSource "${dots}/tmux";
     foot = forceSource "${dots}/foot";
     fuzzel = forceSource "${dots}/fuzzel";
     htop = forceSource "${dots}/htop";

@@ -11,9 +11,9 @@ vim.o.wrap = false
 vim.o.fileencodings = "utf-8"
 vim.opt.updatetime = 200
 vim.opt.autoread = true
-vim.opt.iskeyword:append("-")
-vim.opt.iskeyword:append("_")
-vim.opt.iskeyword:append("@")
+-- vim.opt.iskeyword:append("-")
+-- vim.opt.iskeyword:append("_")
+-- vim.opt.iskeyword:append("@")
 vim.o.exrc = true
 vim.o.winborder = "single"
 vim.o.winblend = 0

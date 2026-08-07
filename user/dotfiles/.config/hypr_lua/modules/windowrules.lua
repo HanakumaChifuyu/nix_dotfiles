@@ -1,12 +1,13 @@
--- Opacity for kitty
-hl.window_rule({ match = { class = "kitty" }, opacity = "0.95" })
+-- Opacity for Foot clients
+hl.window_rule({ match = { class = "footclient" }, opacity = "0.85" })
 
 -- Dropdown terminal (float + center)
 hl.window_rule({
-	match = { class = "kitty-dropdown" },
+	match = { class = "foot-dropdown" },
 	float = true,
 	center = true,
 	size = { "70%", "60%" },
+	opacity = "0.85",
 })
 
 -- Float XWayland windows, no blur/border/rounding

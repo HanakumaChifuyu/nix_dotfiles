@@ -43,6 +43,16 @@ input_path = "~/.config/matugen/templates/fuzzel.ini"
 output_path = "~/.cache/matugen/fuzzel-colors.ini"
 # fuzzel 无运行时；下次启动自动生效
 
+[templates.foot]
+input_path = "~/.config/matugen/templates/foot-colors.ini"
+output_path = "~/.cache/matugen/foot-colors.ini"
+# foot reads this file when a new terminal window is opened
+
+[templates.mako]
+input_path = "~/.config/matugen/templates/mako-colors"
+output_path = "~/.cache/matugen/mako-colors"
+post_hook = "sh -c 'makoctl reload >/dev/null 2>&1 || true'"
+
 [templates.btop]
 input_path = "~/.config/matugen/templates/btop.theme"
 output_path = "~/.cache/matugen/btop.theme"

@@ -14,6 +14,7 @@ let
     pkgs.bash
     pkgs.coreutils
     pkgs.matugen
+    pkgs.mako
     pkgs.procps
     # pkgs.swaynotificationcenter  # swaync replaced by mako
     pkgs.awww
@@ -26,6 +27,8 @@ let
     "${home}/.cache/matugen/hypr-vars.lua"
     # "${home}/.cache/matugen/swaync-style.css"  # swaync replaced by mako
     "${home}/.cache/matugen/fuzzel-colors.ini"
+    "${home}/.cache/matugen/foot-colors.ini"
+    "${home}/.cache/matugen/mako-colors"
     "${home}/.cache/matugen/btop.theme"
     "${home}/.cache/matugen/yazi-theme.toml"
     "${home}/.cache/matugen/nvim-matugen.lua"
@@ -95,5 +98,13 @@ in
         echo "No wallpaper found in ${wallpapers}; skipping initial matugen color generation"
       fi
     fi
+  '';
+
+  # Home Manager starts mako through D-Bus activation. Reload that single
+  # instance instead of starting mako.service, which would compete for the
+  # org.freedesktop.Notifications bus name and leave a failed unit behind.
+  home.activation.reloadMako = lib.hm.dag.entryAfter [ "ensureMatugenColors" ] ''
+    ${pkgs.systemd}/bin/systemctl --user reset-failed mako.service >/dev/null 2>&1 || true
+    ${pkgs.mako}/bin/makoctl reload >/dev/null 2>&1 || true
   '';
 }

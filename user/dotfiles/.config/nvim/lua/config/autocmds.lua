@@ -46,7 +46,7 @@ local function toggle_dollar_sign_pair()
 
 			['"'] = { action = "closeopen", pair = '""', neigh_pattern = "^[^\\]", register = { cr = false } },
 			["'"] = { action = "closeopen", pair = "''", neigh_pattern = "^[^%a\\]", register = { cr = false } },
-			["`"] = { action = "closeopen", pair = "``", neigh_pattern = "^[^\\]", register = { cr = false } },
+			-- ["`"] = { action = "closeopen", pair = "``", neigh_pattern = "^[^\\]", register = { cr = false } },
 			-- ["$"] = { action = "closeopen", pair = "$$", neigh_pattern = "^[^\\]", register = { cr = false } },
 		},
 	})

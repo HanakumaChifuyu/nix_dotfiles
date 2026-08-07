@@ -16,7 +16,6 @@ return {
 			--     'select_next', "fallback" },
 			-- ['<S-Tab>'] = {
 			--     "select_prev", "fallback" },
-			["<C-p>"] = { "show", "fallback" },
 			["<CR>"] = { "accept", "fallback" },
 			["<C-j>"] = { "select_next", "fallback" },
 			["<C-k>"] = { "select_prev", "fallback" },
