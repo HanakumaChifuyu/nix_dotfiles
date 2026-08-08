@@ -1,3 +1,21 @@
+/*
+  TODO: YubiKey 到货后的 sops-nix 设置指南
+
+  --------------------------------------------------
+  1. 开启服务与安装工具 (在 packages.nix 或系统配置中)：
+     - services.pcscd.enable = true;
+     - pkgs.age-plugin-yubikey
+     - pkgs.yubikey-manager
+  2. 插上 YubiKey，在终端生成身份指针文件：
+     $ age-plugin-yubikey
+     (按提示设置 PIN 码和按键触控，它会自动生成存根文件至 ~/.config/sops/age/keys.txt)
+     终端会打印出类似 age1yubikey1... 的公钥。
+  3. 更新项目根目录的 .sops.yaml：
+     将打印的 age1yubikey1... 公钥加入到 .sops.yaml 的 recipients 规则中，
+     并运行 `sops updatekeys secrets/keys.yaml` 更新密文。
+  4. 当前的 sops.age.keyFile 已设为 ${home}/.config/sops/age/keys.txt，届时可直接工作！
+*/
+
 {
   config,
   lib,

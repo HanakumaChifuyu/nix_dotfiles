@@ -35,6 +35,10 @@
 
     # Formatters (for Neovim conform.nvim)
 
+    # SSH management & terminal utilities
+    sshs
+    fzf
+
     # misc
     starship
     libnotify
