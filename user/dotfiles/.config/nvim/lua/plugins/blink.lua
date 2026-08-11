@@ -11,7 +11,6 @@ return {
 	opts = {
 		keymap = {
 			preset = "default",
-
 			-- ['<Tab>'] = {
 			--     'select_next', "fallback" },
 			-- ['<S-Tab>'] = {
@@ -25,8 +24,12 @@ return {
 			nerd_font_variant = "mono",
 		},
 		sources = {
-			default = { "lsp", "path", "snippets" },
+			default = { "lsp", "path", "snippets", "buffer", "dictionary" },
 			providers = {
+				-- Keep words from the current buffer below semantic completion sources.
+				buffer = {
+					score_offset = -5,
+				},
 
 				thesaurus = {
 					enabled = true,
@@ -59,6 +62,9 @@ return {
 					enabled = true,
 					name = "blink-cmp-words",
 					module = "blink-cmp-words.dictionary",
+					-- The dictionary source already penalizes each successive item;
+					-- lower the whole source as well, below buffer completions.
+					score_offset = -10,
 					-- All available options
 					opts = {
 						-- The number of characters required to trigger completion.
@@ -84,11 +90,11 @@ return {
 				},
 			},
 
-			-- Setup completion by filetype
-			per_filetype = {
-				text = { "dictionary" },
-				markdown = { "thesaurus" },
-			},
+			-- -- Setup completion by filetype
+			-- per_filetype = {
+			-- 	text = { "dictionary" },
+			-- 	markdown = { "thesaurus" },
+			-- },
 		},
 		completion = {
 
