@@ -1,10 +1,4 @@
 return {
-    -- add dracula
+    -- Optional fallback theme; it is not loaded automatically.
     { "Mofiqul/dracula.nvim" },
-    {
-        "folke/tokyonight.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-    }
 }

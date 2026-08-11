@@ -72,5 +72,3 @@ vim.diagnostic.config({
 })
 
 -- Note: Autocommands moved to lua/config/autocmds.lua for centralized management
-
-vim.cmd.colorscheme("tokyonight")
