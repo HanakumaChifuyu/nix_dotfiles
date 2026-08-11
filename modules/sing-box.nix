@@ -5,15 +5,11 @@
   ...
 }:
 let
-  hy2-ip = config.sops.secrets."hysteria2/server_ip".path;
-  hy2-passwd = config.sops.secrets."hysteria2/passwd".path;
-  hy2-obfs-passwd = config.sops.secrets."hysteria2/obfs/password".path;
-  hy2-tls-server_name = config.sops.secrets."hysteria2/tls/server_name".path;
-
-  vl-reality-ip = config.sops.secrets."vless_reality/server_ip".path;
-  vl-reality-uuid = config.sops.secrets."vless_reality/uuid".path;
-  vl-reality-pubkey = config.sops.secrets."vless_reality/public_key".path;
-  vl-reality-shortid = config.sops.secrets."vless_reality/short_id".path;
+  node = "sing_box/jp_osaka/";
+  hy2-ip = config.sops.secrets."${node}hysteria2/server_ip".path;
+  hy2-passwd = config.sops.secrets."${node}hysteria2/passwd".path;
+  hy2-obfs-passwd = config.sops.secrets."${node}hysteria2/obfs/password".path;
+  hy2-tls-server_name = config.sops.secrets."${node}hysteria2/tls/server_name".path;
 
   cn-rule-set-tags = [
     "WeChat"
@@ -56,6 +52,7 @@ let
   };
 
   cn-domains-dns = [
+    "faroapi.com"
     "www.coalcloud.net"
     "cloudflare.com"
     "mirrors.aliyun.com"
@@ -173,15 +170,10 @@ let
   ];
 in
 {
-  sops.secrets."hysteria2/server_ip" = { };
-  sops.secrets."hysteria2/passwd" = { };
-  sops.secrets."hysteria2/obfs/password" = { };
-  sops.secrets."hysteria2/tls/server_name" = { };
-
-  sops.secrets."vless_reality/server_ip" = { };
-  sops.secrets."vless_reality/uuid" = { };
-  sops.secrets."vless_reality/public_key" = { };
-  sops.secrets."vless_reality/short_id" = { };
+  sops.secrets."${node}hysteria2/server_ip" = { };
+  sops.secrets."${node}hysteria2/passwd" = { };
+  sops.secrets."${node}hysteria2/obfs/password" = { };
+  sops.secrets."${node}hysteria2/tls/server_name" = { };
 
   services.sing-box = {
     enable = true;
@@ -298,35 +290,6 @@ in
             };
           };
         }
-        {
-          type = "vless";
-          tag = "reality-proxy";
-          server = {
-            _secret = vl-reality-ip;
-          };
-          server_port = 29191;
-          uuid = {
-            _secret = vl-reality-uuid;
-          };
-          flow = "xtls-rprx-vision";
-          tls = {
-            enabled = true;
-            server_name = "www.microsoft.com";
-            utls = {
-              enabled = true;
-              fingerprint = "chrome";
-            };
-            reality = {
-              enabled = true;
-              public_key = {
-                _secret = vl-reality-pubkey;
-              };
-              short_id = {
-                _secret = vl-reality-shortid;
-              };
-            };
-          };
-        }
       ];
       route = {
         default_domain_resolver = "aliyun";
@@ -361,8 +324,29 @@ in
             ip_cidr = [ "1.1.1.1" ];
             outbound = "proxy";
           }
+          # Steam content servers use HTTP/80 and can redirect chunk requests
+          # to bare CDN IPs.  Keep the store on the proxy (normally HTTPS/443),
+          # but send those downloads directly.
+          {
+            process_name = [
+              "steam"
+              "steamwebhelper"
+            ];
+            network = "tcp";
+            port = [ 80 ];
+            outbound = "direct";
+          }
           {
             action = "sniff";
+          }
+          {
+            domain_suffix = [
+              "steam.clngaa.com"
+              "eccdnx.com"
+              "pphimalayanrt.com"
+              "sycontroller.com"
+            ];
+            outbound = "direct";
           }
           {
             type = "logical";
