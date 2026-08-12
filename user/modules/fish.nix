@@ -52,6 +52,31 @@ in
           command ssh $host
         end
       end
+
+      # Search with ripgrep and open a line-aware fzf preview.
+      # Usage: rgf <keyword> [directory]; the directory defaults to $PWD.
+      function rgf --description "Search files with ripgrep and preview matches in fzf"
+        if test (count $argv) -lt 1; or test (count $argv) -gt 2
+          echo "Usage: rgf <keyword> [directory]" >&2
+          return 2
+        end
+
+        set -l query $argv[1]
+        set -l directory $PWD
+        if test (count $argv) -eq 2
+          set directory $argv[2]
+        end
+
+        if not test -d "$directory"
+          echo "rgf: directory not found: $directory" >&2
+          return 1
+        end
+
+        rg -n --column --color=always -- "$query" "$directory" |
+          fzf --ansi --delimiter : \
+            --preview 'bat --color=always --highlight-line {2} -- {1}' \
+            --preview-window 'up:60%:+{2}-10'
+      end
     '';
 
     shellAliases = {
