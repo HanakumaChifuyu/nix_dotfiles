@@ -13,6 +13,11 @@ hl.config({
 		layout = "dwindle",
 	},
 
+	render = {
+		-- Keep the SDR monitor in SDR when a fullscreen client advertises HDR.
+		cm_auto_hdr = 0,
+	},
+
 	decoration = {
 		rounding = 20,
 		rounding_power = 2,
