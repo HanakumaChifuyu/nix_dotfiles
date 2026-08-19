@@ -100,6 +100,7 @@ hl.config({
 	misc = {
 		enable_swallow = true,
 		initial_workspace_tracking = 1,
-		vrr = 0,
+		-- Adaptive Sync only for fullscreen content such as games.
+		vrr = 2,
 	},
 })

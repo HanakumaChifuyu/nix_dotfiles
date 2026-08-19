@@ -19,7 +19,8 @@ hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen()) -- whole full screen
 hl.bind(mainMod .. " + A", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" })) -- fake full screen
 hl.bind(mainMod .. " + SPACE", hl.dsp.window.float()) -- float mode
 hl.bind(mainMod .. " + P", hl.dsp.window.pin()) -- pin window
-hl.bind(mainMod .. " + G", hl.dsp.group.toggle())
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(scriptsDir .. "/gamemode.sh")) -- toggle game mode
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.group.toggle()) -- toggle group
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(scriptsDir .. "/Screenshot.sh"))
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("scratchpad"))
 hl.bind(mainMod .. " + ALT + S", hl.dsp.window.move({ workspace = "special:scratchpad" }))

@@ -87,4 +87,13 @@
     # 启用 gamescope 支持（在 Wayland 下玩游戏很有用）
     gamescopeSession.enable = true;
   };
+
+  # Gamescope 嵌套合成器（支持 FSR 升采样、全局低延迟、绝对锁定鼠标）
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+  };
+
+  # Feral GameMode（自动调度 CPU 性能模式并提升游戏优先级）
+  programs.gamemode.enable = true;
 }

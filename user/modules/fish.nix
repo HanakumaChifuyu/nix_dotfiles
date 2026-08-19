@@ -53,11 +53,12 @@ in
         end
       end
 
-      # Search with ripgrep and open a line-aware fzf preview.
-      # Usage: rgf <keyword> [directory]; the directory defaults to $PWD.
+      # Search with ripgrep and preview matches in fzf.
+      # Usage: rgf <regex> [directory]; the directory defaults to $PWD.
+      # Enter copies the selected result; Ctrl-O opens it in Neovim at the match.
       function rgf --description "Search files with ripgrep and preview matches in fzf"
         if test (count $argv) -lt 1; or test (count $argv) -gt 2
-          echo "Usage: rgf <keyword> [directory]" >&2
+          echo "Usage: rgf <regex> [directory]" >&2
           return 2
         end
 
@@ -74,8 +75,11 @@ in
 
         rg -n --column --color=always -- "$query" "$directory" |
           fzf --ansi --delimiter : \
+            --header 'Enter: copy result · Ctrl-O: open in nvim' \
             --preview 'bat --color=always --highlight-line {2} -- {1}' \
-            --preview-window 'up:60%:+{2}-10'
+            --preview-window 'up:60%:+{2}-10' \
+            --bind 'enter:execute-silent(printf "%s\\n" {} | wl-copy)+abort' \
+            --bind 'ctrl-o:become(nvim +{2} {1})'
       end
     '';
 

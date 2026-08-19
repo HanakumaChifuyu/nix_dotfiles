@@ -30,3 +30,15 @@ hl.window_rule({
 
 -- anki
 hl.window_rule({ match = { class = "anki" }, float = true })
+
+-- Gaming & Gamescope (极低延迟直通、全屏、防止息屏)
+hl.window_rule({
+	match = { class = "gamescope" },
+	fullscreen = true,
+	idle_inhibit = "focus",
+})
+
+hl.window_rule({
+	match = { class = "^steam_app_.*" },
+	idle_inhibit = "focus",
+})
