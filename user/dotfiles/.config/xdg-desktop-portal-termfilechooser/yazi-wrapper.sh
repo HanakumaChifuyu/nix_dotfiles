@@ -16,7 +16,7 @@ path="$4"
 out="$5"
 
 cmd="yazi"
-termcmd="${TERMCMD:-kitty}"
+termcmd="${TERMCMD:-foot}"
 
 if [ "$save" = "1" ]; then
   # save a file
@@ -33,8 +33,8 @@ else
 fi
 
 case "$termcmd" in
-kitty)
-  kitty --title termfilechooser "$cmd" "$@"
+foot)
+  foot --title=termfilechooser "$cmd" "$@"
   ;;
 ghostty)
   ghostty --title=termfilechooser -e "$cmd" "$@"
