@@ -53,6 +53,8 @@ require("conform").setup({
 		typescriptreact = { "prettier", stop_after_first = true },
 		cpp = { "clang-format" },
 		c = { "clang-format" },
+		cmake = { "cmake_format" },
+		meson = { "meson_format" },
 		vue = { "prettier" },
 		css = { "prettier" },
 		html = { "prettier" },
@@ -61,6 +63,13 @@ require("conform").setup({
 	format_on_save = {
 		timeout_ms = 500,
 		lsp_format = "fallback",
+	},
+	formatters = {
+		meson_format = {
+			command = "meson",
+			args = { "format", "--source-file-path", "$FILENAME", "-" },
+			stdin = true,
+		},
 	},
 })
 

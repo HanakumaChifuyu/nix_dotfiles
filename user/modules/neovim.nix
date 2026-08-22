@@ -17,8 +17,18 @@
     extraPackages =
       (with pkgs; [
         # LSP
-        nixd # Nix LSP
+        nixd # Nix
         lua-language-server # Lua
+        basedpyright # Python
+        tinymist # Typst
+        rust-analyzer # Rust
+        vtsls # JavaScript / TypeScript
+        vscode-langservers-extracted # HTML / CSS / ESLint
+        tailwindcss-language-server # Tailwind CSS
+        emmet-ls # Emmet
+        clang-tools # C / C++
+        neocmakelsp # CMake
+        mesonlsp # Meson
 
         # Build tools for lazy.nvim plugins such as nvim-treesitter and LuaSnip jsregexp.
         gcc
@@ -32,6 +42,8 @@
         xmlformat
         nixfmt # Nix formatter
         stylua # Lua formatter
+        cmake-format
+        meson
 
         fzf
         wordnet
