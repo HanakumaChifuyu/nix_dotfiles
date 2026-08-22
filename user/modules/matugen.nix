@@ -28,6 +28,7 @@ let
     # "${home}/.cache/matugen/swaync-style.css"  # swaync replaced by mako
     "${home}/.cache/matugen/fuzzel-colors.ini"
     "${home}/.cache/matugen/foot-colors.ini"
+    "${home}/.cache/matugen/kitty-colors.conf"
     "${home}/.cache/matugen/mako-colors"
     "${home}/.cache/matugen/btop.theme"
     "${home}/.cache/matugen/yazi-theme.toml"

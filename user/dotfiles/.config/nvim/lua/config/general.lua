@@ -68,7 +68,7 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.INFO] = "󰋽 ",
 		},
 	},
-	underline = true,
+	underline = false,
 })
 
 -- Note: Autocommands moved to lua/config/autocmds.lua for centralized management

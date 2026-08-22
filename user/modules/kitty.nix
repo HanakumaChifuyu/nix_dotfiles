@@ -1,8 +1,4 @@
-{ config, pkgs, ... }:
-
-let
-  windowModifier = if pkgs.stdenv.isDarwin then "cmd" else "alt";
-in
+{ pkgs, ... }:
 {
   programs.kitty = {
     enable = true;
@@ -36,10 +32,14 @@ in
       tab_bar_style = "custom";
       tab_title_template = "{index}: {title[:12]}{'  :{}'.format(num_windows) if num_windows > 1 else ''}";
 
-      enabled_layouts = "splits:split_axis=horizontal";
+      # enabled_layouts = "splits:split_axis=horizontal";
       shell_integration = "enabled";
       scrollback_lines = 10000;
       scrollback_pager_history_size = 200;
+
+      # Let tmux own all multiplexing shortcuts. This removes Kitty's defaults
+      # before the bindings below are applied.
+      clear_all_shortcuts = true;
     };
 
     keybindings = {
@@ -47,46 +47,46 @@ in
       "ctrl+v" = "paste_from_clipboard";
 
       "ctrl+plus" = "change_font_size all +1";
-      "ctrl+equal" = "change_font_size all +1";
-      "ctrl+kp_add" = "change_font_size all +1";
+      # "ctrl+equal" = "change_font_size all +1";
+      # "ctrl+kp_add" = "change_font_size all +1";
       "ctrl+minus" = "change_font_size all -1";
-      "ctrl+underscore" = "change_font_size all -1";
-      "ctrl+kp_subtract" = "change_font_size all -1";
-      "ctrl+0" = "change_font_size all 0";
-      "ctrl+kp_0" = "change_font_size all 0";
+      # "ctrl+underscore" = "change_font_size all -1";
+      # "ctrl+kp_subtract" = "change_font_size all -1";
+      # "ctrl+0" = "change_font_size all 0";
+      # "ctrl+kp_0" = "change_font_size all 0";
 
-      "${windowModifier}+i" = "new_tab";
-      "${windowModifier}+left" = "previous_tab";
-      "${windowModifier}+right" = "next_tab";
+      # "${windowModifier}+i" = "new_tab";
+      # "${windowModifier}+left" = "previous_tab";
+      # "${windowModifier}+right" = "next_tab";
 
       "ctrl+e" = "scroll_line_down 2";
       "ctrl+y" = "scroll_line_up 2";
 
-      "${windowModifier}+-" = "launch --location=hsplit --cwd=current";
-      "${windowModifier}+\\" = "launch --location=vsplit --cwd=current";
+      # "${windowModifier}+-" = "launch --location=hsplit --cwd=current";
+      # "${windowModifier}+\\" = "launch --location=vsplit --cwd=current";
 
-      "${windowModifier}+k" = "neighboring_window up";
-      "${windowModifier}+j" = "neighboring_window down";
-      "${windowModifier}+h" = "neighboring_window left";
-      "${windowModifier}+l" = "neighboring_window right";
+      # "${windowModifier}+k" = "neighboring_window up";
+      # "${windowModifier}+j" = "neighboring_window down";
+      # "${windowModifier}+h" = "neighboring_window left";
+      # "${windowModifier}+l" = "neighboring_window right";
 
-      "${windowModifier}+shift+up" = "move_window up";
-      "${windowModifier}+shift+down" = "move_window down";
-      "${windowModifier}+shift+right" = "move_window left";
-      "${windowModifier}+shift+left" = "move_window right";
+      # "${windowModifier}+shift+up" = "move_window up";
+      # "${windowModifier}+shift+down" = "move_window down";
+      # "${windowModifier}+shift+right" = "move_window left";
+      # "${windowModifier}+shift+left" = "move_window right";
 
-      "ctrl+up" = "resize_window taller";
-      "ctrl+down" = "resize_window shorter 3";
-      "ctrl+right" = "resize_window narrower";
-      "ctrl+left" = "resize_window wider 3";
+      # "ctrl+up" = "resize_window taller";
+      # "ctrl+down" = "resize_window shorter 3";
+      # "ctrl+right" = "resize_window narrower";
+      # "ctrl+left" = "resize_window wider 3";
 
-      "${windowModifier}+q" = "close_window_with_confirmation";
-      "${windowModifier}+/" =
-        "launch --stdin-source=@screen_scrollback --type=overlay ${config.home.homeDirectory}/.config/kitty/scrollback-nvim.sh";
+      # "${windowModifier}+q" = "close_window_with_confirmation";
+      # "${windowModifier}+/" =
+      #   "launch --stdin-source=@screen_scrollback --type=overlay ${config.home.homeDirectory}/.config/kitty/scrollback-nvim.sh";
     };
 
     extraConfig = ''
-      include themes/tokyonight_night.conf
+      include ~/.cache/matugen/kitty-colors.conf
     '';
   };
 

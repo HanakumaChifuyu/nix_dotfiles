@@ -1,7 +1,6 @@
 hl.on("hyprland.start", function()
 	hl.exec_cmd("xrdb -merge ~/.Xresources")
-	hl.exec_cmd("foot --server")
-	hl.exec_cmd("footclient")
+	hl.exec_cmd("kitty")
 	hl.exec_cmd("wl-paste --type text --watch cliphist store")
 	hl.exec_cmd("wl-paste --type image --watch cliphist store")
 	hl.exec_cmd("fcitx5")
