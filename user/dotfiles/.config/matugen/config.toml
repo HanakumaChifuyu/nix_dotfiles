@@ -46,7 +46,9 @@ output_path = "~/.cache/matugen/fuzzel-colors.ini"
 [templates.foot]
 input_path = "~/.config/matugen/templates/foot-colors.ini"
 output_path = "~/.cache/matugen/foot-colors.ini"
-# foot reads this file when a new terminal window is opened
+# foot does not watch included config files. Update the palette of existing
+# foot windows as well; tmux uses this ANSI palette for its status theme.
+post_hook = "~/.config/matugen/refresh-terminal-colors.sh"
 
 [templates.mako]
 input_path = "~/.config/matugen/templates/mako-colors"
