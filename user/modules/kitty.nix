@@ -46,6 +46,11 @@
       "ctrl+c" = "copy_or_interrupt";
       "ctrl+v" = "paste_from_clipboard";
 
+      # Legacy terminals encode Shift+Enter exactly like Enter. Send the
+      # CSI-u sequence so modern terminal applications can use it for a
+      # newline without submitting the current input.
+      "shift+enter" = "send_text all \\x1b[13;2u";
+
       "ctrl+plus" = "change_font_size all +1";
       # "ctrl+equal" = "change_font_size all +1";
       # "ctrl+kp_add" = "change_font_size all +1";

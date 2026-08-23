@@ -9,6 +9,9 @@
   # nix-ld: run unpatched dynamic binaries on NixOS
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
+    binutils
+    patchelf
+
     stdenv.cc.cc.lib
     zlib
     glib

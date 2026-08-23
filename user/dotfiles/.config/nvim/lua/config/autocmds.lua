@@ -46,8 +46,9 @@ local function toggle_dollar_sign_pair()
 
 			['"'] = { action = "closeopen", pair = '""', neigh_pattern = "^[^\\]", register = { cr = false } },
 			["'"] = { action = "closeopen", pair = "''", neigh_pattern = "^[^%a\\]", register = { cr = false } },
+			["`"] = false,
 			-- ["`"] = { action = "closeopen", pair = "``", neigh_pattern = "^[^\\]", register = { cr = false } },
-			-- ["$"] = { action = "closeopen", pair = "$$", neigh_pattern = "^[^\\]", register = { cr = false } },
+			["$"] = { action = "closeopen", pair = "$$", neigh_pattern = "^[^\\]", register = { cr = false } },
 		},
 	})
 end
@@ -61,6 +62,43 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = "typst",
 	desc = "Enable dollar sign pair for typst files",
 	callback = toggle_dollar_sign_pair,
+})
+
+-- Rust uses `///` as a line-based documentation comment. It is not a
+-- syntactic block comment, so Visual `gb` toggles it on every selected line.
+local rust_doc_comment_group = vim.api.nvim_create_augroup("RustDocComment", { clear = true })
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = rust_doc_comment_group,
+	pattern = "rust",
+	desc = "Toggle Rust documentation comments with Visual gb",
+	callback = function(event)
+		vim.keymap.set("x", "gb", function()
+			local first = vim.fn.line("'<") - 1
+			local last = vim.fn.line("'>")
+			local lines = vim.api.nvim_buf_get_lines(event.buf, first, last, false)
+			local is_doc_block = #lines > 0
+
+			for _, line in ipairs(lines) do
+				if not line:match("^%s*/// ?") then
+					is_doc_block = false
+					break
+				end
+			end
+
+			for index, line in ipairs(lines) do
+				local indent, content = line:match("^(%s*)/// ?(.*)$")
+				if is_doc_block then
+					lines[index] = indent .. content
+				else
+					local leading = line:match("^%s*")
+					lines[index] = leading .. "/// " .. line:sub(#leading + 1)
+				end
+			end
+
+			vim.api.nvim_buf_set_lines(event.buf, first, last, false, lines)
+		end, { buffer = event.buf, desc = "Toggle Rust /// documentation comments" })
+	end,
 })
 
 -- Help and man pages in current window only

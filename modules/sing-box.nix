@@ -52,6 +52,7 @@ let
   };
 
   cn-domains-dns = [
+    "www.luogu.com.cn"
     "faroapi.com"
     "www.coalcloud.net"
     "cloudflare.com"
