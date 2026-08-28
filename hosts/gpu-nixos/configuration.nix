@@ -62,6 +62,7 @@
   # Environment variables for NVIDIA + Wayland
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
+    NVD_BACKEND = "direct";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     WLR_NO_HARDWARE_CURSORS = "1";

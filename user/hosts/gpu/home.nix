@@ -36,6 +36,8 @@
 
     # Media
     vlc
+    wineWow64Packages.waylandFull
+    winetricks
 
     # Browsers
     qutebrowser

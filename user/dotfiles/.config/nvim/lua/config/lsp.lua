@@ -96,33 +96,33 @@ vim.lsp.enable("lua_ls")
 
 -- Nix (nixd)
 -- local hostname = vim.fn.trim(vim.fn.system("hostname"))
-local hostname = "gpunixos"
--- local user = vim.fn.trim(vim.fn.system("whoami"))
-local user = "tohno@gpu"
-local flake_expr = "builtins.getFlake (toString ./.)"
+-- local hostname = "gpunixos"
+-- -- local user = vim.fn.trim(vim.fn.system("whoami"))
+-- local user = "tohno@gpu"
+-- local flake_expr = "builtins.getFlake (toString ./.)"
+--
+-- vim.lsp.config["nixd"] = {
+-- 	cmd = { "nixd" },
+-- 	filetypes = { "nix" },
+-- 	root_markers = { "flake.nix", ".git" },
+-- 	settings = {
+-- 		nixd = {
+-- 			nixpkgs = {
+-- 				expr = "import (builtins.getFlake (toString ./.)).inputs.nixpkgs { }",
+-- 			},
+-- 			formatting = {
+-- 				command = { "nixfmt" },
+-- 			},
+-- 			options = {
+-- 				["flake-parts"] = {
+-- 					expr = [[(builtins.getFlake (toString ./.)).debug.options]],
+-- 				},
+-- 			},
+-- 		},
+-- 	},
+-- }
 
-vim.lsp.config["nixd"] = {
-	cmd = { "nixd" },
-	filetypes = { "nix" },
-	root_markers = { "flake.nix", ".git" },
-	settings = {
-		nixd = {
-			nixpkgs = {
-				expr = "import (builtins.getFlake (toString ./.)).inputs.nixpkgs { }",
-			},
-			formatting = {
-				command = { "nixfmt" },
-			},
-			options = {
-				["flake-parts"] = {
-					expr = [[(builtins.getFlake (toString ./.)).debug.options]],
-				},
-			},
-		},
-	},
-}
-
-vim.lsp.enable("nixd")
+vim.lsp.enable("nil_ls")
 
 -- Python (basedpyright)
 vim.lsp.config["basedpyright"] = {

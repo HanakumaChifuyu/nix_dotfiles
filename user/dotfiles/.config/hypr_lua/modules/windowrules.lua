@@ -1,7 +1,7 @@
 -- Opacity for Kitty clients
 hl.window_rule({ match = { class = "kitty" }, opacity = "0.85" })
 
--- Float XWayland windows, no blur/border/rounding
+-- Float XWayland windows (including Wine), no blur/border/rounding
 hl.window_rule({
 	match = { xwayland = true },
 	float = true,
@@ -9,6 +9,13 @@ hl.window_rule({
 	decorate = false,
 	rounding = 0,
 	no_anim = true,
+})
+
+-- Wine's Wayland driver uses the lower-case Windows executable name as app_id.
+-- Hyprland exposes that app_id as `class`, e.g. `notepad.exe`.
+hl.window_rule({
+	match = { class = ".*\\.(exe|com)$" },
+	float = true,
 })
 
 -- Filechooser
