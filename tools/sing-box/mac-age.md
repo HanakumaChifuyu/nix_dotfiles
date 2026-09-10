@@ -1,6 +1,6 @@
 # Mac sing-box：age 密钥准备
 
-本阶段只准备密钥和测试，尚未启用 Mac 的 sing-box、TUN 或 SOPS 服务。
+本文记录密钥准备流程。Mac sing-box 的启动配置和网络测试见 [mac.md](mac.md)。
 
 Mac 私钥保存在 `~/.config/sops/age/keys.txt`，权限为 `600`，所在目录权限为 `700`。
 公钥已登记到仓库 `.sops.yaml` 的 `macbook` recipient，原 Linux recipients 保留。

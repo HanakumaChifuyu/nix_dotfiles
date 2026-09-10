@@ -120,4 +120,4 @@ chmod 600 /mnt/etc/ssh/ssh_host_ed25519_key
 
 > 注意：`user/modules/activation.nix` 会在 home-manager 激活时清理 `~/.ssh` 下残留的 Nix store 符号链接，确保 SSH 权限检查不会因错误的文件类型而拒绝密钥。
 
-macOS 的 Home Manager profile 当前没有启用 `sops-nix`，因此不依赖上面的 NixOS SSH host key bootstrap 流程。Mac 使用独立的 age identity，公钥已登记到 `.sops.yaml`；现有密文还需在已授权机器上执行 `sops updatekeys` 才能给 Mac 解密。操作和测试见 [Mac age 密钥准备](tools/sing-box/mac-age.md)。
+macOS 使用独立的 age identity，已加入现有密文的授权列表，不依赖 NixOS SSH host key bootstrap。Mac sing-box 在 launchd 启动时通过 SOPS 解密所需节点；操作和测试见 [Mac sing-box](tools/sing-box/mac.md)，密钥准备流程见 [Mac age 密钥准备](tools/sing-box/mac-age.md)。

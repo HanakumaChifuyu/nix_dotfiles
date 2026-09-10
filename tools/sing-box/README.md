@@ -1,5 +1,7 @@
 # Linux sing-box 测试
 
+Mac 配置和测试见 [mac.md](mac.md)。
+
 配置入口是 `modules/sing-box.nix`，适用于 `desktop_nixos` 和 `gpu_nixos`。
 Fish 的全局代理变量、本地 7890 端口和 Hysteria2 节点参数保持原样。
 
