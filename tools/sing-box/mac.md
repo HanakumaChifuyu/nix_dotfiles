@@ -1,5 +1,8 @@
 # Mac sing-box 配置与测试
 
+首次安装与系统、用户配置的激活顺序见 [MacBook 部署手册](../../hosts/macbook/README.md)，
+密钥生成与授权见 [age 密钥准备](mac-age.md)。
+
 Mac 使用与 Linux 相同的 DNS、分流和固定版本规则集，仍提供 `127.0.0.1:7890`。
 Fish 的全局代理变量保持原样。平台入口是 `hosts/macbook/sing-box.nix`，
 共享策略在 `modules/sing-box-settings.nix`，Linux 入口仍是 `modules/sing-box.nix`。

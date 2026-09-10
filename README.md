@@ -1,4 +1,4 @@
-# NixOS Dotfiles
+# NixOS / macOS Dotfiles
 
 ## 两阶段部署
 
@@ -42,34 +42,26 @@ nix --extra-experimental-features "nix-command flakes" run github:nix-community/
 
 ### macOS / nix-darwin
 
-MacBook 首次部署时，系统里还没有 `darwin-rebuild` 和 `home-manager` 命令，需要都通过 `nix run` 临时调用。
+当前 Mac 配置使用 Apple Silicon（`aarch64-darwin`），已有用户为 `tohno`。
+系统入口是 `macbook`，Home Manager 入口是 `tohno@macbook`。
 
-阶段 1：首次激活 nix-darwin 系统层：
-
-```sh
-sudo nix --extra-experimental-features "nix-command flakes" run github:nix-darwin/nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake .#macbook
-```
-
-阶段 2：首次激活 Home Manager 用户层：
-
-```sh
-nix --extra-experimental-features "nix-command flakes" run github:nix-community/home-manager/release-26.05 -- switch --flake .#mac@macbook
-```
-
-`nix run` 只是在首次部署时临时调用 Home Manager，本身不会把 `home-manager` 命令安装到用户环境里。本仓库的 Mac Home Manager profile 会通过 `home.packages` 持久安装 `home-manager`，所以上面这次激活成功后，后续就可以直接使用 `home-manager switch`。
-
-后续部署：
+已完成首次部署后，在仓库根目录更新：
 
 ```sh
 sudo darwin-rebuild switch --flake .#macbook
-home-manager switch --flake .#mac@macbook
+home-manager switch --flake '.#tohno@macbook'
 ```
 
-`macbook` 当前按 Apple Silicon 配置为 `aarch64-darwin`。如果目标机器是 Intel Mac，需要把 flake 里的 system 改为 `x86_64-darwin`，并相应调整 `homeConfigurations."mac@macbook"` 使用的 system。
+系统层包含 sing-box 开机服务、Homebrew、字体与 macOS defaults；用户层包含
+Fish、编辑器、Karabiner 规则、鼠须管和动态配色。Home Manager 以当前用户运行，不加 sudo。
+
+首次安装、密钥准备、服务交接、日常维护和回滚见
+[MacBook / nix-darwin 部署手册](hosts/macbook/README.md)。
+代理相关的详细测试见 [Mac sing-box](tools/sing-box/mac.md)。
 
 ## 密钥管理
 
-本项目使用 [sops-nix](https://github.com/Mic92/sops-nix) 管理 secrets，系统和 Home Manager 都以 SSH host key 作为 bootstrap 密钥：
+NixOS 使用 [sops-nix](https://github.com/Mic92/sops-nix) 管理 secrets，系统和 Home Manager 以 SSH host key 作为 bootstrap 密钥。下面的流程仅适用于 NixOS；macOS 使用独立 age identity，见本节末尾的 Mac 文档。
 
 ### Bootstrap 密钥
 
