@@ -5,7 +5,7 @@ matugen_light:
   author: "nix_dotfiles"
   color_space: srgb
   back_color: 0x{{ colors.surface_container.light.hex_stripped }}
-  border_color: 0x{{ colors.outline_variant.light.hex_stripped }}
+  border_color: 0x00000000
   text_color: 0x{{ colors.on_surface_variant.light.hex_stripped }}
   candidate_text_color: 0x{{ colors.on_surface.light.hex_stripped }}
   label_color: 0x{{ colors.on_surface_variant.light.hex_stripped }}
@@ -22,7 +22,7 @@ matugen_dark:
   author: "nix_dotfiles"
   color_space: srgb
   back_color: 0x{{ colors.surface_container.dark.hex_stripped }}
-  border_color: 0x{{ colors.outline_variant.dark.hex_stripped }}
+  border_color: 0x00000000
   text_color: 0x{{ colors.on_surface_variant.dark.hex_stripped }}
   candidate_text_color: 0x{{ colors.on_surface.dark.hex_stripped }}
   label_color: 0x{{ colors.on_surface_variant.dark.hex_stripped }}
