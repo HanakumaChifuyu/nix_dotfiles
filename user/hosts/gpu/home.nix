@@ -24,6 +24,9 @@
     claude-code
     github-copilot-cli
     unstable.codex
+    steam-run
+
+    gaiasky
 
     # Social & Communication
     wechat
