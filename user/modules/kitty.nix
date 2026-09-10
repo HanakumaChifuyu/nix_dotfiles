@@ -16,6 +16,7 @@
       cursor_underline_thickness = 2.0;
 
       confirm_os_window_close = 1;
+
       shell = "${pkgs.fish}/bin/fish";
 
       copy_on_select = "no";
@@ -25,7 +26,7 @@
       window_border_width = "1pt";
       window_margin_width = 0;
       window_padding_width = 4;
-      hide_window_decorations = "no";
+      hide_window_decorations = "yes";
 
       tab_bar_min_tabs = 2;
       tab_bar_edge = "bottom";

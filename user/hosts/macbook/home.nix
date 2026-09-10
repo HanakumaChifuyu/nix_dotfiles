@@ -10,6 +10,7 @@
     ../../modules/neovim.nix
     ../../modules/starship.nix
     ../../modules/ssh.nix
+    ../../modules/tmux.nix
     ../../modules/yazi.nix
     ./karabiner.nix
     ./rime.nix
@@ -24,6 +25,9 @@
   };
 
   programs.man.generateCaches = false;
+
+  # tmux navigation uses M-* bindings; make macOS Option emit Alt in Kitty.
+  programs.kitty.settings.macos_option_as_alt = "both";
 
   home.packages = with pkgs; [
     curl

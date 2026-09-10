@@ -36,7 +36,7 @@ let
       hookPath,
       requiredOutputs,
     }:
-    lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    lib.hm.dag.entryAfter ([ "linkGeneration" ] ++ lib.optionals pkgs.stdenv.isDarwin [ "installSquirrelRimeIce" ]) ''
       generation_id='${generationId}'
       generation_marker="${home}/.cache/matugen/.generation"
       needs_generation=0
@@ -88,10 +88,23 @@ let
       fi
     '';
 
+  applySquirrelColors = pkgs.writeShellScript "apply-squirrel-colors" ''
+    set -eu
+    mkdir -p "${home}/Library/Rime"
+    # Matugen emits RGB; Squirrel expects BGR (0xBBGGRR).
+    ${pkgs.gnused}/bin/sed -E 's/0x([[:xdigit:]]{2})([[:xdigit:]]{2})([[:xdigit:]]{2})/0x\3\2\1/g' \
+      "${home}/.cache/matugen/squirrel-colors.yaml" > "${home}/Library/Rime/matugen.yaml"
+    squirrel="/Library/Input Methods/Squirrel.app/Contents/MacOS/Squirrel"
+    if [ -x "$squirrel" ]; then
+      "$squirrel" --reload
+    fi
+  '';
+
   darwinConfig = pkgs.writeText "matugen-darwin.toml" ''
     [config]
     [config.wallpaper]
-    command = "~/.config/matugen/set-wallpaper {{ image }}"
+    command = "/bin/sh"
+    arguments = ["${home}/.config/matugen/set-wallpaper"]
     set = true
 
     [templates]
@@ -117,6 +130,11 @@ let
     [templates.pywal]
     input_path = "~/.config/matugen/templates/pywal-colors.json"
     output_path = "~/.cache/wal/colors.json"
+
+    [templates.squirrel]
+    input_path = "~/.config/matugen/templates/squirrel-colors.yaml"
+    output_path = "~/.cache/matugen/squirrel-colors.yaml"
+    post_hook = "${applySquirrelColors}"
   '';
 
   mkLinuxConfig = _: {
@@ -171,7 +189,9 @@ let
   mkDarwinConfig = _: {
     home.packages = [ pkgs.matugen ];
 
-    xdg.configFile."matugen/config.toml".source = darwinConfig;
+    # Matugen follows the native macOS application-support directory instead
+    # of XDG_CONFIG_HOME when no explicit --config path is provided.
+    home.file."Library/Application Support/com.InioX.matugen/config.toml".source = darwinConfig;
     xdg.configFile."matugen/templates".source = matugenSource + /templates;
     xdg.configFile."matugen/set-wallpaper" = {
       executable = true;
@@ -204,12 +224,17 @@ let
 
     home.activation.ensureMatugenColors = ensureMatugenColors {
       generationId = "${matugenSource}:${darwinConfig}:darwin";
-      hookPath = lib.makeBinPath [
+      # Matugen's macOS wallpaper backend invokes system tools by name, while
+      # Home Manager activation runs with a Nix-only PATH.
+      hookPath = "${lib.makeBinPath [
         pkgs.bash
         pkgs.coreutils
         pkgs.matugen
+      ]}:/usr/bin:/bin";
+      requiredOutputs = sharedOutputs ++ [
+        "${home}/.cache/matugen/squirrel-colors.yaml"
+        "${home}/Library/Rime/matugen.yaml"
       ];
-      requiredOutputs = sharedOutputs;
     };
   };
 in

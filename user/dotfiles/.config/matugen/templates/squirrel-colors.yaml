@@ -1,0 +1,35 @@
+# Generated as RGB; apply-squirrel-colors converts to Squirrel BGR.
+
+matugen_light:
+  name: "Matugen Light"
+  author: "nix_dotfiles"
+  color_space: srgb
+  back_color: 0x{{ colors.surface_container.light.hex_stripped }}
+  border_color: 0x{{ colors.outline_variant.light.hex_stripped }}
+  text_color: 0x{{ colors.on_surface_variant.light.hex_stripped }}
+  candidate_text_color: 0x{{ colors.on_surface.light.hex_stripped }}
+  label_color: 0x{{ colors.on_surface_variant.light.hex_stripped }}
+  comment_text_color: 0x{{ colors.on_surface_variant.light.hex_stripped }}
+  hilited_text_color: 0x{{ colors.on_secondary_container.light.hex_stripped }}
+  hilited_back_color: 0x{{ colors.secondary_container.light.hex_stripped }}
+  hilited_candidate_back_color: 0x{{ colors.primary.light.hex_stripped }}
+  hilited_candidate_text_color: 0x{{ colors.on_primary.light.hex_stripped }}
+  hilited_candidate_label_color: 0x{{ colors.on_primary.light.hex_stripped }}
+  hilited_comment_text_color: 0x{{ colors.on_primary.light.hex_stripped }}
+
+matugen_dark:
+  name: "Matugen Dark"
+  author: "nix_dotfiles"
+  color_space: srgb
+  back_color: 0x{{ colors.surface_container.dark.hex_stripped }}
+  border_color: 0x{{ colors.outline_variant.dark.hex_stripped }}
+  text_color: 0x{{ colors.on_surface_variant.dark.hex_stripped }}
+  candidate_text_color: 0x{{ colors.on_surface.dark.hex_stripped }}
+  label_color: 0x{{ colors.on_surface_variant.dark.hex_stripped }}
+  comment_text_color: 0x{{ colors.on_surface_variant.dark.hex_stripped }}
+  hilited_text_color: 0x{{ colors.on_secondary_container.dark.hex_stripped }}
+  hilited_back_color: 0x{{ colors.secondary_container.dark.hex_stripped }}
+  hilited_candidate_back_color: 0x{{ colors.primary.dark.hex_stripped }}
+  hilited_candidate_text_color: 0x{{ colors.on_primary.dark.hex_stripped }}
+  hilited_candidate_label_color: 0x{{ colors.on_primary.dark.hex_stripped }}
+  hilited_comment_text_color: 0x{{ colors.on_primary.dark.hex_stripped }}

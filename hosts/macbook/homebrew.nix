@@ -20,10 +20,7 @@
     enable = true;
 
     casks = [
-      "karabiner-elements"
-      "raycast"
       "squirrel-app"
-      "wechat"
     ];
 
     onActivation = {
