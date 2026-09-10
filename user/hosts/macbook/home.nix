@@ -30,6 +30,7 @@
   programs.kitty.settings.macos_option_as_alt = "both";
 
   home.packages = with pkgs; [
+    age
     curl
     code2prompt
     eza
@@ -38,6 +39,7 @@
     jq
     lazygit
     ripgrep
+    sops
     tokei
     wget
     zoxide
