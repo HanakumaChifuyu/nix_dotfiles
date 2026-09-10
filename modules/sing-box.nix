@@ -11,47 +11,27 @@ let
   hy2-obfs-passwd = config.sops.secrets."${node}hysteria2/obfs/password".path;
   hy2-tls-server_name = config.sops.secrets."${node}hysteria2/tls/server_name".path;
 
-  cn-rule-set-tags = [
-    "WeChat"
-    "DingTalk"
-    "BiliBili"
-    "NetEaseMusic"
-    "DouYin"
-    "Weibo"
-    "Zhihu"
-    "XiaoHongShu"
-    "MeiTuan"
-    "JingDong"
-    "Alibaba"
-    "Baidu"
-    "Tencent"
-    "iQIYI"
-    "Youku"
-    "KuaiShou"
-    "XianYu"
-    "Pinduoduo"
-    "XiaoMi"
-    "Huawei"
-    "Coolapk"
-    "NGA"
-    "Sina"
-    "Sohu"
-    "NetEase"
-    "KugouKuwo"
-    "Kingsoft"
-    "KingsoftCloud"
-    "XieCheng"
-  ];
+  rule-set-snapshot = import ./sing-box-rules.nix;
+  cn-rule-set-tags = builtins.attrNames rule-set-snapshot.hashes;
 
+  # Fetch at build time so service startup works without a live proxy or CDN.
   mkRuleSet = tag: {
     inherit tag;
-    type = "remote";
+    type = "local";
     format = "binary";
-    url = "https://cdn.jsdelivr.net/gh/senshinya/singbox_ruleset@main/rule/${tag}/${tag}.srs";
-    download_detour = "proxy";
+    path = toString (pkgs.fetchurl {
+      name = "sing-box-${tag}.srs";
+      urls = [
+        "https://raw.githubusercontent.com/senshinya/singbox_ruleset/${rule-set-snapshot.revision}/rule/${tag}/${tag}.srs"
+        "https://cdn.jsdelivr.net/gh/senshinya/singbox_ruleset@${rule-set-snapshot.revision}/rule/${tag}/${tag}.srs"
+      ];
+      hash = rule-set-snapshot.hashes.${tag};
+    });
   };
 
-  cn-domains-dns = [
+  # Explicit direct exceptions shared by DNS and routing. Domains only, no paths.
+  # Upstream package registries use the default proxy unless explicitly listed.
+  direct-domains = [
     "www.luogu.com.cn"
     "faroapi.com"
     "www.coalcloud.net"
@@ -67,7 +47,6 @@ let
     "mirrors.nju.edu.cn"
     "mirrors.pku.edu.cn"
     "mirrors.bfsu.edu.cn"
-    "mirrors.tuna.tsinghua.edu.cn"
     "mirrors.cqu.edu.cn"
     "mirrors.dgut.edu.cn"
     "mirrors.hit.edu.cn"
@@ -95,7 +74,6 @@ let
     "goproxy.io"
     "proxy.golang.com.cn"
     "crates.io-index.cn"
-    "mirrors.ustc.edu.cn/crates.io-index"
     "flutter-io.cn"
     "storage.flutter-io.cn"
     "maven.aliyun.com"
@@ -115,49 +93,17 @@ let
     "ark.cn-beijing.volces.com"
     "ark.cn-shanghai.volces.com"
     "console.volcengine.com"
-  ];
-
-  cn-domains-route-extra = [
     "coze.cn"
     "cc.bingj.com"
-    "mirrors.xjtu.edu.cn"
-    "mirrors.jlu.edu.cn"
-    "mirrors.ustc.edu.cn"
-    "mirrors.nju.edu.cn"
     "ruby.taobao.org"
     "registry.npm.taobao.org"
     "npm.taobao.org"
-    "mirrors.aliyun.com/npm"
-    "mirrors.aliyun.com/goproxy"
-    "repo.spring.io"
-    "plugins.gradle.org.mirror"
-    "downloads.gradle-dn.com"
     "packagist.phpcomposer.com"
     "repo.packagist.org.cn"
-    "composer.China.com"
+    "composer.china.com"
     "packagist.laravel-china.org"
-    "homebrew.bintray.com"
-    "mirrors.tuna.tsinghua.edu.cn/homebrew"
-    "mirrors.ustc.edu.cn/homebrew"
-    "pypi.python.org"
     "gitee.com"
-    "rubygems.org"
-    "npmjs.org"
-    "yarnpkg.com"
-    "nuget.org"
-    "chocolatey.org"
-    "brew.sh"
-    "linuxbrew.bintray.com"
-    "sh.rustup.rs"
-    "static.rust-lang.org"
-    "mirrors.aliyun.com/crates.io-index"
-    "mirrors.sjtug.sjtu.edu.cn/git/crates.io-index"
-    "mirrors.tuna.tsinghua.edu.cn/git/crates.io-index"
     "code.aliyun.com"
-    "mirrors.tuna.tsinghua.edu.cn/anaconda"
-    "repo.anaconda.com"
-    "conda.anaconda.org"
-    "mirrors.tuna.tsinghua.edu.cn/anaconda/cloud"
     "ghproxy.com"
     "mirror.ghproxy.com"
     "gh-proxy.com"
@@ -168,6 +114,11 @@ let
     "chinamobile.com"
     "deepseek.com"
     "benefits.chinaums.com"
+    "tailscale.com"
+    "steam.clngaa.com"
+    "eccdnx.com"
+    "pphimalayanrt.com"
+    "sycontroller.com"
   ];
 in
 {
@@ -178,14 +129,12 @@ in
 
   services.sing-box = {
     enable = true;
-    # enable = false;
     settings = {
       log = {
         level = "info";
         timestamp = true;
       };
       dns = {
-
         servers = [
           {
             tag = "aliyun";
@@ -216,7 +165,7 @@ in
             server = "aliyun";
           }
           {
-            domain_suffix = cn-domains-dns;
+            domain_suffix = direct-domains;
             action = "route";
             server = "aliyun";
           }
@@ -259,6 +208,9 @@ in
           stack = "system";
           auto_route = true;
           strict_route = true;
+          # Linux auto_redirect marks sing-box's own outbound sockets to bypass
+          # the TUN. Avoid binding all direct traffic to the physical interface,
+          # which would also bind connections intended for Tailscale.
           auto_redirect = true;
           route_exclude_address = [ "100.64.0.0/10" ];
         }
@@ -296,6 +248,17 @@ in
         default_domain_resolver = "aliyun";
         rule_set = map mkRuleSet cn-rule-set-tags;
         rules = [
+          # Preserve MagicDNS even for queries arriving through mixed-in.
+          {
+            ip_cidr = [ "100.100.100.100/32" ];
+            port = 53;
+            outbound = "direct";
+          }
+          # Capture ordinary DNS before destination-IP or domain bypass rules.
+          {
+            port = 53;
+            action = "hijack-dns";
+          }
           {
             port = [ 41641 ];
             network = "udp";
@@ -341,21 +304,7 @@ in
             action = "sniff";
           }
           {
-            domain_suffix = [
-              "steam.clngaa.com"
-              "eccdnx.com"
-              "pphimalayanrt.com"
-              "sycontroller.com"
-            ];
-            outbound = "direct";
-          }
-          {
-            type = "logical";
-            mode = "or";
-            rules = [
-              { protocol = "dns"; }
-              { port = 53; }
-            ];
+            protocol = "dns";
             action = "hijack-dns";
           }
           {
@@ -364,14 +313,7 @@ in
             outbound = "direct";
           }
           {
-            domain_suffix = cn-domains-dns ++ cn-domains-route-extra;
-            outbound = "direct";
-          }
-          {
-            domain_keyword = [
-              "mirror"
-              "mirrors"
-            ];
+            domain_suffix = direct-domains;
             outbound = "direct";
           }
           {
