@@ -12,7 +12,7 @@
   nix-homebrew = {
     enable = true;
     enableRosetta = true;
-    user = "mac";
+    user = "tohno";
     autoMigrate = true;
   };
 

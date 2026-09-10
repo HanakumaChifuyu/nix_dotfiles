@@ -103,7 +103,7 @@
               sops-nix.homeManagerModules.sops
             ];
 
-            "mac@macbook" = mkHome "aarch64-darwin" [
+            "tohno@macbook" = mkHome "aarch64-darwin" [
               ./user/hosts/macbook/home.nix
             ];
           };

@@ -11,8 +11,8 @@
 
   networking.hostName = "macbook";
 
-  users.users.mac = {
-    home = "/Users/mac";
+  users.users.tohno = {
+    home = "/Users/tohno";
     shell = pkgs.fish;
   };
 
@@ -20,7 +20,7 @@
   environment.shells = [ pkgs.fish ];
 
   system = {
-    primaryUser = "mac";
+    primaryUser = "tohno";
     stateVersion = 6;
 
     defaults.CustomUserPreferences."NSGlobalDomain" = {

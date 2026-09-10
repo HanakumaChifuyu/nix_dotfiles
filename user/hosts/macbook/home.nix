@@ -14,8 +14,8 @@
     ./rime.nix
   ];
 
-  home.username = "mac";
-  home.homeDirectory = "/Users/mac";
+  home.username = "tohno";
+  home.homeDirectory = "/Users/tohno";
   home.stateVersion = "26.05";
   home.sessionVariables = {
     LANG = "en_US.UTF-8";
