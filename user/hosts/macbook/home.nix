@@ -6,6 +6,7 @@
     ../../modules/fish.nix
     ../../modules/git.nix
     ../../modules/kitty.nix
+    ../../modules/matugen.nix
     ../../modules/neovim.nix
     ../../modules/starship.nix
     ../../modules/ssh.nix
