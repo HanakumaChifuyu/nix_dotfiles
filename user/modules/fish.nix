@@ -84,6 +84,7 @@ in
     '';
 
     shellAliases = {
+      agyd = "agy --dangerously-skip-permissions --mode accept-edits";
       lg = "lazygit";
       y = "yazi";
       ls = "eza --icons";

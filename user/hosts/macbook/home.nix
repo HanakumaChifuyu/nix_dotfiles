@@ -170,5 +170,10 @@
     wget
     zoxide
     unstable.codex
+    ncdu
+
+    # social network
+    telegram-desktop
+
   ];
 }

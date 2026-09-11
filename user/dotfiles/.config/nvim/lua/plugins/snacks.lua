@@ -35,6 +35,10 @@ return {
 		scope = { enabled = false },
 		statuscolumn = {
 			enabled = true,
+			-- Gitsigns colors changed line numbers via numhl. Its sign text is
+			-- disabled, so rendering the Git component would only add a padded,
+			-- highlighted two-character block beside the number column.
+			right = { "fold" },
 		},
 		words = { enabled = true },
 	},

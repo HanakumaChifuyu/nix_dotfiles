@@ -1,10 +1,11 @@
-# Generated as RGB; apply-squirrel-colors converts to Squirrel BGR.
+# Generated as RGB/ARGB; apply-squirrel-colors converts to Squirrel BGR/ABGR.
 
 matugen_light:
   name: "Matugen Light"
   author: "nix_dotfiles"
   color_space: srgb
-  back_color: 0x{{ colors.surface_container.light.hex_stripped }}
+  # 0xD9 alpha (85%) exposes Squirrel's native macOS blur behind the panel.
+  back_color: 0xD9{{ colors.surface_container.light.hex_stripped }}
   border_color: 0x00000000
   text_color: 0x{{ colors.on_surface_variant.light.hex_stripped }}
   candidate_text_color: 0x{{ colors.on_surface.light.hex_stripped }}
@@ -21,7 +22,8 @@ matugen_dark:
   name: "Matugen Dark"
   author: "nix_dotfiles"
   color_space: srgb
-  back_color: 0x{{ colors.surface_container.dark.hex_stripped }}
+  # 0xD9 alpha (85%) exposes Squirrel's native macOS blur behind the panel.
+  back_color: 0xD9{{ colors.surface_container.dark.hex_stripped }}
   border_color: 0x00000000
   text_color: 0x{{ colors.on_surface_variant.dark.hex_stripped }}
   candidate_text_color: 0x{{ colors.on_surface.dark.hex_stripped }}

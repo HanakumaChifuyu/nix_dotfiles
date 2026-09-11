@@ -148,8 +148,10 @@ Rime 用户数据位于 `~/Library/Rime`。若缺少 `rime_ice.schema.yaml`，�
 切换壁纸和生成主题可使用：
 
 ```bash
-matugen image /absolute/path/to/wallpaper.jpg --mode dark --type scheme-tonal-spot
+matugen-wallpaper /absolute/path/to/wallpaper.jpg
 ```
+
+脚本也接受相对路径，例如 `matugen-wallpaper ./wallpaper.jpg`。
 
 生成结果位于 `~/.cache/matugen`，鼠须管配色写入 `~/Library/Rime/matugen.yaml`。
 这些是生成文件，持久修改应写入仓库中的 Matugen 模板。壁纸控制首次执行时可能需要系统授权。

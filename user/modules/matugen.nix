@@ -9,6 +9,7 @@ let
   home = toString config.home.homeDirectory;
   wallpapers = ../Wallpapers;
   matugenSource = ../dotfiles/.config/matugen;
+  nvimTemplate = ../dotfiles/.config/nvim/lua/matugen-template.lua;
   cacheLink = path: config.lib.file.mkOutOfStoreSymlink (home + "/.cache/matugen/" + path);
   walLink = path: config.lib.file.mkOutOfStoreSymlink (home + "/.cache/wal/" + path);
 
@@ -91,8 +92,11 @@ let
   applySquirrelColors = pkgs.writeShellScript "apply-squirrel-colors" ''
     set -eu
     mkdir -p "${home}/Library/Rime"
-    # Matugen emits RGB; Squirrel expects BGR (0xBBGGRR).
-    ${pkgs.gnused}/bin/sed -E 's/0x([[:xdigit:]]{2})([[:xdigit:]]{2})([[:xdigit:]]{2})/0x\3\2\1/g' \
+    # Matugen emits RGB/ARGB; Squirrel expects BGR/ABGR. Convert 8-digit
+    # colors first so their alpha byte remains at the front.
+    ${pkgs.gnused}/bin/sed -E \
+      -e 's/0x([[:xdigit:]]{2})([[:xdigit:]]{2})([[:xdigit:]]{2})([[:xdigit:]]{2})([^[:xdigit:]]|$)/0x\1\4\3\2\5/g' \
+      -e 's/0x([[:xdigit:]]{2})([[:xdigit:]]{2})([[:xdigit:]]{2})([^[:xdigit:]]|$)/0x\3\2\1\4/g' \
       "${home}/.cache/matugen/squirrel-colors.yaml" > "${home}/Library/Rime/matugen.yaml"
     squirrel="/Library/Input Methods/Squirrel.app/Contents/MacOS/Squirrel"
     if [ -x "$squirrel" ]; then
@@ -166,7 +170,7 @@ let
     };
 
     home.activation.ensureMatugenColors = ensureMatugenColors {
-      generationId = "${matugenSource}:linux";
+      generationId = "${matugenSource}:${nvimTemplate}:linux";
       hookPath = lib.makeBinPath [
         pkgs.bash
         pkgs.coreutils
@@ -188,6 +192,62 @@ let
 
   mkDarwinConfig = _: {
     home.packages = [ pkgs.matugen ];
+
+    home.file.".local/bin/matugen-wallpaper" = {
+      executable = true;
+      text = ''
+        #!/bin/sh
+
+        set -eu
+
+        usage() {
+          echo "Usage: matugen-wallpaper IMAGE" >&2
+        }
+
+        if [ "$#" -ne 1 ]; then
+          usage
+          exit 2
+        fi
+
+        case "$1" in
+          -h|--help)
+            usage
+            exit 0
+            ;;
+        esac
+
+        input=$1
+        case "$input" in
+          "~/"*) input="$HOME/''${input#~/}" ;;
+          /*) ;;
+          *) input="$PWD/$input" ;;
+        esac
+
+        image_dir=$(/usr/bin/dirname "$input")
+        image_name=$(/usr/bin/basename "$input")
+        if ! normalized_dir=$(CDPATH= cd -P "$image_dir" 2>/dev/null && /bin/pwd); then
+          echo "matugen-wallpaper: directory not found: $image_dir" >&2
+          exit 1
+        fi
+        image_dir=$normalized_dir
+        image="$image_dir/$image_name"
+
+        if [ ! -f "$image" ]; then
+          echo "matugen-wallpaper: image not found: $image" >&2
+          exit 1
+        fi
+
+        /bin/mkdir -p "$HOME/.cache/matugen"
+        ${pkgs.matugen}/bin/matugen image \
+          --mode dark \
+          --type scheme-tonal-spot \
+          --contrast 0 \
+          --source-color-index 0 \
+          -- "$image"
+        /usr/bin/printf '%s\n' "$image" > "$HOME/.cache/matugen/current_wallpaper"
+        /usr/bin/printf '✓ Wallpaper: %s\n' "$image"
+      '';
+    };
 
     # Matugen follows the native macOS application-support directory instead
     # of XDG_CONFIG_HOME when no explicit --config path is provided.
@@ -223,7 +283,7 @@ let
     };
 
     home.activation.ensureMatugenColors = ensureMatugenColors {
-      generationId = "${matugenSource}:${darwinConfig}:darwin";
+      generationId = "${matugenSource}:${nvimTemplate}:${darwinConfig}:darwin";
       # Matugen's macOS wallpaper backend invokes system tools by name, while
       # Home Manager activation runs with a Nix-only PATH.
       hookPath = "${lib.makeBinPath [

@@ -1,5 +1,65 @@
 local M = {}
 
+local transparent_groups = {
+	"Normal",
+	"NormalNC",
+	"NormalFloat",
+	"FloatBorder",
+	"StatusColumn",
+	"StatusColumnNC",
+	"SignColumn",
+	"FoldColumn",
+	"CursorLineSign",
+	"CursorLineFold",
+	"LineNr",
+	"LineNrAbove",
+	"LineNrBelow",
+	"CursorLineNr",
+	"EndOfBuffer",
+	"MsgArea",
+	"WinSeparator",
+	-- Gitsigns derives its line-number highlights from these groups. Clearing
+	-- their backgrounds keeps changed-line numbers colored but transparent.
+	"GitGutterAdd",
+	"GitGutterChange",
+	"GitGutterDelete",
+	"GitGutterChangeDelete",
+}
+
+local gitsigns_types = {
+	"Add",
+	"Change",
+	"Delete",
+	"Changedelete",
+	"Topdelete",
+	"Untracked",
+}
+
+function M.apply_transparency()
+	local groups = vim.deepcopy(transparent_groups)
+	for _, staged in ipairs({ "", "Staged" }) do
+		for _, change_type in ipairs(gitsigns_types) do
+			groups[#groups + 1] = "GitSigns" .. staged .. change_type .. "Nr"
+		end
+	end
+
+	for _, group in ipairs(groups) do
+		-- Plugin highlight groups might not exist during initial theme setup.
+		if vim.fn.hlexists(group) == 1 then
+			local definition = vim.api.nvim_get_hl(0, { name = group, link = true })
+			-- Keep links intact so Gitsigns continues following Matugen color
+			-- changes. Their GitGutter targets are made transparent above.
+			if definition.link == nil then
+				local highlight = vim.api.nvim_get_hl(0, { name = group, link = false })
+				highlight.bg = nil
+				highlight.ctermbg = nil
+				highlight.default = nil
+				vim.api.nvim_set_hl(0, group, highlight)
+			end
+		end
+	end
+end
+
 function M.setup()
 	require("base16-colorscheme").setup({
 		-- Background tones
@@ -25,24 +85,7 @@ function M.setup()
 
 	-- Let Kitty's transparent background show through Neovim while retaining
 	-- each highlight group's foreground and text attributes.
-	local transparent_groups = {
-		"Normal",
-		"NormalNC",
-		"NormalFloat",
-		"FloatBorder",
-		"SignColumn",
-		"FoldColumn",
-		"LineNr",
-		"EndOfBuffer",
-		"MsgArea",
-		"WinSeparator",
-	}
-	for _, group in ipairs(transparent_groups) do
-		local highlight = vim.api.nvim_get_hl(0, { name = group, link = false })
-		highlight.bg = nil
-		highlight.ctermbg = nil
-		vim.api.nvim_set_hl(0, group, highlight)
-	end
+	M.apply_transparency()
 
 	-- 显式覆写选中相关高亮，确保 visual 模式醒目
 	local p_bg = "{{colors.primary_container.default.hex}}"
@@ -56,6 +99,16 @@ function M.setup()
 	vim.api.nvim_set_hl(0, "CurSearch", { bg = p_bg, fg = p_fg, bold = true })
 	vim.api.nvim_set_hl(0, "MatchParen", { bg = s_bg, fg = s_fg, bold = true })
 end
+
+local transparency_group = vim.api.nvim_create_augroup("MatugenTransparency", { clear = true })
+vim.api.nvim_create_autocmd("ColorScheme", {
+	group = transparency_group,
+	desc = "Restore transparent editor and gutter backgrounds",
+	callback = function()
+		-- Run after plugin ColorScheme handlers recreate their highlight groups.
+		vim.schedule(M.apply_transparency)
+	end,
+})
 
 -- Register a signal handler for SIGUSR1 (matugen updates)
 local signal = vim.uv.new_signal()

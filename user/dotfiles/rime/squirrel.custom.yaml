@@ -3,21 +3,26 @@
 patch:
   style/color_scheme: matugen_light
   style/color_scheme_dark: matugen_dark
-  style/candidate_list_layout: stacked
+  style/candidate_list_layout: linear
+  # Let Squirrel's native NSVisualEffectView show through the translucent
+  # Matugen background without fading the candidate text itself.
+  style/translucency: true
+  style/mutual_exclusive: true
+  style/alpha: 1.0
   style/candidate_format: "[label]  [candidate] [comment]"
   style/font_face: "PingFang SC"
-  style/font_point: 15
+  style/font_point: 14
   style/label_font_face: "Helvetica Neue"
-  style/label_font_point: 11
+  style/label_font_point: 10
   style/comment_font_face: "PingFang SC"
-  style/comment_font_point: 12
-  style/corner_radius: 10
-  style/hilited_corner_radius: 7
-  style/border_height: 5
+  style/comment_font_point: 11
+  style/corner_radius: 8
+  style/hilited_corner_radius: 6
+  style/border_height: 2
   style/border_width: 7
-  style/line_spacing: 7
-  style/spacing: 9
-  style/shadow_size: 0
+  style/line_spacing: 3
+  style/spacing: 5
+  style/shadow_size: 3
 
   preset_color_schemes/matugen_light:
     __include: matugen:/matugen_light
