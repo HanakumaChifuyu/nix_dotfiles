@@ -23,6 +23,27 @@ function M.setup()
 		base0F = "{{colors.error_container.default.hex}}", -- Deprecated, Embedded Tags
 	})
 
+	-- Let Kitty's transparent background show through Neovim while retaining
+	-- each highlight group's foreground and text attributes.
+	local transparent_groups = {
+		"Normal",
+		"NormalNC",
+		"NormalFloat",
+		"FloatBorder",
+		"SignColumn",
+		"FoldColumn",
+		"LineNr",
+		"EndOfBuffer",
+		"MsgArea",
+		"WinSeparator",
+	}
+	for _, group in ipairs(transparent_groups) do
+		local highlight = vim.api.nvim_get_hl(0, { name = group, link = false })
+		highlight.bg = nil
+		highlight.ctermbg = nil
+		vim.api.nvim_set_hl(0, group, highlight)
+	end
+
 	-- 显式覆写选中相关高亮，确保 visual 模式醒目
 	local p_bg = "{{colors.primary_container.default.hex}}"
 	local p_fg = "{{colors.on_primary_container.default.hex}}"

@@ -21,6 +21,7 @@
 
     casks = [
       "karabiner-elements"
+      "sol"
       "squirrel-app"
     ];
 

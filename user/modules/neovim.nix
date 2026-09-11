@@ -17,7 +17,7 @@
     extraPackages =
       (with pkgs; [
         # LSP
-        nixd # Nix
+        nil # Nix
         lua-language-server # Lua
         basedpyright # Python
         tinymist # Typst

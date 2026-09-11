@@ -17,6 +17,12 @@
     shell = pkgs.fish;
   };
 
+  # Allow the primary macOS user to administer the machine without entering
+  # their password after login.
+  security.sudo.extraConfig = ''
+    tohno ALL = (ALL) NOPASSWD: ALL
+  '';
+
   programs.fish.enable = true;
   environment.shells = [ pkgs.fish ];
 
@@ -31,6 +37,13 @@
       InitialKeyRepeat = 27;
       ApplePressAndHoldEnabled = false;
     };
+
+    # The implicit macOS mouse tracking speed is 1.0. Increase mouse movement
+    # by 50% without changing the trackpad speed.
+    defaults.".GlobalPreferences"."com.apple.mouse.scaling" = 1.5;
+
+    # Keep Desktop 1-10 numbering stable for Alt+number switching.
+    defaults.dock.mru-spaces = false;
 
     defaults.CustomUserPreferences."NSGlobalDomain" = {
       AppleLanguages = [ "en-US" ];

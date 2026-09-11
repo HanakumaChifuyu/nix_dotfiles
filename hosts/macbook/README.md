@@ -122,7 +122,8 @@ home-manager switch --flake '.#tohno@macbook'
 | Homebrew 更新 | 系统激活时 `autoUpdate = true`，`upgrade = false`，`cleanup = "none"` |
 | 字体 | [fonts.nix](fonts.nix)：Nerd Fonts、中日韩字体及仓库内字体 |
 | 键盘重复 | 系统层设置 `KeyRepeat = 1`、`InitialKeyRepeat = 27`，关闭长按选字菜单 |
-| 键盘映射 | [karabiner.nix](../../user/hosts/macbook/karabiner.nix)：Caps 短按 Escape / 长按 Control、Ctrl+h/j/k/l 方向键等 |
+| 鼠标速度 | 系统层将鼠标跟踪速度设为 `1.5`（默认值 `1.0` 的 150%），不修改触控板速度 |
+| 键盘映射 | [karabiner.nix](../../user/hosts/macbook/karabiner.nix)：交换 Command/Option、Alt+1–9/0 切换桌面、Alt+Q 关闭窗口、Alt+Shift+Q 退出应用、Alt+A 切换窗口填充、Caps 短按 Escape / 长按 Control 等 |
 | 鼠须管 | [rime.nix](../../user/hosts/macbook/rime.nix)：初始化雾凇拼音，部署仓库内 Rime 配置 |
 | 动态配色 | [matugen.nix](../../user/modules/matugen.nix)：生成 Kitty、Neovim、Yazi、btop 和鼠须管颜色 |
 
@@ -132,6 +133,13 @@ Homebrew 的 `autoUpdate` 更新 Homebrew 元数据，并不等同于执行所�
 首次打开 Karabiner-Elements 时，按应用提示完成 macOS 权限与驱动授权。
 Nix 管理的键盘配置位于 `~/.config/karabiner/karabiner.json`，应修改仓库源文件，
 不要只在生成的配置文件中修改。首次安装鼠须管后，在系统输入法设置中添加它，必要时重新登录。
+
+Karabiner 会交换左右 Command 和 Option：物理 Option 键执行 macOS Command 快捷键，
+物理 Command 键作为 Alt 使用。按物理 Command+1–9/0 可切换主显示器的桌面 1–10；
+目标桌面尚未创建时会显示通知。Mission Control 的 Control+数字快捷键由 Home Manager
+激活脚本启用；首次应用后如果桌面切换尚未生效，请注销并重新登录一次。
+物理 Command+Q 关闭当前窗口，物理 Command+Shift+Q 正常退出当前应用；物理
+Command+A 在填充当前窗口和恢复平铺前尺寸之间切换。
 
 Rime 用户数据位于 `~/Library/Rime`。若缺少 `rime_ice.schema.yaml`，当前激活脚本会
 初始化该目录，并清理除 `rime_ice.userdb` 之外的已有内容；已有自定义输入方案时先备份该目录。

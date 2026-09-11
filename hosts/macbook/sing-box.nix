@@ -122,8 +122,12 @@ in
     serviceConfig = {
       UserName = "root";
       ProgramArguments = [
-        "${runner}/bin/sing-box-mac"
-        "run"
+        "/bin/sh"
+        "-c"
+        # /nix is an encrypted volume and may not be mounted when launchd first
+        # loads system daemons. Start from the root volume, then wait until the
+        # store is available before resolving the runner's store path.
+        "/bin/wait4path /nix/store && exec ${runner}/bin/sing-box-mac run"
       ];
       RunAtLoad = true;
       KeepAlive = true;
