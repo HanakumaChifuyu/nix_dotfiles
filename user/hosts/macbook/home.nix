@@ -17,6 +17,7 @@
     ../../modules/ssh.nix
     ../../modules/tmux.nix
     ../../modules/yazi.nix
+    ./ghostty.nix
     ./karabiner.nix
     ./rime.nix
     ./sol.nix

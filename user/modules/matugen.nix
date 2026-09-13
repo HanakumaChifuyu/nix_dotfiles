@@ -118,6 +118,11 @@ let
     output_path = "~/.cache/matugen/kitty-colors.conf"
     post_hook = "/usr/bin/pkill -SIGUSR1 kitty || true"
 
+    [templates.ghostty]
+    input_path = "~/.config/matugen/templates/ghostty-theme.conf"
+    output_path = "~/.cache/matugen/ghostty-theme.conf"
+    post_hook = "/usr/bin/pkill -SIGUSR2 -x ghostty || true"
+
     [templates.btop]
     input_path = "~/.config/matugen/templates/btop.theme"
     output_path = "~/.cache/matugen/btop.theme"
@@ -292,6 +297,7 @@ let
         pkgs.matugen
       ]}:/usr/bin:/bin";
       requiredOutputs = sharedOutputs ++ [
+        "${home}/.cache/matugen/ghostty-theme.conf"
         "${home}/.cache/matugen/squirrel-colors.yaml"
         "${home}/Library/Rime/matugen.yaml"
       ];
