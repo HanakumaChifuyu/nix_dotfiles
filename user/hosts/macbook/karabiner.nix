@@ -298,32 +298,43 @@ in
                   ];
             }
             {
-              description = "Ctrl+C/V copy and paste outside Kitty";
-              # Kitty handles copy_or_interrupt and paste_from_clipboard itself.
+              description = "Ctrl+C/V clipboard shortcuts with terminal exceptions";
+              # Kitty handles both shortcuts itself. Ghostty must receive
+              # Ctrl+C unchanged for SIGINT, while Ctrl+V continues to use
+              # the macOS paste shortcut provided by this rule.
               manipulators =
                 map
-                  (key: {
+                  (binding: {
                     type = "basic";
                     from = {
-                      key_code = key;
+                      key_code = binding.key;
                       modifiers.mandatory = [ "control" ];
                     };
                     to = [
                       {
-                        key_code = key;
+                        key_code = binding.key;
                         modifiers = [ "command" ];
                       }
                     ];
                     conditions = [
                       {
                         type = "frontmost_application_unless";
-                        bundle_identifiers = [ "^net\\.kovidgoyal\\.kitty$" ];
+                        bundle_identifiers = binding.excludedBundleIdentifiers;
                       }
                     ];
                   })
                   [
-                    "c"
-                    "v"
+                    {
+                      key = "c";
+                      excludedBundleIdentifiers = [
+                        "^net\\.kovidgoyal\\.kitty$"
+                        "^com\\.mitchellh\\.ghostty$"
+                      ];
+                    }
+                    {
+                      key = "v";
+                      excludedBundleIdentifiers = [ "^net\\.kovidgoyal\\.kitty$" ];
+                    }
                   ];
             }
           ];
