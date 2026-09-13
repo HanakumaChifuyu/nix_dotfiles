@@ -10,6 +10,20 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # 定期自动清理未引用的 Nix 包与旧代际（每周日凌晨 03:15 清理超过 7 天的旧代际）
+  nix.gc = {
+    automatic = true;
+    interval = {
+      Weekday = 7;
+      Hour = 3;
+      Minute = 15;
+    };
+    options = "--delete-older-than 7d";
+  };
+
+  # 定期自动优化 Nix store（通过硬链接去重）
+  nix.optimise.automatic = true;
+
   networking.hostName = "macbook";
 
   users.users.tohno = {

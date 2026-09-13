@@ -10,7 +10,7 @@
     ../../modules/btop.nix
     ../../modules/fish.nix
     ../../modules/git.nix
-    ../../modules/kitty.nix
+    # ../../modules/kitty.nix
     ../../modules/matugen.nix
     ../../modules/neovim.nix
     ../../modules/starship.nix
@@ -33,15 +33,15 @@
 
   programs.man.generateCaches = false;
 
-  programs.kitty.settings = {
-    # Karabiner turns the physical Command keys into macOS Option; make Kitty
-    # treat those logical Option keys as Alt for tmux navigation.
-    macos_option_as_alt = "both";
-
-    # Use native macOS transparency and background blur.
-    background_opacity = 0.9;
-    background_blur = 20;
-  };
+  # programs.kitty.settings = {
+  #   # Karabiner turns the physical Command keys into macOS Option; make Kitty
+  #   # treat those logical Option keys as Alt for tmux navigation.
+  #   macos_option_as_alt = "both";
+  #
+  #   # Use native macOS transparency and background blur.
+  #   background_opacity = 0.9;
+  #   background_blur = 20;
+  # };
 
   home.file.".local/bin/mac-screenshot" = {
     executable = true;

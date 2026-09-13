@@ -24,6 +24,7 @@
       "sol"
       "squirrel-app"
       "ghostty"
+      "wechat"
 
     ];
 

@@ -250,6 +250,12 @@ in
         ip_cidr = [ "1.1.1.1" ];
         outbound = "proxy";
       }
+      # Hearthstone game servers are handed out as changing bare IPs, so the
+      # Blizzard domain/IP rule set alone does not reliably match game traffic.
+      {
+        process_name = [ "Hearthstone" ];
+        outbound = "direct";
+      }
       # Steam content servers use HTTP/80 and can redirect chunk requests
       # to bare CDN IPs.  Keep the store on the proxy (normally HTTPS/443),
       # but send those downloads directly.
