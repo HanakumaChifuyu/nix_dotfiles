@@ -6,6 +6,7 @@
     DingTalk = "sha256-1zTxmjPTD0m2W3GwEfVgKmrbIfpjn1rdjsO/NPNuE9E=";
     BiliBili = "sha256-rQJTOxPuVeDersH7hRPJOBzjRBOKClCW6AT6s9fA+tM=";
     NetEaseMusic = "sha256-UTIm+sulJRXu8rvV+t2npjC/fGjtiAImCj0BWVYGds0=";
+    Blizzard = "sha256-njq9UVBZfHsF3l55UZPTM1z6bBq/RaUEUIc2P3zRXjo=";
     DouYin = "sha256-AhRRNSpoTPiqG8GPX1CodnMMFetzocOpHGx1w4oO6jg=";
     Weibo = "sha256-esiE6eaLMhJJyT2P86PhwsLyontDY7L++Xlqmg/i0Rg=";
     Zhihu = "sha256-+zC/CDFI/8lrPKT5bK2UBk/NV0SOH7UJStz+45jEYDk=";

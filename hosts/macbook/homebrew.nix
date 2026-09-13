@@ -23,6 +23,8 @@
       "karabiner-elements"
       "sol"
       "squirrel-app"
+      "ghostty"
+
     ];
 
     onActivation = {

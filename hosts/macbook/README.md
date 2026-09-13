@@ -152,6 +152,8 @@ matugen-wallpaper /absolute/path/to/wallpaper.jpg
 ```
 
 脚本也接受相对路径，例如 `matugen-wallpaper ./wallpaper.jpg`。
+首次使用前，在“系统设置 → 墙纸”中开启“在所有空间显示”；否则 macOS
+只会更新当前 Mission Control 桌面。这个开关只需设置一次。
 
 生成结果位于 `~/.cache/matugen`，鼠须管配色写入 `~/Library/Rime/matugen.yaml`。
 这些是生成文件，持久修改应写入仓库中的 Matugen 模板。壁纸控制首次执行时可能需要系统授权。

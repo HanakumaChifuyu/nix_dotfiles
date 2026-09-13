@@ -89,81 +89,30 @@ in
               description = "Alt+1-9/0: switch to macOS Desktop 1-10";
               # Simple modifications run first, so Option here is produced by
               # the physical Command keys after the Command/Option swap.
-              manipulators =
-                map
-                  (binding: {
-                    type = "basic";
-                    from = {
-                      key_code = binding.key;
-                      modifiers.mandatory = [ "option" ];
+              manipulators = map (binding: {
+                type = "basic";
+                from = {
+                  key_code = binding.key;
+                  modifiers.mandatory = [ "option" ];
+                };
+                to = [
+                  {
+                    shell_command = "/Users/tohno/.local/bin/mac-space-check ${toString binding.space}";
+                  }
+                  {
+                    # Let Mission Control perform the actual switch. The
+                    # helper only reports a missing target Space.
+                    key_code = binding.key;
+                    modifiers = [ "control" ];
+                  }
+                  {
+                    set_variable = {
+                      name = "mac_window_filled_by_alt_a";
+                      value = false;
                     };
-                    to = [
-                      {
-                        shell_command = "/Users/tohno/.local/bin/mac-space-check ${toString binding.space}";
-                      }
-                      {
-                        # Let Mission Control perform the actual switch. The
-                        # helper only reports a missing target Space.
-                        key_code = binding.key;
-                        modifiers = [ "control" ];
-                      }
-                      {
-                        set_variable = {
-                          name = "mac_window_filled_by_alt_a";
-                          value = false;
-                        };
-                      }
-                    ];
-                  })
-                  spaceBindings;
-            }
-            {
-              description = "Alt+Q: close window; Alt+Shift+Q: quit application";
-              manipulators = [
-                {
-                  type = "basic";
-                  from = {
-                    key_code = "q";
-                    modifiers.mandatory = [
-                      "option"
-                      "shift"
-                    ];
-                  };
-                  to = [
-                    {
-                      key_code = "q";
-                      modifiers = [ "command" ];
-                      repeat = false;
-                    }
-                    {
-                      set_variable = {
-                        name = "mac_window_filled_by_alt_a";
-                        value = false;
-                      };
-                    }
-                  ];
-                }
-                {
-                  type = "basic";
-                  from = {
-                    key_code = "q";
-                    modifiers.mandatory = [ "option" ];
-                  };
-                  to = [
-                    {
-                      key_code = "w";
-                      modifiers = [ "command" ];
-                      repeat = false;
-                    }
-                    {
-                      set_variable = {
-                        name = "mac_window_filled_by_alt_a";
-                        value = false;
-                      };
-                    }
-                  ];
-                }
-              ];
+                  }
+                ];
+              }) spaceBindings;
             }
             {
               description = "Alt+A: toggle window fill and previous size";

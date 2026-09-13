@@ -13,7 +13,8 @@ Fish 的全局代理变量、本地 7890 端口和 Hysteria2 节点参数保持�
 - 移除 `mirror` 关键字直连，以及 RubyGems、Rust、Homebrew 等上游的直连例外。
   这些上游默认走代理，明确列出的国内镜像继续直连。
 - 保留 Linux `auto_redirect` 的出口标记机制和原有 Tailscale 路由排除。
-- 29 份规则集固定上游提交与 SHA-256，在 Nix 构建时下载，运行时读取 Nix store。
+- 30 份规则集固定上游提交与 SHA-256，在 Nix 构建时下载，运行时读取 Nix store。
+  其中 `Blizzard` 覆盖战网、暴雪游戏域名和游戏服务器 IP，按现有策略使用国内 DNS 并直连。
   不再每天自动跟随上游 `main`；更新规则需要同时修改
   `modules/sing-box-rules.nix` 中的 revision 和 hashes，然后重新构建。
   构建下载先尝试 GitHub，再尝试同一提交的 jsDelivr URL。
@@ -55,7 +56,7 @@ sudo "$singbox_previous_system/bin/switch-to-configuration" test
 ## 本地验证范围
 
 修改时使用仓库锁定的 sing-box 1.13.13：两个 Linux 主机的 sing-box 配置求值通过；
-29 份规则集的 Nix 下载、哈希校验和二进制解码通过。
+30 份规则集的 Nix 下载、哈希校验和二进制解码通过。
 在 macOS 上去除 Linux TUN 入站、使用占位凭据后，`sing-box check` 通过；
 用本地 DNS 和 SOCKS 测试端点验证了 13 项 DNS/路由行为。
 这些检查未启用系统 TUN，也未连接实际 Hysteria2 节点，不能替代原机器的网络测试。

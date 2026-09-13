@@ -56,16 +56,44 @@ let
   # macOS watches each rule file's parent directory. Give every rule a small
   # directory instead of watching all of /nix/store (which exhausts file handles).
   ruleFiles = pkgs.runCommand "sing-box-mac-rule-files" { } (
-    lib.concatMapStringsSep "\n" (rule: ''
+    ''
+      mkdir -p "$out/dns-domains"
+    ''
+    + lib.concatMapStringsSep "\n" (rule: ''
       mkdir -p "$out/${rule.tag}"
       cp ${lib.escapeShellArg rule.path} "$out/${rule.tag}/rules.srs"
+      ${lib.getExe pkgs.sing-box} rule-set decompile "$out/${rule.tag}/rules.srs" -o ${rule.tag}.json
     '') base.route.rule_set
+    + ''
+      # The pinned rule sets contain flat OR rules. Fail if their shape changes:
+      # silently flattening logical/inverted rules would change DNS policy.
+      ${lib.getExe pkgs.jq} -se 'all(.[].rules[];
+        (keys - ["domain", "domain_suffix", "domain_keyword", "domain_regex",
+                 "ip_cidr", "process_name"] | length) == 0)' *.json > /dev/null
+      ${lib.getExe pkgs.jq} -s '{version: 2, rules: [.[].rules[] |
+        with_entries(select(.key == "domain" or .key == "domain_suffix" or
+                            .key == "domain_keyword" or .key == "domain_regex")) |
+        select(length > 0)]}' *.json > dns-domains.json
+      ${lib.getExe pkgs.sing-box} rule-set compile dns-domains.json -o "$out/dns-domains/rules.srs"
+    ''
   );
   settings = base // {
     dns = base.dns // {
       servers = map (
-        server: if server.tag == "tailscale" then server // { detour = "local"; } else server
+        server:
+        if server.tag == "tailscale" then
+          server // { detour = "local"; }
+        else if server.tag == "aliyun" then
+          # Preserve the shared resolver tag; use the reachable macOS upstream.
+          server // { server = "119.29.29.29"; }
+        else
+          server
       ) base.dns.servers;
+      # DNS must match domains without first resolving IP-based routing rules.
+      # Otherwise an unavailable upstream also prevents local FakeIP replies.
+      rules = map (
+        rule: if rule ? rule_set then rule // { rule_set = [ "dns-domains" ]; } else rule
+      ) base.dns.rules;
     };
     outbounds = base.outbounds ++ [
       {
@@ -79,18 +107,27 @@ let
     ];
     route = base.route // {
       auto_detect_interface = true;
-      rule_set = map (rule: rule // { path = "${ruleFiles}/${rule.tag}/rules.srs"; }) base.route.rule_set;
+      rule_set = map (rule: rule // { path = "${ruleFiles}/${rule.tag}/rules.srs"; }) base.route.rule_set ++ [
+        {
+          tag = "dns-domains";
+          type = "local";
+          format = "binary";
+          path = "${ruleFiles}/dns-domains/rules.srs";
+        }
+      ];
       rules = [
         {
-          ip_cidr = [ "fd7a:115c:a1e0::/48" ];
+          # The unbound local outlet is safe only for destinations excluded
+          # from auto_route. Other private addresses (notably IPv6 ULA) must
+          # keep using direct's automatic interface binding to avoid TUN loops.
+          ip_cidr = (lib.findFirst (inbound: inbound.type == "tun") null base.inbounds).route_exclude_address;
           outbound = "local";
         }
       ]
       ++ map (
         rule:
         if
-          (rule.ip_is_private or false)
-          || lib.elem "100.64.0.0/10" (rule.ip_cidr or [ ])
+          lib.elem "100.64.0.0/10" (rule.ip_cidr or [ ])
           || lib.elem "100.100.100.100/32" (rule.ip_cidr or [ ])
           || lib.elem "ts.net" (rule.domain_suffix or [ ])
         then

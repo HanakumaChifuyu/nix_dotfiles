@@ -10,6 +10,9 @@ Fish 的全局代理变量保持原样。平台入口是 `hosts/macbook/sing-box
 Mac 通过 root launchd daemon 运行原生 sing-box 1.13.13，自动分配 `utun` 接口。
 不使用 Linux 的 `auto_redirect`/`strict_route`，普通出口自动绑定当前默认网卡。
 LAN/Tailscale 使用独立的本地出口及路由排除，避免被强制绑定到物理网卡。
+本地出口的 IP 匹配范围复用 TUN 的 `route_exclude_address`；其余私网地址仍走
+自动绑定默认网卡的 `direct`。不要把所有 `ip_is_private` 流量改为 `local`：
+未排除的 IPv6 ULA 地址会经系统路由重新进入 TUN，形成 UDP 循环并造成 CPU 激增。
 当前 Mac 没有运行 Tailscale，其共存行为需要安装后再实际验证。
 
 ## 启用前检查
