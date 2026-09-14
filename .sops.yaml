@@ -3,10 +3,12 @@ keys:
   - &desktop age1rdh8sj8u9jymu8t7rmutkc22ld2rkpferxzhjwqs6evxm6r5z9esypheuc
   # Mac private key: ~/.config/sops/age/keys.txt (never commit the private key).
   - &macbook age1uwtwft3fc7c6wpkmzsyfxgmkfredrj78quv64pf7l4mxq5eypv6q45nk5p
+  - &nas-5060ti-16G age1nw5whdyd2nens24cxd4twqf5h6y9rqncxqsjjjz2l5czufagzqvqxjpl0h
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
+          - *nas-5060ti-16G
           - *nixos
           - *desktop
           - *macbook

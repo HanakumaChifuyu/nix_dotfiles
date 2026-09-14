@@ -76,6 +76,13 @@
               disko.nixosModules.disko
             ];
           };
+          nas_gpu = nixpkgs.lib.nixosSystem {
+            system = builtins.head (inputs.self.systems or [ "x86_64-linux" ]);
+            modules = [
+              ./hosts/nas-5060ti-16G/configuration.nix
+              inputs.sops-nix.nixosModules.sops
+            ];
+          };
 
         };
 
@@ -106,6 +113,7 @@
             "tohno@macbook" = mkHome "aarch64-darwin" [
               ./user/hosts/macbook/home.nix
             ];
+
           };
       };
 

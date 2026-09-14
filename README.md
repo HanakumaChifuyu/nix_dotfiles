@@ -93,6 +93,34 @@ sops.age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
 首次安装时目标系统尚未建立，密钥需要放到 `/mnt` 下：
 
+在现有电脑上为新 NAS 生成 SSH host key，并把派生的 age 公钥登记到 `.sops.yaml`：
+
+```bash
+# 在现有电脑的仓库根目录运行，无需 sudo
+bash tools/secret/bootstrap-keys.sh
+# 可用 --output-dir 指定输出目录；其他主机可传 --name 主机名
+```
+
+脚本检查 `ssh-keygen`、`age` 和 `ssh-to-age`，缺少时会提示安装命令；
+密钥对默认输出到本机 `~/.local/share/nix-dotfiles/host-keys/nas-5060ti-16G/`，
+文件名为 `ssh_host_ed25519_key` 和 `ssh_host_ed25519_key.pub`。
+重复运行会复用该目录中的私钥。同名公钥不一致时拒绝修改配置。
+随后在当前电脑上运行 `sops updatekeys --yes secrets/keys.yaml`（需要已有解密权限），
+把更新后的配置和密文同步到 NAS。
+
+把生成的密钥对通过 `scp` 或 U 盘复制到 NAS 安装环境的 `/mnt/etc/ssh/`，
+已安装系统则复制到 `/etc/ssh/`。例如先把两个文件放到 U 盘，在 NAS 安装环境执行：
+
+```bash
+sudo mkdir -p /mnt/etc/ssh
+sudo install -o root -g root -m 600 /run/media/usb/ssh_host_ed25519_key /mnt/etc/ssh/
+sudo install -o root -g root -m 644 /run/media/usb/ssh_host_ed25519_key.pub /mnt/etc/ssh/
+```
+
+私钥不能提交到仓库。
+
+如果恢复已有密钥，可以从备份复制：
+
 ```
 # 假设你把密钥存在 U 盘，挂载在 /run/media/usb
 mkdir -p /mnt/etc/ssh
