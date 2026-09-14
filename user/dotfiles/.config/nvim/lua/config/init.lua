@@ -1,4 +1,6 @@
 require("notify").setup({
+	-- Normal is transparent, so notification animations need an explicit background.
+	background_colour = "#000000",
 	fps = 60,
 	render = "minimal",
 	timeout = 200,

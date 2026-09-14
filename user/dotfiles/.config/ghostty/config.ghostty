@@ -23,3 +23,5 @@ quick-terminal-autohide = true
 
 macos-titlebar-style = tabs
 window-save-state = always
+
+shell-integration-features = ssh-env,ssh-terminfo

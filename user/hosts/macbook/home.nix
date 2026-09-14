@@ -173,6 +173,8 @@
     unstable.codex
     ncdu
 
+    iproute2mac
+
     # social network
     telegram-desktop
 
