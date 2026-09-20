@@ -31,11 +31,16 @@ in
       (
       set -e
       host_key=/etc/ssh/ssh_host_ed25519_key
+      user_config_dir=${sopsUserHome}/.config
       user_age_key=${sopsUserAgeKeyFile}
       user_age_dir=$(${pkgs.coreutils}/bin/dirname "$user_age_key")
 
       if [ -f "$host_key" ]; then
-        ${pkgs.coreutils}/bin/install -d -m 700 -o ${sopsUser} -g users "$user_age_dir"
+        # install -d only applies ownership to explicitly listed directories.
+        # Otherwise a fresh install leaves .config and sops owned by root,
+        # preventing Fish and other programs from creating their config files.
+        ${pkgs.coreutils}/bin/install -d -m 700 -o ${sopsUser} -g users \
+          "$user_config_dir" "$user_config_dir/sops" "$user_age_dir"
         # nixos-install can pass a TMPDIR that does not exist inside the chroot.
         # An absolute template avoids TMPDIR and allows an atomic final rename.
         tmp_key=$(${pkgs.coreutils}/bin/mktemp "$user_age_dir/.keys.txt.XXXXXXXXXX")

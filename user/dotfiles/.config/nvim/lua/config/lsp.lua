@@ -45,6 +45,7 @@ require("conform").setup({
 		rust = { "rustfmt", "leptosfmt" },
 		python = { "ruff_format", "ruff_organize_imports", "ruff_fix" },
 		nix = { "nixfmt" },
+		slint = { "slint_lsp" },
 		json = { "biome", "prettier", stop_after_first = true },
 		jsonc = { "biome" },
 		javascript = { "prettier", stop_after_first = true },
@@ -65,6 +66,8 @@ require("conform").setup({
 		lsp_format = "fallback",
 	},
 	formatters = {
+		-- Override built-in formatter options here with append_args.
+		-- Example: stylua = { append_args = { "--column-width", "80" } },
 		meson_format = {
 			command = "meson",
 			args = { "format", "--source-file-path", "$FILENAME", "-" },
@@ -254,3 +257,5 @@ vim.lsp.config["mesonlsp"] = {
 	filetypes = { "meson" },
 }
 vim.lsp.enable({ "clangd", "neocmake", "mesonlsp" })
+
+vim.lsp.enable("slint_lsp")

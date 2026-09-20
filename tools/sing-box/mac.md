@@ -3,11 +3,15 @@
 首次安装与系统、用户配置的激活顺序见 [MacBook 部署手册](../../hosts/macbook/README.md)，
 密钥生成与授权见 [age 密钥准备](mac-age.md)。
 
-Mac 使用与 Linux 相同的 DNS、分流和固定版本规则集，仍提供 `127.0.0.1:7890`。
+Mac 复用 Linux 的 DNS 分流策略和固定版本规则集，仍提供 `127.0.0.1:7890`。
+Mac 的国内 DNS 上游使用阿里 DoH（`223.5.5.5`，TLS 名称 `dns.alidns.com`），
+避免普通 UDP/53 上游反复超时；保留 FakeIP 与 Tailscale MagicDNS。
 Fish 的全局代理变量保持原样。平台入口是 `hosts/macbook/sing-box.nix`，
 共享策略在 `modules/sing-box-settings.nix`，Linux 入口仍是 `modules/sing-box.nix`。
 
-Mac 通过 root launchd daemon 运行原生 sing-box 1.13.13，自动分配 `utun` 接口。
+Mac 通过 root launchd daemon 运行原生 sing-box 1.13.13，自动分配 `utun` 接口，
+使用 `gvisor` 协议栈。此前 `system` 栈出现过 DNS/UDP 和 mixed 代理正常、
+TUN TCP 完成握手后 TLS 停滞的现象，改用 gVisor 避开该系统 TCP 转发路径。
 不使用 Linux 的 `auto_redirect`/`strict_route`，普通出口自动绑定当前默认网卡。
 LAN/Tailscale 使用独立的本地出口及路由排除，避免被强制绑定到物理网卡。
 本地出口的 IP 匹配范围复用 TUN 的 `route_exclude_address`；其余私网地址仍走

@@ -25,6 +25,8 @@
       "squirrel-app"
       "ghostty"
       "wechat"
+      "prismlauncher"
+      "playcover-community"
 
     ];
 

@@ -6,6 +6,7 @@
     ./fonts.nix
     ./homebrew.nix
     ./sing-box.nix
+    ./external-ssd.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -54,7 +55,7 @@
 
     # The implicit macOS mouse tracking speed is 1.0. Increase mouse movement
     # by 50% without changing the trackpad speed.
-    defaults.".GlobalPreferences"."com.apple.mouse.scaling" = 1.5;
+    defaults.".GlobalPreferences"."com.apple.mouse.scaling" = 2.5;
 
     # Keep Desktop 1-10 numbering stable for Alt+number switching.
     defaults.dock.mru-spaces = false;

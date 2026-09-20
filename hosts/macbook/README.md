@@ -160,6 +160,30 @@ matugen-wallpaper /absolute/path/to/wallpaper.jpg
 
 ## 日常更新
 
+### 外接 SSD 固定挂载目录
+
+[external-ssd.nix](external-ssd.nix) 将 APFS 卷
+`86716007-5CB0-43DD-8FAD-21B953CB9AAE` 固定挂载到 `/Users/tohno/ssd-volume`。
+使用的是卷 UUID，不是 APFS 容器 UUID，也不依赖 `disk6s1` 之类会变化的编号。
+系统激活时会创建挂载目录，并通过 `vifs` 更新 `/etc/fstab` 中这个卷的条目，
+保留安装器的 `/nix` 等其他规则；之后每次插盘由 macOS 自动挂载。
+
+```bash
+sudo darwin-rebuild switch --flake .#macbook
+```
+
+首次应用后，已挂载的磁盘需要安全推出再插入。若当前未挂载，也可以执行：
+
+```bash
+diskutil mount 86716007-5CB0-43DD-8FAD-21B953CB9AAE
+df -h /Users/tohno/ssd-volume
+```
+
+重新格式化会改变卷 UUID，需要更新模块。若以后移除此模块，还需用 `sudo vifs`
+删除对应 UUID 的条目；激活脚本写入的条目不会因移除模块或回滚而自动删除。
+
+### 更新配置和依赖
+
 拉取配置后按需要激活两层，不必每次更新依赖：
 
 ```bash

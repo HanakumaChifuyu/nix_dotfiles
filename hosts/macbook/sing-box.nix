@@ -23,7 +23,9 @@ let
         "fdfe:dcba:9876::1/126"
       ];
       mtu = 1350;
-      stack = "system";
+      # Avoid Darwin system-stack TCP stalls: DNS/UDP and mixed-in can keep
+      # working while TUN TCP accepts connections but never forwards TLS.
+      stack = "gvisor";
       auto_route = true;
       route_exclude_address = [
         "10.0.0.0/8"
@@ -84,8 +86,13 @@ let
         if server.tag == "tailscale" then
           server // { detour = "local"; }
         else if server.tag == "aliyun" then
-          # Preserve the shared resolver tag; use the reachable macOS upstream.
-          server // { server = "119.29.29.29"; }
+          # Plain UDP DNS repeatedly timed out on this Mac. Bootstrap DoH
+          # with a literal IP so it never depends on the managed system DNS.
+          server // {
+            type = "https";
+            server = "223.5.5.5";
+            tls.server_name = "dns.alidns.com";
+          }
         else
           server
       ) base.dns.servers;
