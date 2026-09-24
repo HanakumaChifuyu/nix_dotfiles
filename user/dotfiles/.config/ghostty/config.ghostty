@@ -12,6 +12,7 @@ font-size = 14
 theme = Matugen
 
 macos-option-as-alt = true
+mouse-hide-while-typing = true
 
 background-opacity = 0.9
 background-blur = 20

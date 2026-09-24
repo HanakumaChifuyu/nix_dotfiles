@@ -20,9 +20,13 @@ end, { noremap = true, desc = "Quit (ignore if last window)" })
 -- Quick escape from insert mode
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
 
+-- Jump list navigation (non-recursive so the disabled keys still work as RHS)
+vim.keymap.set("n", "H", "<C-o>", { noremap = true, silent = true, desc = "Jump to previous location" })
+vim.keymap.set("n", "L", "<C-i>", { noremap = true, silent = true, desc = "Jump to next location" })
+vim.keymap.set("n", "<C-o>", "<Nop>", { desc = "Disable original jump-back key" })
+vim.keymap.set("n", "<C-i>", "<Nop>", { desc = "Disable original jump-forward key" })
+
 -- Buffer navigation
-vim.keymap.set({ "n", "v" }, "H", "^", { desc = "Jump to the end of the line" })
-vim.keymap.set({ "n", "v" }, "L", "$", { desc = "Jump to the beginning of the line." })
 vim.keymap.set("n", "<leader>c", function()
 	Snacks.bufdelete()
 end, { noremap = true, silent = true, desc = "Close current buffer and go to previous" })
