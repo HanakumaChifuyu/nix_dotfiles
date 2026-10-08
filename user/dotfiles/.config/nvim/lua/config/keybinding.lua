@@ -6,8 +6,8 @@
 vim.keymap.set("n", "<leader>e", "<cmd>Oil --float<CR>", { desc = "Open Oil file manager (float)" })
 
 -- Visual line navigation
-vim.keymap.set({ "n", "v" }, "j", "gj", { noremap = true, silent = true })
-vim.keymap.set({ "n", "v" }, "k", "gk", { noremap = true, silent = true })
+vim.keymap.set({ "n", "x" }, "j", "gj", { noremap = true, silent = true })
+vim.keymap.set({ "n", "x" }, "k", "gk", { noremap = true, silent = true })
 
 -- Quick save and quit
 vim.keymap.set("n", "<leader>w", ":wa<CR>", { noremap = true, desc = "Save all buffers" })
