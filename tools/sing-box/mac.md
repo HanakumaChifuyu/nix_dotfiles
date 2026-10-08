@@ -110,6 +110,9 @@ sudo sing-box-mac restore-dns
 程序会把手动 DNS 恢复为原地址列表，把原先自动获取 DNS 的服务恢复为 `Empty`。
 运行期间用户自行修改过的 DNS 会保留，恢复失败时会保留记录供重试。
 异常退出后 launchd 重启程序时，也会先尝试恢复旧记录再重新启动。
+程序另在 `/var/lib/sing-box/dns-original.json` 保留最近一次原始 DNS；
+即使网络切换后旧的 TUN DNS 再次出现、而本次恢复记录已删除，下次启动或执行
+`restore-dns` 仍可恢复原始 DNS。不要手动删除这个文件。
 停止后如需继续使用 FlClash，可重新打开其 TUN。
 
 `bootout` 只停止本次运行；恢复启动可执行：

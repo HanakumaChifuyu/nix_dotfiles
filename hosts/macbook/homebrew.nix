@@ -19,6 +19,10 @@
   homebrew = {
     enable = true;
 
+    brews = [
+      "qemu"
+    ];
+
     casks = [
       "karabiner-elements"
       "sol"

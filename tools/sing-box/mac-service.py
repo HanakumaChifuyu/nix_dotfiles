@@ -34,6 +34,10 @@ def write_json(path, value):
 class SystemDNS:
     def __init__(self, state_file, command=None):
         self.state_file = Path(state_file)
+        # Keep the last known original after a successful restore. A network
+        # service can briefly report different DNS while its interface changes,
+        # then expose the old TUN DNS again after the state file is removed.
+        self.original_file = self.state_file.with_name("dns-original.json")
         self.command = command or self.networksetup
 
     @staticmethod
@@ -55,6 +59,7 @@ class SystemDNS:
 
     def apply(self):
         saved = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
+        originals = json.loads(self.original_file.read_text()) if self.original_file.exists() else {}
         services = self.command("-listallnetworkservices").splitlines()[1:]
         for service in services:
             if not service or service.startswith("*") or service in saved:
@@ -62,17 +67,28 @@ class SystemDNS:
             previous = self.current(service)
             if previous == TUN_DNS:
                 raise RuntimeError(f"{service} already uses sing-box DNS without a saved original")
+            originals[service] = previous
+            # Publish the durable fallback before changing system DNS.
+            write_json(self.original_file, originals)
             saved[service] = previous
             # Save before mutation, so recovery works even if the process is killed.
             write_json(self.state_file, saved)
             self.command("-setdnsservers", service, *TUN_DNS)
 
     def restore(self):
-        if not self.state_file.exists():
+        if not self.state_file.exists() and not self.original_file.exists():
             return
-        saved = json.loads(self.state_file.read_text())
+        saved = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
+        originals = json.loads(self.original_file.read_text()) if self.original_file.exists() else {}
+        # The active snapshot is authoritative; the durable copy also repairs
+        # TUN DNS that reappears after a network transition or lost snapshot.
+        # An old network service may have been removed since the backup.
+        services = {
+            name.lstrip("*") for name in self.command("-listallnetworkservices").splitlines()[1:]
+        }
+        targets = {**{name: value for name, value in originals.items() if name in services}, **saved}
         remaining = {}
-        for service, previous in saved.items():
+        for service, previous in targets.items():
             try:
                 # Preserve DNS changes made by the user or another application.
                 if self.current(service) == TUN_DNS:
@@ -82,7 +98,7 @@ class SystemDNS:
         if remaining:
             write_json(self.state_file, remaining)
             raise RuntimeError("Some DNS settings could not be restored; retry restore-dns")
-        self.state_file.unlink()
+        self.state_file.unlink(missing_ok=True)
 
 
 def validate_tun_routes(config):

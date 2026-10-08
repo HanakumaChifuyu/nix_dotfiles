@@ -158,6 +158,7 @@
 
   home.packages = with pkgs; [
     age
+    android-tools
     curl
     code2prompt
     eza

@@ -57,6 +57,20 @@ in
           selected = true;
           virtual_hid_keyboard.keyboard_type_v2 = "ansi";
 
+          # NuPhy Node 75 LP-1 reports both keyboard and pointing device over
+          # Bluetooth LE, so Karabiner does not modify its events by default.
+          devices = [
+            {
+              identifiers = {
+                vendor_id = 2007;
+                product_id = 0;
+                is_keyboard = true;
+                is_pointing_device = true;
+              };
+              ignore = false;
+            }
+          ];
+
           # Put macOS Command on the physical Alt/Option keys and use the
           # physical Command keys as the tiling-style Alt modifier.
           simple_modifications =

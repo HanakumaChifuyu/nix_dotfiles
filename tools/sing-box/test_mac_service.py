@@ -60,9 +60,29 @@ class DNSRecoveryTests(unittest.TestCase):
         restarted.restore()
         self.assertEqual(self.network.servers["Wi-Fi"], [])
 
+    def test_restore_recovers_tun_dns_after_snapshot_disappears(self):
+        self.manager.apply()
+        self.assertEqual(json.loads(self.manager.original_file.read_text())["Wi-Fi"], [])
+        self.path.unlink()
+        restarted = service.SystemDNS(self.path, self.network)
+        restarted.restore()
+        self.assertEqual(self.network.servers["Wi-Fi"], [])
+        self.assertEqual(self.network.servers["USB Ethernet"], ["223.5.5.5", "1.1.1.1"])
+
+    def test_restore_recovers_dns_that_reappears_after_transient_change(self):
+        self.manager.apply()
+        self.network.servers["Wi-Fi"] = []  # Interface change temporarily hides TUN DNS.
+        self.manager.restore()
+        self.assertFalse(self.path.exists())
+        self.network.servers["Wi-Fi"] = service.TUN_DNS[:]
+        self.manager.restore()
+        self.assertEqual(self.network.servers["Wi-Fi"], [])
+
     def test_preserve_dns_edited_while_running(self):
         self.manager.apply()
         self.network.servers["Wi-Fi"] = ["9.9.9.9"]
+        self.manager.restore()
+        self.assertEqual(self.network.servers["Wi-Fi"], ["9.9.9.9"])
         self.manager.restore()
         self.assertEqual(self.network.servers["Wi-Fi"], ["9.9.9.9"])
 

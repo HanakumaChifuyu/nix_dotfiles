@@ -232,7 +232,8 @@ sudo launchctl bootstrap system /Library/LaunchDaemons/org.nixos.sing-box.plist
 ```
 
 `bootout` 不会从 Nix 配置中移除服务。长期停用需移除对应 import，再激活系统配置。
-不要删除 `/var/lib/sing-box/dns-state.json` 来修复 DNS；这是恢复原 DNS 的记录。
+不要删除 `/var/lib/sing-box/dns-state.json` 或 `dns-original.json` 来修复 DNS；
+它们保存本次和最近一次的原始 DNS 设置，供异常退出或网络切换后恢复。
 
 ## 回滚
 
