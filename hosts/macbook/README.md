@@ -210,28 +210,25 @@ git diff -- flake.lock
 ## 服务管理和恢复
 
 ```bash
-sudo launchctl print system/org.nixos.sing-box
+sing-box-mac status
 sudo tail -n 80 /var/log/sing-box.log
 sing-box-mac check
 ```
 
-`launchctl print` 中应能看到服务处于运行状态；7890 由 sing-box 监听，系统 DNS 应为 `172.19.0.2`。
+`sing-box-mac status` 会显示 launchd 运行状态及当前 Wi-Fi DNS。
 只有查看配置通过不足以证明网络可用，完整网络验收命令见 [代理测试文档](../../tools/sing-box/mac.md)。
 
-临时停止：
+停止与启动服务（自带 DNS 还原与安全检查）：
 
 ```bash
-sudo launchctl bootout system/org.nixos.sing-box
+sudo sing-box-mac stop     # 停止服务并自动安全恢复 DNS
+sudo sing-box-mac start    # 启动服务
+sudo sing-box-mac restart  # 重启服务
+sudo sing-box-mac toggle   # 切换启停状态
 ```
 
-正常退出会恢复 DNS。如果上次被强制终止，停止服务后运行 `sudo sing-box-mac restore-dns`。
-恢复开机服务的本次运行：
-
-```bash
-sudo launchctl bootstrap system /Library/LaunchDaemons/org.nixos.sing-box.plist
-```
-
-`bootout` 不会从 Nix 配置中移除服务。长期停用需移除对应 import，再激活系统配置。
+底层分别调用 `launchctl bootout` 与 `bootstrap`。`stop` 命令在停止后会自动执行 `restore-dns` 并清理残留无效 DNS，防止断网。
+`stop` 不会从 Nix 配置中移除服务。长期停用需移除对应 import，再激活系统配置。
 不要删除 `/var/lib/sing-box/dns-state.json` 或 `dns-original.json` 来修复 DNS；
 它们保存本次和最近一次的原始 DNS 设置，供异常退出或网络切换后恢复。
 

@@ -97,11 +97,23 @@ sudo tail -n 80 /var/log/sing-box.log
 
 ## 停止与恢复
 
+推荐使用封装命令管理服务（内置安全停止与 DNS 自动校验）：
+
+```bash
+sudo sing-box-mac stop     # 停止服务并自动安全恢复 DNS
+sudo sing-box-mac start    # 启动服务
+sudo sing-box-mac restart  # 重启服务
+sudo sing-box-mac toggle   # 切换启停状态
+sing-box-mac status        # 查看服务状态与当前 Wi-Fi DNS
+```
+
+底层等价于使用 launchd 命令并自动执行 DNS 恢复保底：
+
 ```bash
 sudo launchctl bootout system/org.nixos.sing-box
 ```
 
-正常停止会自动恢复 DNS。若被强制杀死、或上次恢复失败，先确保服务已停止，再执行：
+若异常终止或需手动检查 DNS，可在停止服务后执行：
 
 ```bash
 sudo sing-box-mac restore-dns
@@ -115,7 +127,7 @@ sudo sing-box-mac restore-dns
 `restore-dns` 仍可恢复原始 DNS。不要手动删除这个文件。
 停止后如需继续使用 FlClash，可重新打开其 TUN。
 
-`bootout` 只停止本次运行；恢复启动可执行：
+手动启动底层命令：
 
 ```bash
 sudo launchctl bootstrap system /Library/LaunchDaemons/org.nixos.sing-box.plist

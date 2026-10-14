@@ -146,13 +146,96 @@ let
   };
   template = (pkgs.formats.json { }).generate "sing-box-mac-template.json" settings;
   runner = pkgs.writeShellScriptBin "sing-box-mac" ''
-    exec ${pkgs.python3}/bin/python3 ${../../tools/sing-box/mac-service.py} \
-      --template ${template} \
-      --secrets ${../../secrets/keys.yaml} \
-      --identity ${lib.escapeShellArg "${config.users.users.tohno.home}/.config/sops/age/keys.txt"} \
-      --sing-box ${lib.getExe pkgs.sing-box} \
-      --sops ${lib.getExe pkgs.sops} \
-      --curl ${lib.getExe pkgs.curl} "$@"
+    set -euo pipefail
+
+    service_name="system/org.nixos.sing-box"
+    plist_path="/Library/LaunchDaemons/org.nixos.sing-box.plist"
+
+    run_py() {
+      exec ${pkgs.python3}/bin/python3 ${../../tools/sing-box/mac-service.py} \
+        --template ${template} \
+        --secrets ${../../secrets/keys.yaml} \
+        --identity ${lib.escapeShellArg "${config.users.users.tohno.home}/.config/sops/age/keys.txt"} \
+        --sing-box ${lib.getExe pkgs.sing-box} \
+        --sops ${lib.getExe pkgs.sops} \
+        --curl ${lib.getExe pkgs.curl} "$@"
+    }
+
+    require_root() {
+      if [ "$(id -u)" -ne 0 ]; then
+        exec sudo "$0" "$@"
+      fi
+    }
+
+    case "''${1:-}" in
+      start)
+        require_root "$@"
+        if /bin/launchctl print "$service_name" >/dev/null 2>&1; then
+          echo "sing-box is already running."
+          exit 0
+        fi
+        if [ ! -f "$plist_path" ]; then
+          echo "Error: $plist_path not found. Please run darwin-rebuild switch first." >&2
+          exit 1
+        fi
+        echo "Starting sing-box launchd service..."
+        /bin/launchctl bootstrap system "$plist_path"
+        echo "sing-box service started."
+        ;;
+      stop)
+        require_root "$@"
+        echo "Stopping sing-box launchd service..."
+        /bin/launchctl bootout "$service_name" 2>/dev/null || true
+        sleep 1
+        echo "Ensuring DNS is restored..."
+        ${pkgs.python3}/bin/python3 ${../../tools/sing-box/mac-service.py} \
+          --template ${template} \
+          --secrets ${../../secrets/keys.yaml} \
+          --identity ${lib.escapeShellArg "${config.users.users.tohno.home}/.config/sops/age/keys.txt"} \
+          --sing-box ${lib.getExe pkgs.sing-box} \
+          --sops ${lib.getExe pkgs.sops} \
+          --curl ${lib.getExe pkgs.curl} restore-dns 2>/dev/null || true
+        # Clean up any lingering TUN or bogus DNS entries on all network services
+        /usr/sbin/networksetup -listallnetworkservices 2>/dev/null | sed '1d' | grep -v '^\*' | while IFS= read -r s; do
+          [ -z "$s" ] && continue
+          dns=$(/usr/sbin/networksetup -getdnsservers "$s" 2>/dev/null || true)
+          case "$dns" in
+            *"172.19.0.2"*|*"6.6.6.6"*)
+              echo "Resetting lingering DNS on '$s' to DHCP (Empty)..."
+              /usr/sbin/networksetup -setdnsservers "$s" Empty
+              ;;
+          esac
+        done
+        echo "sing-box stopped and network DNS restored."
+        ;;
+      restart)
+        require_root "$@"
+        "$0" stop
+        sleep 1
+        "$0" start
+        ;;
+      toggle)
+        require_root "$@"
+        if /bin/launchctl print "$service_name" >/dev/null 2>&1; then
+          "$0" stop
+        else
+          "$0" start
+        fi
+        ;;
+      status)
+        if /bin/launchctl print "$service_name" >/dev/null 2>&1; then
+          echo "sing-box status: RUNNING"
+          /bin/launchctl print "$service_name" | grep -E "state =|pid =|runs =|last exit code =" || true
+        else
+          echo "sing-box status: STOPPED"
+        fi
+        echo -n "Current Wi-Fi DNS: "
+        /usr/sbin/networksetup -getdnsservers Wi-Fi 2>/dev/null || echo "Unknown"
+        ;;
+      *)
+        run_py "$@"
+        ;;
+    esac
   '';
 in
 {
