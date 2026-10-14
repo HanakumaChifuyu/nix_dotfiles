@@ -29,6 +29,7 @@
         clang-tools # C / C++
         neocmakelsp # CMake
         mesonlsp # Meson
+        sqls # SQL
 
         # Build tools for lazy.nvim plugins such as nvim-treesitter and LuaSnip jsregexp.
         gcc
@@ -44,6 +45,8 @@
         stylua # Lua formatter
         cmake-format
         meson
+        sql-formatter # SQL Formatter
+        sqlfluff # SQL Linter / Formatter
 
         fzf
         wordnet

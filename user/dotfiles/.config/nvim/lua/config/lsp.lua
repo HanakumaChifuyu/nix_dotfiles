@@ -59,6 +59,7 @@ require("conform").setup({
 		vue = { "prettier" },
 		css = { "prettier" },
 		html = { "prettier" },
+		sql = { "sqlfluff", "sql_formatter", stop_after_first = true },
 		["_"] = { "trim_whitespace", "trim_newlines", "squeeze_blanks" },
 	},
 	format_on_save = {
@@ -259,3 +260,11 @@ vim.lsp.config["mesonlsp"] = {
 vim.lsp.enable({ "clangd", "neocmake", "mesonlsp" })
 
 vim.lsp.enable("slint_lsp")
+
+-- SQL
+vim.lsp.config["sqls"] = {
+	cmd = { "sqls" },
+	filetypes = { "sql", "mysql" },
+	root_markers = { "config.yml", ".git" },
+}
+vim.lsp.enable("sqls")
