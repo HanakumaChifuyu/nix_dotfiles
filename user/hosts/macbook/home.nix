@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   unstable,
@@ -29,6 +30,7 @@
   home.sessionVariables = {
     LANG = "en_US.UTF-8";
     LC_ALL = "en_US.UTF-8";
+    SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
   };
 
   programs.man.generateCaches = false;
