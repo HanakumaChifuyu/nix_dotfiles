@@ -7,21 +7,15 @@ let
   rule-set-snapshot = import ./sing-box-rules.nix;
   cn-rule-set-tags = builtins.attrNames rule-set-snapshot.hashes;
 
-  # Fetch at build time so service startup works without a live proxy or CDN.
+  # Vendor the pinned snapshot so both builds and startup work without a proxy/CDN.
   mkRuleSet = tag: {
     inherit tag;
     type = "local";
     format = "binary";
-    path = toString (
-      pkgs.fetchurl {
-        name = "sing-box-${tag}.srs";
-        urls = [
-          "https://raw.githubusercontent.com/senshinya/singbox_ruleset/${rule-set-snapshot.revision}/rule/${tag}/${tag}.srs"
-          "https://cdn.jsdelivr.net/gh/senshinya/singbox_ruleset@${rule-set-snapshot.revision}/rule/${tag}/${tag}.srs"
-        ];
-        hash = rule-set-snapshot.hashes.${tag};
-      }
-    );
+    path = builtins.path {
+      path = ./sing-box-rules + "/${tag}.srs";
+      name = "sing-box-${tag}.srs";
+    };
   };
 
   # Explicit direct exceptions shared by DNS and routing. Domains only, no paths.
