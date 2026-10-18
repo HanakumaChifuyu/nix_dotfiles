@@ -1,0 +1,11 @@
+<labwc_config>
+  <keyboard><default /></keyboard>
+  <mouse>
+    <default />
+    <context name="Root">
+      <mousebind button="Right" action="Press">
+        <action name="ShowMenu" menu="root-menu" />
+      </mousebind>
+    </context>
+  </mouse>
+</labwc_config>

@@ -180,6 +180,7 @@
 
     # social network
     telegram-desktop
+    pi-coding-agent
 
   ];
 }

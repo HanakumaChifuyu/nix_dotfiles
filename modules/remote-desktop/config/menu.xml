@@ -1,0 +1,8 @@
+<openbox_menu>
+  <menu id="root-menu">
+    <item label="Terminal"><action name="Execute" command="foot" /></item>
+    <item label="Vulkan demo"><action name="Execute" command="vkcube-wayland" /></item>
+    <menu id="client-list-combined-menu" label="Windows" />
+    <item label="Exit session"><action name="Exit" /></item>
+  </menu>
+</openbox_menu>

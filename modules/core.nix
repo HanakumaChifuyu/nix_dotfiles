@@ -14,6 +14,7 @@
     ./packages.nix
     ./services.nix
     ./nix-settings.nix
+    ./sing-box.nix
     ./sops.nix
   ];
 

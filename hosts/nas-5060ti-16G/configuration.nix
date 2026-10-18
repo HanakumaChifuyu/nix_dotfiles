@@ -12,7 +12,14 @@
   imports = [
     ../../configuration.nix
     ../../hardware-configuration.nix
+    ../../modules/remote-desktop
+    ../../modules/sing-box.nix
   ];
+
+  services.remoteDesktop = {
+    enable = true;
+    user = "tohno";
+  };
 
   # Host-specific settings override the base configuration
   # Zen kernel: optimized for desktop responsiveness and low latency
