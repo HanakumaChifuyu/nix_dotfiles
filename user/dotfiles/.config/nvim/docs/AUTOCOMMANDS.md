@@ -308,54 +308,13 @@ vim.api.nvim_create_autocmd("TermOpen", {
 
 ## Plugin Integration
 
-### Oil.nvim File Operations
+### Oil File Operations
 
-**Purpose**: Integrate Oil file operations with LSP and project-wide refactoring
+The `OilActions` augroup handles `User OilActionsPost` events.
+For each move/rename, it converts Oil URLs to paths and calls `Snacks.rename.on_rename_file()` to notify LSP servers.
+Reference updates depend on the language server's file rename support.
 
-**Configuration**:
-```lua
-local oil_actions_group = vim.api.nvim_create_augroup("OilActions", { clear = true })
-
-vim.api.nvim_create_autocmd("User", {
-    group = oil_actions_group,
-    pattern = "OilActionsPost",
-    desc = "Notify Snacks plugin when Oil renames a file",
-    callback = function(event)
-        if event.data.actions[1].type == "move" then
-            Snacks.rename.on_rename_file(event.data.actions[1].src_url, event.data.actions[1].dest_url)
-        end
-    end,
-})
-```
-
-**Details**:
-
-#### Event: `User` with pattern `OilActionsPost`
-- Custom event emitted by Oil.nvim after file operations
-- Contains action metadata in `event.data`
-
-#### Action Detection
-- Checks if the action type is `"move"`
-- Extracts `src_url` (original path) and `dest_url` (new path)
-
-#### Integration with Snacks
-- Calls `Snacks.rename.on_rename_file()` to update references
-- Updates imports, requires, and other file references
-- Notifies LSP servers about the rename
-
-**Workflow**:
-1. User renames/moves a file using Oil (`:Oil`)
-2. Oil executes the file system operation
-3. Oil emits `OilActionsPost` event
-4. Autocommand detects the move action
-5. Snacks updates all references to the file
-6. LSP servers are notified to update their index
-
-**Benefits**:
-- Seamless refactoring when reorganizing project structure
-- Automatic import/require updates
-- LSP diagnostics stay accurate
-- No broken references after file moves
+Oil configuration lives in `lua/config/oil.lua`. Git status integration is disabled.
 
 ## Creating Custom Autocommands
 

@@ -11,7 +11,7 @@ A modern, feature-rich Neovim configuration with comprehensive LSP support, fuzz
 - **Code Completion**: [blink.cmp](https://github.com/saghen/blink.cmp) - Fast completion engine with LuaSnip integration
 - **Syntax Highlighting**: [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) - Advanced syntax highlighting and code parsing
 - **Fuzzy Finder**: [Snacks.picker](https://github.com/folke/snacks.nvim) - Fast file/text searching
-- **File Manager**: [Oil.nvim](https://github.com/stevearc/oil.nvim) - Edit your filesystem like a buffer
+- **File Manager**: [Oil.nvim](https://github.com/stevearc/oil.nvim) - Edit your filesystem like a buffer, with LSP rename integration
 
 ### Development Tools
 
@@ -294,7 +294,7 @@ Leader key: `<Space>`
 ### Basic Navigation
 | Key | Mode | Action |
 |-----|------|--------|
-| `<leader>e` | n | Open Oil file manager |
+| `<leader>e` | n | Toggle Oil file manager (float) |
 | `H` / `L` | n | Previous/Next buffer |
 | `<leader>c` | n | Close current buffer |
 | `<leader>w` | n | Save all buffers |
@@ -451,21 +451,14 @@ Automatically configures keybindings when opening a terminal:
 **Pattern**: `term://*`
 **Trigger**: `TermOpen`
 
-### Plugin-specific Autocommands
+### Oil File Manager
 
-#### Oil.nvim File Operations
-**Augroup**: `OilActions`
+`<leader>e` toggles the Oil floating window. Edit directory entries and save to create, rename, move, or delete files.
 
-Integrates Oil.nvim file operations with Snacks.nvim's rename functionality. When you rename or move a file using Oil:
-
-1. Detects the `move` action
-2. Notifies Snacks.rename to update references throughout the project
-3. Ensures LSP servers are aware of the file name change
-
-**Pattern**: `OilActionsPost`
-**Trigger**: `User` event
-
-This provides a seamless experience when refactoring file structures, automatically updating imports and references.
+- `OilActionsPost` notifies Snacks.rename for every moved/renamed file. Reference updates depend on LSP server support.
+- `C`: Copy the relative path to the clipboard; `q`: Close; `g.`: Toggle hidden files.
+- Hidden files are shown by default; filesystem changes are watched automatically.
+- Oil Git status integration is disabled.
 
 ### Benefits of This Organization
 

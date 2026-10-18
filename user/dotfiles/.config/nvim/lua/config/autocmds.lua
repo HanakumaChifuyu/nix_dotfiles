@@ -225,9 +225,14 @@ vim.api.nvim_create_autocmd("User", {
 	desc = "Notify Snacks plugin when Oil renames a file",
 	callback = function(event)
 		local actions = event.data and event.data.actions
-		local action = actions and actions[1]
-		if action and action.type == "move" then
-			Snacks.rename.on_rename_file(action.src_url, action.dest_url)
+		for _, action in ipairs(actions or {}) do
+			if action.type == "move" then
+				local _, from = require("oil.util").parse_url(action.src_url)
+				local _, to = require("oil.util").parse_url(action.dest_url)
+				if from and to then
+					Snacks.rename.on_rename_file(from, to)
+				end
+			end
 		end
 	end,
 })

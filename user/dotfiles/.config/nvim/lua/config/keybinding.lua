@@ -3,7 +3,9 @@
 -- ============================================================================
 
 -- File manager
-vim.keymap.set("n", "<leader>e", "<cmd>Oil --float<CR>", { desc = "Open Oil file manager (float)" })
+vim.keymap.set("n", "<leader>e", function()
+	require("oil").toggle_float()
+end, { desc = "Toggle Oil file manager (float)" })
 
 -- Visual line navigation
 vim.keymap.set({ "n", "x" }, "j", "gj", { noremap = true, silent = true })

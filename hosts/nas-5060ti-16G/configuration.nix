@@ -14,6 +14,7 @@
     ../../hardware-configuration.nix
     ../../modules/remote-desktop
     ../../modules/sing-box.nix
+    ./storage.nix
   ];
 
   services.remoteDesktop = {
