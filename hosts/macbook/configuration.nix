@@ -41,6 +41,15 @@
   programs.fish.enable = true;
   environment.shells = [ pkgs.fish ];
 
+  # Existing macOS accounts need their login shell updated explicitly.
+  system.activationScripts.postActivation.text = ''
+    desired_shell=/run/current-system/sw/bin/fish
+    current_shell=$(/usr/bin/dscl . -read /Users/tohno UserShell)
+    if [ "$current_shell" != "UserShell: $desired_shell" ]; then
+      /usr/bin/dscl . -create /Users/tohno UserShell "$desired_shell"
+    fi
+  '';
+
   system = {
     primaryUser = "tohno";
     stateVersion = 6;
