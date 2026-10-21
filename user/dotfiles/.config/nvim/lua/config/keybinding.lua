@@ -7,6 +7,18 @@ vim.keymap.set("n", "<leader>e", function()
 	require("oil").toggle_float()
 end, { desc = "Toggle Oil file manager (float)" })
 
+-- Reuse the same terminal session when hiding and reopening the float
+local float_terminal
+vim.keymap.set({ "n", "t" }, "<leader>tt", function()
+	if not float_terminal then
+		float_terminal = require("toggleterm.terminal").Terminal:new({
+			direction = "float",
+			hidden = true,
+		})
+	end
+	float_terminal:toggle()
+end, { silent = true, desc = "Toggle floating terminal" })
+
 -- Visual line navigation
 vim.keymap.set({ "n", "x" }, "j", "gj", { noremap = true, silent = true })
 vim.keymap.set({ "n", "x" }, "k", "gk", { noremap = true, silent = true })

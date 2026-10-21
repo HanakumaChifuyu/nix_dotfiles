@@ -34,6 +34,11 @@
   };
 
   programs.man.generateCaches = false;
+  programs.tmux.shell = "${pkgs.fish}/bin/fish";
+  # Clear the macOS helper command retained by an existing tmux server.
+  programs.tmux.extraConfig = lib.mkAfter ''
+    set -g default-command ""
+  '';
 
   # programs.kitty.settings = {
   #   # Karabiner turns the physical Command keys into macOS Option; make Kitty

@@ -36,7 +36,7 @@ in
           -u http_proxy -u https_proxy -u all_proxy \
           -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
           -u no_proxy -u NO_PROXY \
-          steam $argv
+          ${if pkgs.stdenv.isDarwin then "/Applications/Steam.app/Contents/MacOS/steam_osx" else "steam"} $argv
       end
 
       # Interactive SSH host selector using fzf
