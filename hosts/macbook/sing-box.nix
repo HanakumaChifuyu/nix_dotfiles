@@ -80,6 +80,15 @@ let
     ''
   );
   settings = base // {
+    experimental = base.experimental // {
+      clash_api = {
+        external_controller = "127.0.0.1:19090";
+        default_mode = "rule";
+        # Local CLI only; do not allow arbitrary websites to control routing.
+        access_control_allow_origin = [ "http://127.0.0.1:19090" ];
+        access_control_allow_private_network = false;
+      };
+    };
     dns = base.dns // {
       servers = map (
         server:
@@ -98,8 +107,15 @@ let
       ) base.dns.servers;
       # DNS must match domains without first resolving IP-based routing rules.
       # Otherwise an unavailable upstream also prevents local FakeIP replies.
-      rules = map (
-        rule: if rule ? rule_set then rule // { rule_set = [ "dns-domains" ]; } else rule
+      rules = lib.concatMap (
+        rule:
+        [ (if rule ? rule_set then rule // { rule_set = [ "dns-domains" ]; } else rule) ]
+        # Keep MagicDNS first, then bypass FakeIP for new direct-mode queries.
+        ++ lib.optional ((rule.server or "") == "tailscale") {
+          clash_mode = "direct";
+          action = "route";
+          server = "aliyun";
+        }
       ) base.dns.rules;
     };
     outbounds = base.outbounds ++ [
@@ -130,6 +146,20 @@ let
           ip_cidr = (lib.findFirst (inbound: inbound.type == "tun") null base.inbounds).route_exclude_address;
           outbound = "local";
         }
+        # DNS must still reach the resolver before the direct-mode catch-all.
+        {
+          port = 53;
+          action = "hijack-dns";
+        }
+        { action = "sniff"; }
+        {
+          protocol = "dns";
+          action = "hijack-dns";
+        }
+        {
+          clash_mode = "direct";
+          outbound = "direct";
+        }
       ]
       ++ map (
         rule:
@@ -141,7 +171,7 @@ let
           rule // { outbound = "local"; }
         else
           rule
-      ) base.route.rules;
+      ) (lib.filter (rule: !(lib.elem (rule.action or "") [ "sniff" "hijack-dns" ])) base.route.rules);
     };
   };
   template = (pkgs.formats.json { }).generate "sing-box-mac-template.json" settings;
@@ -226,11 +256,17 @@ let
         if /bin/launchctl print "$service_name" >/dev/null 2>&1; then
           echo "sing-box status: RUNNING"
           /bin/launchctl print "$service_name" | grep -E "state =|pid =|runs =|last exit code =" || true
+          if ! "$0" mode-status; then
+            echo "sing-box mode: UNKNOWN (controller unavailable)"
+          fi
         else
           echo "sing-box status: STOPPED"
         fi
         echo -n "Current Wi-Fi DNS: "
         /usr/sbin/networksetup -getdnsservers Wi-Fi 2>/dev/null || echo "Unknown"
+        ;;
+      direct|rule|mode-toggle)
+        run_py "$@"
         ;;
       *)
         run_py "$@"

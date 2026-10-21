@@ -2,6 +2,7 @@
 
 import argparse
 import fcntl
+import http.client
 import ipaddress
 import json
 import os
@@ -15,6 +16,46 @@ import time
 
 
 TUN_DNS = ["172.19.0.2"]
+CONTROLLER_PORT = 19090
+
+
+def controller_request(method="GET", body=None):
+    # HTTPConnection connects directly: Fish/system proxy settings must never
+    # route controller requests back through the proxy we are controlling.
+    connection = http.client.HTTPConnection("127.0.0.1", CONTROLLER_PORT, timeout=5)
+    try:
+        connection.request(method, "/configs", body=json.dumps(body) if body is not None else None,
+                           headers={"Content-Type": "application/json"})
+        response = connection.getresponse()
+        payload = response.read()
+        if not 200 <= response.status < 300:
+            raise RuntimeError(f"Mode controller returned HTTP {response.status}")
+        return json.loads(payload) if payload else None
+    except (OSError, http.client.HTTPException) as error:
+        raise RuntimeError(
+            "Mode controller unavailable; make sure sing-box is running with the updated configuration"
+        ) from error
+    finally:
+        connection.close()
+
+
+def current_mode():
+    config = controller_request()
+    mode = config.get("mode", "") if isinstance(config, dict) else ""
+    if mode not in ("direct", "rule"):
+        raise RuntimeError(f"Unexpected sing-box mode: {mode!r}")
+    return mode
+
+
+def mode_command(command):
+    if command == "mode-status":
+        mode = current_mode()
+    else:
+        mode = ("rule" if current_mode() == "direct" else "direct") if command == "mode-toggle" else command
+        controller_request("PATCH", {"mode": mode})
+        if current_mode() != mode:
+            raise RuntimeError("Mode change could not be confirmed; run sing-box-mac status")
+    print(f"sing-box mode: {mode.upper()}")
 
 
 def write_json(path, value):
@@ -135,6 +176,8 @@ def render(args, directory, proxy_only=False):
     if proxy_only:
         config["inbounds"] = [item for item in config["inbounds"] if item["type"] == "mixed"]
         config["inbounds"][0]["listen_port"] = args.port
+        # An isolated connectivity test must not bind the live controller port.
+        config.get("experimental", {}).pop("clash_api", None)
     path = Path(directory) / "config.json"
     write_json(path, config)
     result = subprocess.run([args.sing_box, "check", "-c", str(path)], capture_output=True, text=True)
@@ -279,10 +322,14 @@ def main():
     parser.add_argument("--curl", required=True)
     parser.add_argument("--state-dir", default="/var/lib/sing-box")
     parser.add_argument("--port", type=int, default=19890)
-    parser.add_argument("command", choices=["check", "proxy-test", "run", "restore-dns"])
+    parser.add_argument("command", choices=[
+        "check", "proxy-test", "run", "restore-dns", "direct", "rule", "mode-toggle", "mode-status",
+    ])
     args = parser.parse_args()
     os.umask(0o077)
-    if args.command == "check":
+    if args.command in ("direct", "rule", "mode-toggle", "mode-status"):
+        mode_command(args.command)
+    elif args.command == "check":
         with tempfile.TemporaryDirectory(prefix="sing-box-check-") as directory:
             render(args, directory)
         print("PASS: runtime decryption and macOS sing-box configuration")

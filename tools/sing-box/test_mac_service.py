@@ -1,13 +1,14 @@
 """DNS rollback and runtime-secret regression tests; no root or network required."""
 
 import importlib.util
+import io
 import json
 import socket
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 
 spec = importlib.util.spec_from_file_location("mac_service", Path(__file__).with_name("mac-service.py"))
@@ -133,6 +134,7 @@ class RuntimeSecretsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             template = Path(directory) / "template.json"
             base = {
+                "experimental": {"clash_api": {"external_controller": "127.0.0.1:19090"}},
                 "outbounds": [{"tag": "proxy", "obfs": {}, "tls": {}}],
                 "inbounds": [{"type": "mixed", "listen_port": 7890},
                              {"type": "tun", "address": ["172.19.0.1/30"]}],
@@ -151,10 +153,75 @@ class RuntimeSecretsTests(unittest.TestCase):
             self.assertEqual(output["outbounds"][0]["password"], "test-password")
             self.assertEqual(output["outbounds"][0]["obfs"]["password"], "test-obfs")
             self.assertEqual(output["inbounds"], [{"type": "mixed", "listen_port": 19890}])
+            self.assertNotIn("clash_api", output["experimental"])
             self.assertEqual(path.stat().st_mode & 0o777, 0o600)
             self.assertEqual(json.loads(template.read_text()), base)
             self.assertIn("--extract", run.call_args_list[0].args[0])
             self.assertEqual(run.call_args_list[0].kwargs["env"]["SOPS_AGE_KEY_FILE"], "identity.txt")
+
+
+class ModeControlTests(unittest.TestCase):
+    def test_explicit_modes_are_confirmed(self):
+        for mode in ("direct", "rule"):
+            with self.subTest(mode=mode), patch.object(service, "controller_request", side_effect=[
+                None, {"mode": mode},
+            ]) as request, patch("sys.stdout", new_callable=io.StringIO) as output:
+                service.mode_command(mode)
+                self.assertEqual(request.call_args_list[0].args, ("PATCH", {"mode": mode}))
+                self.assertIn(mode.upper(), output.getvalue())
+
+    def test_toggle_uses_current_mode_in_both_directions(self):
+        for before, after in (("rule", "direct"), ("direct", "rule")):
+            with self.subTest(before=before), patch.object(service, "controller_request", side_effect=[
+                {"mode": before}, None, {"mode": after},
+            ]) as request, patch("sys.stdout", new_callable=io.StringIO):
+                service.mode_command("mode-toggle")
+                self.assertEqual(request.call_args_list[1].args, ("PATCH", {"mode": after}))
+
+    def test_status_does_not_change_mode(self):
+        with patch.object(service, "controller_request", return_value={"mode": "rule"}) as request:
+            with patch("sys.stdout", new_callable=io.StringIO):
+                service.mode_command("mode-status")
+            request.assert_called_once_with()
+
+    def test_unexpected_mode_is_not_silently_toggled(self):
+        with patch.object(service, "controller_request", return_value={"mode": "global"}) as request:
+            with self.assertRaisesRegex(RuntimeError, "Unexpected"):
+                service.mode_command("mode-toggle")
+            request.assert_called_once_with()
+
+    def test_failed_confirmation_is_reported(self):
+        with patch.object(service, "controller_request", side_effect=[None, {"mode": "rule"}]):
+            with self.assertRaisesRegex(RuntimeError, "could not be confirmed"):
+                service.mode_command("direct")
+
+    def test_http_requests_use_loopback_and_close_connection(self):
+        connection = Mock()
+        connection.getresponse.return_value.status = 204
+        connection.getresponse.return_value.read.return_value = b""
+        with patch.object(service.http.client, "HTTPConnection", return_value=connection) as factory:
+            self.assertIsNone(service.controller_request("PATCH", {"mode": "direct"}))
+            factory.assert_called_once_with("127.0.0.1", service.CONTROLLER_PORT, timeout=5)
+        self.assertEqual(connection.request.call_args.args, ("PATCH", "/configs"))
+        self.assertEqual(json.loads(connection.request.call_args.kwargs["body"]), {"mode": "direct"})
+        connection.close.assert_called_once()
+
+    def test_unavailable_controller_reports_actionable_error(self):
+        connection = Mock()
+        connection.request.side_effect = ConnectionRefusedError()
+        with patch.object(service.http.client, "HTTPConnection", return_value=connection):
+            with self.assertRaisesRegex(RuntimeError, "updated configuration"):
+                service.controller_request()
+        connection.close.assert_called_once()
+
+    def test_http_failure_is_not_reported_as_success(self):
+        connection = Mock()
+        connection.getresponse.return_value.status = 500
+        connection.getresponse.return_value.read.return_value = b"failure"
+        with patch.object(service.http.client, "HTTPConnection", return_value=connection):
+            with self.assertRaisesRegex(RuntimeError, "HTTP 500"):
+                service.controller_request("PATCH", {"mode": "direct"})
+        connection.close.assert_called_once()
 
 
 class PortAvailabilityTests(unittest.TestCase):

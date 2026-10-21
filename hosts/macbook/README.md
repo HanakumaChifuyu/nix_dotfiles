@@ -215,19 +215,35 @@ sudo tail -n 80 /var/log/sing-box.log
 sing-box-mac check
 ```
 
-`sing-box-mac status` 会显示 launchd 运行状态及当前 Wi-Fi DNS。
+`sing-box-mac status` 会显示 launchd 运行状态、当前模式及 Wi-Fi DNS。
 只有查看配置通过不足以证明网络可用，完整网络验收命令见 [代理测试文档](../../tools/sing-box/mac.md)。
 
-停止与启动服务（自带 DNS 还原与安全检查）：
+日常暂停代理节点使用直连模式，保持服务、TUN 和本地代理入口运行：
 
 ```bash
-sudo sing-box-mac stop     # 停止服务并自动安全恢复 DNS
+sing-box-mac direct       # 全直连，保留局域网和 Tailscale 访问
+sing-box-mac rule         # 恢复规则分流
+sing-box-mac mode-toggle  # 在 DIRECT / RULE 间切换
+sing-box-mac status       # 查看当前模式
+```
+
+这些命令通过本机 `127.0.0.1:19090` 控制接口切换，无需 sudo 或重启服务。
+首次使用需要应用包含新功能的系统配置；旧服务未加载控制接口时，命令会报错而不会重启服务。
+模式由 sing-box 缓存保存，服务重启后会恢复上次模式，首次启动默认为 `rule`。
+切换只影响新连接，已有连接不会被主动断开；需要立即改变某个应用的出口时，让该应用重新连接。
+直连模式的新 DNS 查询使用阿里 DNS（Tailscale 域名继续走 MagicDNS）；已有 FakeIP 映射保留供存量缓存使用。
+
+停止与启动服务（维护时使用）：
+
+```bash
+sudo sing-box-mac stop     # 停止服务并尝试恢复 DNS
 sudo sing-box-mac start    # 启动服务
 sudo sing-box-mac restart  # 重启服务
 sudo sing-box-mac toggle   # 切换启停状态
 ```
 
-底层分别调用 `launchctl bootout` 与 `bootstrap`。`stop` 命令在停止后会自动执行 `restore-dns` 并清理残留无效 DNS，防止断网。
+底层分别调用 `launchctl bootout` 与 `bootstrap`。`stop` 命令在停止后会执行 `restore-dns` 并尝试清理残留无效 DNS。
+`stop` 不会清除 macOS 系统代理或已有 Fish 会话的代理环境变量，因此日常切换请使用 `direct` / `rule`。
 `stop` 不会从 Nix 配置中移除服务。长期停用需移除对应 import，再激活系统配置。
 不要删除 `/var/lib/sing-box/dns-state.json` 或 `dns-original.json` 来修复 DNS；
 它们保存本次和最近一次的原始 DNS 设置，供异常退出或网络切换后恢复。
